@@ -20,6 +20,13 @@ from .string.not_equals import NotEqualsCondition, NotEqualsConditionSchema
 from .string.starts_with import StartsWithCondition, StartsWithConditionSchema
 from .string.ends_with import EndsWithCondition, EndsWithConditionSchema
 from .string.regex_match import RegexMatchCondition, RegexMatchConditionSchema
+# -- Collection Conditions --
+from .collection.is_in import IsInCondition, IsInConditionSchema
+from .collection.is_not_in import IsNotInCondition, IsNotInConditionSchema
+from .collection.all_in import AllInCondition, AllInConditionSchema
+from .collection.all_not_in import AllNotInCondition, AllNotInConditionSchema
+from .collection.any_in import AnyInCondition, AnyInConditionSchema
+from .collection.any_not_in import AnyNotInCondition, AnyNotInConditionSchema
 
 
 class ConditionSchema(OneOfSchema):
@@ -40,6 +47,13 @@ class ConditionSchema(OneOfSchema):
         StartsWithCondition.name: StartsWithConditionSchema,
         EndsWithCondition.name: EndsWithConditionSchema,
         RegexMatchCondition.name: RegexMatchConditionSchema,
+        # -- Collection Conditions --
+        IsInCondition.name: IsInConditionSchema,
+        IsNotInCondition.name: IsNotInConditionSchema,
+        AllInCondition.name: AllInConditionSchema,
+        AllNotInCondition.name: AllNotInConditionSchema,
+        AnyInCondition.name: AnyInConditionSchema,
+        AnyNotInCondition.name: AnyNotInConditionSchema,
     }
 
     def get_obj_type(self, obj):
