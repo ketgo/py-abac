@@ -5,6 +5,19 @@
 from marshmallow import ValidationError
 from marshmallow_oneofschema import OneOfSchema
 
+from .collection.all_in import AllInCondition, AllInConditionSchema
+from .collection.all_not_in import AllNotInCondition, AllNotInConditionSchema
+from .collection.any_in import AnyInCondition, AnyInConditionSchema
+from .collection.any_not_in import AnyNotInCondition, AnyNotInConditionSchema
+# --- Collection Conditions ---
+from .collection.is_in import IsInCondition, IsInConditionSchema
+from .collection.is_not_in import IsNotInCondition, IsNotInConditionSchema
+# --- Logic Conditions ---
+from .logic._all import AllCondition, AllConditionSchema
+from .logic._any import AnyCondition, AnyConditionSchema
+from .logic._not import NotCondition, NotConditionSchema
+# -- Network Conditions --
+from .net import CIDRCondition, CIDRConditionSchema
 # --- Numeric Conditions ---
 from .numeric.eq import EqualCondition, EqualConditionSchema
 from .numeric.gt import GreaterCondition, GreaterConditionSchema
@@ -14,23 +27,12 @@ from .numeric.lte import LessEqualCondition, LessEqualConditionSchema
 from .numeric.neq import NotEqualCondition, NotEqualConditionSchema
 # --- String Conditions ---
 from .string.contains import ContainsCondition, ContainsConditionSchema
-from .string.not_contains import NotContainsCondition, NotContainsConditionSchema
-from .string.equals import EqualsCondition, EqualsConditionSchema
-from .string.not_equals import NotEqualsCondition, NotEqualsConditionSchema
-from .string.starts_with import StartsWithCondition, StartsWithConditionSchema
 from .string.ends_with import EndsWithCondition, EndsWithConditionSchema
+from .string.equals import EqualsCondition, EqualsConditionSchema
+from .string.not_contains import NotContainsCondition, NotContainsConditionSchema
+from .string.not_equals import NotEqualsCondition, NotEqualsConditionSchema
 from .string.regex_match import RegexMatchCondition, RegexMatchConditionSchema
-# --- Collection Conditions ---
-from .collection.is_in import IsInCondition, IsInConditionSchema
-from .collection.is_not_in import IsNotInCondition, IsNotInConditionSchema
-from .collection.all_in import AllInCondition, AllInConditionSchema
-from .collection.all_not_in import AllNotInCondition, AllNotInConditionSchema
-from .collection.any_in import AnyInCondition, AnyInConditionSchema
-from .collection.any_not_in import AnyNotInCondition, AnyNotInConditionSchema
-# --- Logic Conditions ---
-from .logic._all import AllCondition, AllConditionSchema
-from .logic._any import AnyCondition, AnyConditionSchema
-from .logic._not import NotCondition, NotConditionSchema
+from .string.starts_with import StartsWithCondition, StartsWithConditionSchema
 
 
 class ConditionSchema(OneOfSchema):
@@ -62,6 +64,8 @@ class ConditionSchema(OneOfSchema):
         AllCondition.name: AllConditionSchema,
         AnyCondition.name: AnyConditionSchema,
         NotCondition.name: NotConditionSchema,
+        # -- Network Conditions --
+        CIDRCondition.name: CIDRConditionSchema,
     }
 
     def get_obj_type(self, obj):
