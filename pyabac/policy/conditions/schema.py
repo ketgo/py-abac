@@ -20,13 +20,17 @@ from .string.not_equals import NotEqualsCondition, NotEqualsConditionSchema
 from .string.starts_with import StartsWithCondition, StartsWithConditionSchema
 from .string.ends_with import EndsWithCondition, EndsWithConditionSchema
 from .string.regex_match import RegexMatchCondition, RegexMatchConditionSchema
-# -- Collection Conditions --
+# --- Collection Conditions ---
 from .collection.is_in import IsInCondition, IsInConditionSchema
 from .collection.is_not_in import IsNotInCondition, IsNotInConditionSchema
 from .collection.all_in import AllInCondition, AllInConditionSchema
 from .collection.all_not_in import AllNotInCondition, AllNotInConditionSchema
 from .collection.any_in import AnyInCondition, AnyInConditionSchema
 from .collection.any_not_in import AnyNotInCondition, AnyNotInConditionSchema
+# --- Logic Conditions ---
+from .logic._all import AllCondition, AllConditionSchema
+from .logic._any import AnyCondition, AnyConditionSchema
+from .logic._not import NotCondition, NotConditionSchema
 
 
 class ConditionSchema(OneOfSchema):
@@ -47,13 +51,17 @@ class ConditionSchema(OneOfSchema):
         StartsWithCondition.name: StartsWithConditionSchema,
         EndsWithCondition.name: EndsWithConditionSchema,
         RegexMatchCondition.name: RegexMatchConditionSchema,
-        # -- Collection Conditions --
+        # --- Collection Conditions ---
         IsInCondition.name: IsInConditionSchema,
         IsNotInCondition.name: IsNotInConditionSchema,
         AllInCondition.name: AllInConditionSchema,
         AllNotInCondition.name: AllNotInConditionSchema,
         AnyInCondition.name: AnyInConditionSchema,
         AnyNotInCondition.name: AnyNotInConditionSchema,
+        # --- Logic Conditions ---
+        AllCondition.name: AllConditionSchema,
+        AnyCondition.name: AnyConditionSchema,
+        NotCondition.name: NotConditionSchema,
     }
 
     def get_obj_type(self, obj):

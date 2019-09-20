@@ -12,7 +12,7 @@ class LogicCondition(ConditionBase, metaclass=ABCMeta):
     def __init__(self, *values):
         for value in values:
             if not is_condition(value):
-                raise TypeError("Invalid argument type '{}' for collection condition.".format(type(value)))
+                raise TypeError("Invalid argument type '{}' for logic condition.".format(type(value)))
         self.values = values
 
 

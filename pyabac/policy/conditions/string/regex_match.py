@@ -5,7 +5,7 @@
 import re
 from marshmallow import Schema, fields, post_load
 
-from ..base import ConditionBase
+from .base import ConditionBase
 
 
 class RegexMatchCondition(ConditionBase):
