@@ -9,6 +9,7 @@ from pyabac.policy.conditions.numeric import GreaterCondition
 from pyabac.policy.conditions.numeric import GreaterEqualCondition
 from pyabac.policy.conditions.numeric import LessCondition
 from pyabac.policy.conditions.numeric import LessEqualCondition
+from pyabac.policy.conditions.numeric import NotEqualCondition
 
 
 class TestNumericCondition(object):
@@ -24,6 +25,8 @@ class TestNumericCondition(object):
         (GreaterEqualCondition(3.0), {"condition": GreaterEqualCondition.name, "value": 3.0}),
         (LessEqualCondition(2), {"condition": LessEqualCondition.name, "value": 2}),
         (LessEqualCondition(3.0), {"condition": LessEqualCondition.name, "value": 3.0}),
+        (NotEqualCondition(2), {"condition": NotEqualCondition.name, "value": 2}),
+        (NotEqualCondition(3.0), {"condition": NotEqualCondition.name, "value": 3.0}),
     ])
     def test_to_json(self, condition, condition_json):
         assert condition.to_json() == condition_json
@@ -39,6 +42,8 @@ class TestNumericCondition(object):
         (GreaterEqualCondition, 3.0, {"condition": GreaterEqualCondition.name, "value": 3.0}),
         (LessEqualCondition, 2, {"condition": LessEqualCondition.name, "value": 2}),
         (LessEqualCondition, 3.0, {"condition": LessEqualCondition.name, "value": 3.0}),
+        (NotEqualCondition, 2, {"condition": NotEqualCondition.name, "value": 2}),
+        (NotEqualCondition, 3.0, {"condition": NotEqualCondition.name, "value": 3.0}),
     ])
     def test_from_json(self, condition_type, value, condition_json):
         condition = condition_type.from_json(condition_json)
@@ -51,7 +56,7 @@ class TestNumericCondition(object):
         (LessCondition, {}, "Invalid argument type '{}' for numeric condition.".format(dict)),
         (GreaterEqualCondition, None, "Invalid argument type '{}' for numeric condition.".format(type(None))),
         (LessEqualCondition, {1, }, "Invalid argument type '{}' for numeric condition.".format(set)),
-        (LessEqualCondition, (), "Invalid argument type '{}' for numeric condition.".format(tuple)),
+        (NotEqualCondition, (), "Invalid argument type '{}' for numeric condition.".format(tuple)),
     ])
     def test_type_error(self, condition, value, err_msg):
         with pytest.raises(TypeError) as err:
@@ -76,6 +81,10 @@ class TestNumericCondition(object):
         (LessEqualCondition(2), 2, True),
         (LessEqualCondition(2), 2.1, False),
         (LessEqualCondition(2), 1.9, True),
+        (NotEqualCondition(2), 2, False),
+        (NotEqualCondition(2.0), 2, False),
+        (NotEqualCondition(2), 2.0, False),
+        (NotEqualCondition(2), 1.9, True),
     ])
     def test_is_satisfied(self, condition, what, result):
         assert condition.is_satisfied(what) == result
