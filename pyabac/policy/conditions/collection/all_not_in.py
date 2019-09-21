@@ -11,8 +11,9 @@ class AllNotInCondition(CollectionCondition):
     name = "AllNotIn"
 
     def is_satisfied(self, what):
+        # If `what` is not a collection then return False
         if not is_collection(what):
-            raise TypeError("Value should be of list type")
+            return False
         return not set(what).issubset(self.value)
 
 

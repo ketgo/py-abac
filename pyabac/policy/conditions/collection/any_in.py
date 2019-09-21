@@ -11,8 +11,9 @@ class AnyInCondition(CollectionCondition):
     name = "AnyIn"
 
     def is_satisfied(self, what):
+        # If `what` is not a collection then return False
         if not is_collection(what):
-            raise TypeError("Value should be of list type")
+            return False
         return bool(set(what).intersection(self.value))
 
 
