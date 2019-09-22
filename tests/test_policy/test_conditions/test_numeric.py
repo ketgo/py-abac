@@ -4,6 +4,7 @@
 
 import pytest
 
+from pyabac.exceptions import ConditionCreationError
 from pyabac.policy.conditions.numeric import EqualCondition
 from pyabac.policy.conditions.numeric import GreaterCondition
 from pyabac.policy.conditions.numeric import GreaterEqualCondition
@@ -59,7 +60,7 @@ class TestNumericCondition(object):
         (NotEqualCondition, (), "Invalid argument type '{}' for numeric condition.".format(tuple)),
     ])
     def test_type_error(self, condition, value, err_msg):
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(ConditionCreationError) as err:
             condition(value)
         assert str(err.value) == err_msg
 

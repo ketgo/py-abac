@@ -5,7 +5,7 @@
 import re
 from marshmallow import Schema, fields, post_load
 
-from .base import ConditionBase
+from .base import ConditionBase, ConditionCreationError
 
 
 class RegexMatchCondition(ConditionBase):
@@ -13,7 +13,7 @@ class RegexMatchCondition(ConditionBase):
 
     def __init__(self, value):
         if not is_regex(value):
-            raise TypeError("Argument '{}' not a valid regexp string.".format(value))
+            raise ConditionCreationError("Argument '{}' not a valid regexp string.".format(value))
         self.value = value
 
     def is_satisfied(self, what):

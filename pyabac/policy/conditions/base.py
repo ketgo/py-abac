@@ -4,6 +4,10 @@
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 
+from marshmallow import ValidationError
+
+from ...exceptions import ConditionCreationError
+
 
 class ConditionBase(metaclass=ABCMeta):
 
@@ -29,7 +33,10 @@ class ConditionBase(metaclass=ABCMeta):
             :return: JSON dict
         """
         from .schema import ConditionSchema
-        return ConditionSchema().dump(self)
+        try:
+            return ConditionSchema().dump(self)
+        except ValidationError as err:
+            raise ConditionCreationError(*err.args)
 
     @staticmethod
     def from_json(data):
@@ -40,4 +47,7 @@ class ConditionBase(metaclass=ABCMeta):
             :return: Class instance
         """
         from .schema import ConditionSchema
-        return ConditionSchema().load(data)
+        try:
+            return ConditionSchema().load(data)
+        except ValidationError as err:
+            raise ConditionCreationError(*err.args)

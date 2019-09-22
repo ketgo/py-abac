@@ -8,6 +8,7 @@ from marshmallow import Schema, fields, validate, post_load, post_dump, Validati
 
 from .conditions.schema import ConditionSchema
 from ..constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
+from ..exceptions import PolicyCreationError
 
 log = logging.getLogger(__name__)
 
@@ -38,14 +39,20 @@ class Policy(object):
         self.collection = collection or DEFAULT_POLICY_COLLECTION
 
         # Storing JSON representation of the policy. This performs type checking via marshmallow
-        self._json = PolicySchema().dump(self)
+        try:
+            self._json = PolicySchema().dump(self)
+        except ValidationError as err:
+            raise PolicyCreationError(*err.args)
 
     def to_json(self):
         return self._json
 
     @staticmethod
     def from_json(data):
-        return PolicySchema().load(data)
+        try:
+            return PolicySchema().load(data)
+        except ValidationError as err:
+            raise PolicyCreationError(err.args)
 
     def allow_access(self):
         """

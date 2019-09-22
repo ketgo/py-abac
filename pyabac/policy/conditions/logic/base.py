@@ -4,7 +4,7 @@
 
 from marshmallow import Schema, fields, validate
 
-from ..base import ConditionBase, ABCMeta
+from ..base import ConditionBase, ABCMeta, ConditionCreationError
 
 
 class LogicCondition(ConditionBase, metaclass=ABCMeta):
@@ -12,7 +12,7 @@ class LogicCondition(ConditionBase, metaclass=ABCMeta):
     def __init__(self, *values):
         for value in values:
             if not is_condition(value):
-                raise TypeError("Invalid argument type '{}' for logic condition.".format(type(value)))
+                raise ConditionCreationError("Invalid argument type '{}' for logic condition.".format(type(value)))
         self.values = values
 
 

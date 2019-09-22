@@ -6,7 +6,7 @@ import ipaddress
 
 from marshmallow import Schema, fields, post_load
 
-from .base import ConditionBase
+from .base import ConditionBase, ConditionCreationError
 
 
 class CIDRCondition(ConditionBase):
@@ -16,6 +16,8 @@ class CIDRCondition(ConditionBase):
     name = "CIDR"
 
     def __init__(self, cidr):
+        if not is_string(cidr):
+            raise ConditionCreationError("Invalid argument type '{}' for network condition.".format(type(cidr)))
         self.cidr = cidr
 
     def is_satisfied(self, what):
@@ -27,6 +29,10 @@ class CIDRCondition(ConditionBase):
         except ValueError:
             return False
         return ip in net
+
+
+def is_string(value):
+    return isinstance(value, str)
 
 
 class CIDRConditionSchema(Schema):

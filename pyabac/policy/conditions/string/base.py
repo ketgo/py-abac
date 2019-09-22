@@ -4,14 +4,14 @@
 
 from marshmallow import Schema, fields
 
-from ..base import ConditionBase, ABCMeta
+from ..base import ConditionBase, ABCMeta, ConditionCreationError
 
 
 class StringCondition(ConditionBase, metaclass=ABCMeta):
 
     def __init__(self, value, case_insensitive=False):
         if not is_string(value):
-            raise TypeError("Invalid argument type '{}' for string condition.".format(type(value)))
+            raise ConditionCreationError("Invalid argument type '{}' for string condition.".format(type(value)))
         self.case_insensitive = case_insensitive or False
         self.value = value
 

@@ -4,6 +4,7 @@
 
 import pytest
 
+from pyabac.exceptions import ConditionCreationError
 from pyabac.policy.conditions.string.contains import ContainsCondition
 from pyabac.policy.conditions.string.not_contains import NotContainsCondition
 from pyabac.policy.conditions.string.equals import EqualsCondition
@@ -76,7 +77,7 @@ class TestStringCondition(object):
         (RegexMatchCondition, "(", "Argument '{}' not a valid regexp string.".format("(")),
     ])
     def test_type_error(self, condition, value, err_msg):
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(ConditionCreationError) as err:
             condition(value)
         assert str(err.value) == err_msg
 
