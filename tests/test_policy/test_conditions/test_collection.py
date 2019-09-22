@@ -9,10 +9,10 @@ from pyabac.policy.conditions.collection import AllInCondition
 from pyabac.policy.conditions.collection import AllNotInCondition
 from pyabac.policy.conditions.collection import AnyInCondition
 from pyabac.policy.conditions.collection import AnyNotInCondition
-from pyabac.policy.conditions.collection import IsInCondition
-from pyabac.policy.conditions.collection import IsNotInCondition
 from pyabac.policy.conditions.collection import IsEmptyCondition
+from pyabac.policy.conditions.collection import IsInCondition
 from pyabac.policy.conditions.collection import IsNotEmptyCondition
+from pyabac.policy.conditions.collection import IsNotInCondition
 
 
 class TestCollectionCondition(object):
@@ -21,7 +21,7 @@ class TestCollectionCondition(object):
         (AllInCondition([2]), {"condition": AllInCondition.name, "value": [2]}),
         (AllNotInCondition([{"test": 2}]), {"condition": AllNotInCondition.name, "value": [{"test": 2}]}),
         (AnyInCondition([2, {"test": 2}]), {"condition": AnyInCondition.name, "value": [2, {"test": 2}]}),
-        (AnyNotInCondition([2, {"test":2}, []]), {"condition": AnyNotInCondition.name, "value": [2, {"test":2}, []]}),
+        (AnyNotInCondition([2, {"test": 2}, []]), {"condition": AnyNotInCondition.name, "value": [2, {"test": 2}, []]}),
         (IsInCondition([2]), {"condition": IsInCondition.name, "value": [2]}),
         (IsNotInCondition([2]), {"condition": IsNotInCondition.name, "value": [2]}),
         (IsEmptyCondition(), {"condition": IsEmptyCondition.name}),

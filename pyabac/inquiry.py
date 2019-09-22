@@ -1,6 +1,7 @@
 """
     Inquiry class
 """
+
 from marshmallow import Schema, fields, post_dump, post_load
 
 from .constants import DEFAULT_POLICY_COLLECTION

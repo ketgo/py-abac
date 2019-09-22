@@ -5,9 +5,9 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.policy.conditions.net import CIDRCondition
 from pyabac.policy.conditions.exists import ExistsCondition
 from pyabac.policy.conditions.exists import NotExistsCondition
+from pyabac.policy.conditions.net import CIDRCondition
 
 
 class TestLogicCondition(object):
@@ -58,4 +58,3 @@ class TestLogicCondition(object):
     ])
     def test_is_satisfied(self, condition, what, result):
         assert condition.is_satisfied(what) == result
-
