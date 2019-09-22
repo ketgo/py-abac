@@ -15,17 +15,17 @@ class CIDRCondition(ConditionBase):
     """
     name = "CIDR"
 
-    def __init__(self, cidr):
-        if not is_string(cidr):
-            raise ConditionCreationError("Invalid argument type '{}' for network condition.".format(type(cidr)))
-        self.cidr = cidr
+    def __init__(self, value):
+        if not is_string(value):
+            raise ConditionCreationError("Invalid argument type '{}' for network condition.".format(type(value)))
+        self.value = value
 
     def is_satisfied(self, what):
         if not isinstance(what, str):
             return False
         try:
             ip = ipaddress.ip_address(what)
-            net = ipaddress.ip_network(self.cidr)
+            net = ipaddress.ip_network(self.value)
         except ValueError:
             return False
         return ip in net
@@ -36,7 +36,7 @@ def is_string(value):
 
 
 class CIDRConditionSchema(Schema):
-    cidr = fields.String(required=True, allow_none=False)
+    value = fields.String(required=True, allow_none=False)
 
     @post_load
     def post_load(self, data, **_):

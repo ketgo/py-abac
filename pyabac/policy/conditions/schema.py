@@ -15,10 +15,10 @@ from .collection.is_in import IsInCondition, IsInConditionSchema
 from .collection.is_not_empty import IsNotEmptyCondition, IsNotEmptyConditionSchema
 from .collection.is_not_in import IsNotInCondition, IsNotInConditionSchema
 # --- Logic Conditions ---
-from .logic._all import AllCondition, AllConditionSchema
-from .logic._any import AnyCondition, AnyConditionSchema
+from .logic._and import AndCondition, AndConditionSchema
+from .logic._or import OrCondition, OrConditionSchema
 from .logic._not import NotCondition, NotConditionSchema
-# -- Network Conditions --
+# --- Network Conditions ---
 from .net import CIDRCondition, CIDRConditionSchema
 # --- Numeric Conditions ---
 from .numeric.eq import EqualCondition, EqualConditionSchema
@@ -35,6 +35,9 @@ from .string.not_contains import NotContainsCondition, NotContainsConditionSchem
 from .string.not_equals import NotEqualsCondition, NotEqualsConditionSchema
 from .string.regex_match import RegexMatchCondition, RegexMatchConditionSchema
 from .string.starts_with import StartsWithCondition, StartsWithConditionSchema
+# --- Other Conditions ---
+from .exists import ExistsCondition, ExistsConditionSchema
+from .exists import NotExistsCondition, NotExistsConditionSchema
 
 
 class ConditionSchema(OneOfSchema):
@@ -65,11 +68,14 @@ class ConditionSchema(OneOfSchema):
         IsEmptyCondition.name: IsEmptyConditionSchema,
         IsNotEmptyCondition.name: IsNotEmptyConditionSchema,
         # --- Logic Conditions ---
-        AllCondition.name: AllConditionSchema,
-        AnyCondition.name: AnyConditionSchema,
+        AndCondition.name: AndConditionSchema,
+        OrCondition.name: OrConditionSchema,
         NotCondition.name: NotConditionSchema,
-        # -- Network Conditions --
+        # --- Network Conditions ---
         CIDRCondition.name: CIDRConditionSchema,
+        # --- Other Conditions ---
+        ExistsCondition.name: ExistsConditionSchema,
+        NotExistsCondition.name: NotExistsConditionSchema,
     }
 
     def get_obj_type(self, obj):

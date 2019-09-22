@@ -10,6 +10,8 @@ from ..base import ConditionBase, ABCMeta, ConditionCreationError
 class LogicCondition(ConditionBase, metaclass=ABCMeta):
 
     def __init__(self, *values):
+        if not values:
+            raise ConditionCreationError("No arguments provided in Logic condition.")
         for value in values:
             if not is_condition(value):
                 raise ConditionCreationError("Invalid argument type '{}' for logic condition.".format(type(value)))
