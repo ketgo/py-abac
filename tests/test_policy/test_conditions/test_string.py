@@ -76,26 +76,69 @@ class TestStringCondition(object):
         (EndsWithCondition, (), "Invalid argument type '{}' for string condition.".format(tuple)),
         (RegexMatchCondition, "(", "Argument '{}' not a valid regexp string.".format("(")),
     ])
-    def test_type_error(self, condition, value, err_msg):
+    def test_create_error(self, condition, value, err_msg):
         with pytest.raises(ConditionCreationError) as err:
             condition(value)
         assert str(err.value) == err_msg
 
+    @pytest.mark.parametrize("condition_type, data", [
+        (ContainsCondition, {"condition": ContainsCondition.name, "value": 2, "case_insensitive": False}),
+        (ContainsCondition, {"condition": ContainsCondition.name, "value": "2", "case_insensitive": 2}),
+        (NotContainsCondition, {"condition": NotContainsCondition.name, "value": [], "case_insensitive": False}),
+        (NotContainsCondition, {"condition": NotContainsCondition.name, "value": "2", "case_insensitive": []}),
+        (EqualsCondition, {"condition": EqualsCondition.name, "value": {}, "case_insensitive": False}),
+        (EqualsCondition, {"condition": EqualsCondition.name, "value": "2", "case_insensitive": {}}),
+        (NotEqualsCondition, {"condition": NotEqualsCondition.name, "value": None, "case_insensitive": False}),
+        (NotEqualsCondition, {"condition": NotEqualsCondition.name, "value": "2", "case_insensitive": None}),
+        (StartsWithCondition, {"condition": StartsWithCondition.name, "value": {1, }, "case_insensitive": False}),
+        (StartsWithCondition, {"condition": StartsWithCondition.name, "value": "2", "case_insensitive": {1, }}),
+        (EndsWithCondition, {"condition": EndsWithCondition.name, "value": (), "case_insensitive": False}),
+        (EndsWithCondition, {"condition": EndsWithCondition.name, "value": "2", "case_insensitive": ()}),
+        (RegexMatchCondition, {"condition": RegexMatchCondition.name, "value": "("}),
+    ])
+    def test_create_from_json_error(self, condition_type, data):
+        with pytest.raises(ConditionCreationError):
+            condition_type.from_json(data)
+
     @pytest.mark.parametrize("condition, what, result", [
         (ContainsCondition("b"), "abc", True),
+        (ContainsCondition("B"), "abc", False),
+        (ContainsCondition("B", True), "abc", True),
         (ContainsCondition("b"), "cde", False),
+        (ContainsCondition("b"), None, False),
+
         (NotContainsCondition("b"), "abc", False),
         (NotContainsCondition("b"), "cde", True),
+        (NotContainsCondition("D"), "cde", True),
+        (NotContainsCondition("D", True), "cde", False),
+        (NotContainsCondition("D", True), None, False),
+
         (EqualsCondition("abc"), "abc", True),
+        (EqualsCondition("ABC"), "abc", False),
+        (EqualsCondition("ABC", True), "abc", True),
         (EqualsCondition("b"), "cde", False),
+        (EqualsCondition("b"), None, False),
+
         (NotEqualsCondition("abc"), "abc", False),
+        (NotEqualsCondition("ABC"), "abc", True),
+        (NotEqualsCondition("ABC", True), "abc", False),
         (NotEqualsCondition("b"), "cde", True),
+        (NotEqualsCondition("b"), None, False),
+
         (StartsWithCondition("ab"), "abc", True),
+        (StartsWithCondition("AB"), "abc", False),
+        (StartsWithCondition("AB", True), "abc", True),
         (StartsWithCondition("ab"), "ab", True),
         (StartsWithCondition("ab"), "cab", False),
+        (StartsWithCondition("ab"), None, False),
+
         (EndsWithCondition("ab"), "abc", False),
         (EndsWithCondition("ab"), "ab", True),
         (EndsWithCondition("ab"), "cab", True),
+        (EndsWithCondition("AB"), "cab", False),
+        (EndsWithCondition("AB", True), "cab", True),
+        (EndsWithCondition("AB", True), None, False),
+
         (RegexMatchCondition(".*"), "foo", True),
         (RegexMatchCondition("abc"), "abc", True),
         (RegexMatchCondition("abc"), "abd", False),
@@ -103,6 +146,7 @@ class TestStringCondition(object):
         (RegexMatchCondition(""), "", True),
         (RegexMatchCondition(r"^python\?exe"), "python?exe", True),
         (RegexMatchCondition(r"^python?exe"), "python?exe", False),
+        (RegexMatchCondition(r"^python?exe"), None, False),
     ])
     def test_is_satisfied(self, condition, what, result):
         assert condition.is_satisfied(what) == result

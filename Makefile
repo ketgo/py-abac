@@ -14,14 +14,6 @@ deps:
 test:
 	${PY_TEST}
 
-.PHONY: test-ni
-test-ni:
-	${PY_TEST} -m "not integration"
-
-.PHONY: test-i
-test-i:
-	${PY_TEST} -m "integration"
-
 .PHONY: coverage
 coverage:
 	${PY_TEST} --cov-config .coveragerc --cov=./ --cov-report html:htmlcov

@@ -76,26 +76,28 @@ class Policy(object):
 
         return subject_fits and resource_fits and action_fits
 
-    @staticmethod
-    def _attribute_fits(field, what):
+    def _attribute_fits(self, field, what):
         """
             Checks if a field's attribute policy fits `what`.
 
-            :param field: definition field of a policy
+            :param field: policy field
             :param what: object to check
             :return: True if fits else False
         """
         if not isinstance(field, dict):
-            log.error("Incorrect Policy definition. Skipping policy.")
+            log.error("Incorrect definition '{}' in Policy '{}'. Skipping policy.".format(field, self.uid))
             return False
 
         checks = []
-        for key, value in field.items():
-            # Find attribute values from `what` using the path defined in JsonPath format in the policy
-            matches = parse(key).find(what)
-            for match in matches:
-                # Check if the attribute value satisfies the attribute condition policy
-                checks.append(value.is_satisfied(match.value))
+        for attr_path, condition in field.items():
+            # Find attribute values from `what` using the path defined in JsonPath format in the policy.
+            # If no path found then set the value to `None`.
+            matches = parse(attr_path).find(what)
+            values = [match.value for match in matches] if matches else [None]
+            # Check all extracted values
+            for value in values:
+                # Check if the extracted value satisfies the condition for field's attribute
+                checks.append(condition.is_satisfied(value))
 
         # If any attribute does not match the policy then return False
         return all(checks)

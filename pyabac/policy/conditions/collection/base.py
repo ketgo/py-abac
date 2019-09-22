@@ -16,7 +16,7 @@ class CollectionCondition(ConditionBase, metaclass=ABCMeta):
 
 
 def is_collection(value):
-    return isinstance(value, list)
+    return any([isinstance(value, list), isinstance(value, set), isinstance(value, tuple)])
 
 
 class CollectionConditionSchema(Schema):

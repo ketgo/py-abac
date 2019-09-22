@@ -5,12 +5,14 @@
 from marshmallow import ValidationError
 from marshmallow_oneofschema import OneOfSchema
 
+# --- Collection Conditions ---
 from .collection.all_in import AllInCondition, AllInConditionSchema
 from .collection.all_not_in import AllNotInCondition, AllNotInConditionSchema
 from .collection.any_in import AnyInCondition, AnyInConditionSchema
 from .collection.any_not_in import AnyNotInCondition, AnyNotInConditionSchema
-# --- Collection Conditions ---
+from .collection.is_empty import IsEmptyCondition, IsEmptyConditionSchema
 from .collection.is_in import IsInCondition, IsInConditionSchema
+from .collection.is_not_empty import IsNotEmptyCondition, IsNotEmptyConditionSchema
 from .collection.is_not_in import IsNotInCondition, IsNotInConditionSchema
 # --- Logic Conditions ---
 from .logic._all import AllCondition, AllConditionSchema
@@ -60,6 +62,8 @@ class ConditionSchema(OneOfSchema):
         AllNotInCondition.name: AllNotInConditionSchema,
         AnyInCondition.name: AnyInConditionSchema,
         AnyNotInCondition.name: AnyNotInConditionSchema,
+        IsEmptyCondition.name: IsEmptyConditionSchema,
+        IsNotEmptyCondition.name: IsNotEmptyConditionSchema,
         # --- Logic Conditions ---
         AllCondition.name: AllConditionSchema,
         AnyCondition.name: AnyConditionSchema,

@@ -4,13 +4,15 @@
 
 from marshmallow import post_load
 
-from .base import StringCondition, StringConditionSchema
+from .base import StringCondition, StringConditionSchema, is_string
 
 
 class NotContainsCondition(StringCondition):
     name = "StringNotContains"
 
     def is_satisfied(self, what):
+        if not is_string(what):
+            return False
         if self.case_insensitive:
             return self.value.lower() not in what.lower()
         return self.value not in what

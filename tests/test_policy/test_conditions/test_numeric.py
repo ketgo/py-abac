@@ -59,10 +59,22 @@ class TestNumericCondition(object):
         (LessEqualCondition, {1, }, "Invalid argument type '{}' for numeric condition.".format(set)),
         (NotEqualCondition, (), "Invalid argument type '{}' for numeric condition.".format(tuple)),
     ])
-    def test_type_error(self, condition, value, err_msg):
+    def test_create_error(self, condition, value, err_msg):
         with pytest.raises(ConditionCreationError) as err:
             condition(value)
         assert str(err.value) == err_msg
+
+    @pytest.mark.parametrize("condition_type, data", [
+        (EqualCondition, {"condition": EqualCondition.name, "value": "test"}),
+        (GreaterCondition, {"condition": GreaterCondition.name, "value": []}),
+        (LessCondition, {"condition": LessCondition.name, "value": {}}),
+        (GreaterEqualCondition, {"condition": GreaterEqualCondition.name, "value": None}),
+        (LessEqualCondition, {"condition": LessEqualCondition.name, "value": {1, }}),
+        (NotEqualCondition, {"condition": NotEqualCondition.name, "value": ()}),
+    ])
+    def test_create_from_json_error(self, condition_type, data):
+        with pytest.raises(ConditionCreationError):
+            condition_type.from_json(data)
 
     @pytest.mark.parametrize("condition, what, result", [
         (EqualCondition(2), 2, True),
@@ -70,22 +82,33 @@ class TestNumericCondition(object):
         (EqualCondition(2.0), 2, True),
         (EqualCondition(2.0), 2.0, True),
         (EqualCondition(2), 3.0, False),
+        (EqualCondition(2), None, False),
+
         (GreaterCondition(2), 2, False),
         (GreaterCondition(2), 2.1, True),
         (GreaterCondition(2), 1.9, False),
+        (GreaterCondition(2), None, False),
+
         (GreaterEqualCondition(2), 2, True),
         (GreaterEqualCondition(2), 2.1, True),
         (GreaterEqualCondition(2), 1.9, False),
+        (GreaterEqualCondition(2), None, False),
+
         (LessCondition(2), 2, False),
         (LessCondition(2), 2.1, False),
         (LessCondition(2), 1.9, True),
+        (LessCondition(2), None, False),
+
         (LessEqualCondition(2), 2, True),
         (LessEqualCondition(2), 2.1, False),
         (LessEqualCondition(2), 1.9, True),
+        (LessEqualCondition(2), None, False),
+
         (NotEqualCondition(2), 2, False),
         (NotEqualCondition(2.0), 2, False),
         (NotEqualCondition(2), 2.0, False),
         (NotEqualCondition(2), 1.9, True),
+        (NotEqualCondition(2), None, False),
     ])
     def test_is_satisfied(self, condition, what, result):
         assert condition.is_satisfied(what) == result

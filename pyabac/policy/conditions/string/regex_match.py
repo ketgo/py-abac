@@ -3,9 +3,10 @@
 """
 
 import re
+
 from marshmallow import Schema, fields, post_load
 
-from .base import ConditionBase, ConditionCreationError
+from .base import ConditionBase, ConditionCreationError, is_string
 
 
 class RegexMatchCondition(ConditionBase):
@@ -17,6 +18,8 @@ class RegexMatchCondition(ConditionBase):
         self.value = value
 
     def is_satisfied(self, what):
+        if not is_string(what):
+            return False
         return re.search(self.value, what) is not None
 
 
