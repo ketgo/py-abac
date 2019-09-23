@@ -10,13 +10,13 @@ class Guard(object):
         Attribute Based Access Control (ABAC) evaluation engine
     """
 
-    def __init__(self, storage=None):
+    def __init__(self, storage):
         """
             Initialize guard object
 
             :param storage: policy storage
         """
-        if isinstance(storage, Storage):
+        if not isinstance(storage, Storage):
             raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
         self.storage = storage
 
@@ -35,14 +35,14 @@ class Guard(object):
 
         # filter for matching policies
         filtered = [policy for policy in policies if
-                    policy._fits(inquiry) and self.check_context_restriction(policy, inquiry)]
+                    policy.fits(inquiry) and self._check_context_restriction(policy, inquiry)]
 
         # no policies -> deny access!
         # if we have 2 or more similar policies - all of them should have allow effect, otherwise -> deny access!
         return len(filtered) > 0 and all(p.allow_access() for p in filtered)
 
     @staticmethod
-    def check_context_restriction(policy, inquiry):
+    def _check_context_restriction(policy, inquiry):
         """
             Check if context restriction in the policy is satisfied for a given inquiry's context.
         """

@@ -49,6 +49,8 @@ class TestLogicCondition(object):
     @pytest.mark.parametrize("condition, what, result", [
         (CIDRCondition("127.0.0.0/24"), "10.0.0.0", False),
         (CIDRCondition("127.0.0.0/24"), "127.0.0.1", True),
+        (CIDRCondition("127.0.0.0/24"), ")", False),
+        (CIDRCondition("127.0.0.0/24"), None, False),
 
         (ExistsCondition(), None, False),
         (ExistsCondition(), 1.0, True),

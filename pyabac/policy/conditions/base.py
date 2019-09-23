@@ -33,10 +33,7 @@ class ConditionBase(metaclass=ABCMeta):
             :return: JSON dict
         """
         from .schema import ConditionSchema
-        try:
-            return ConditionSchema().dump(self)
-        except ValidationError as err:
-            raise ConditionCreationError(*err.args)
+        return ConditionSchema().dump(self)
 
     @staticmethod
     def from_json(data):

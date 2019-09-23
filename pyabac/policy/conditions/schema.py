@@ -81,5 +81,5 @@ class ConditionSchema(OneOfSchema):
     def get_obj_type(self, obj):
         try:
             return getattr(obj, "name")
-        except AttributeError:
-            raise ValidationError("Unknown condition {} found.".format(obj))
+        except AttributeError:  # pragma: no cover
+            raise ValidationError("Unknown condition {} found.".format(obj))  # pragma: no cover

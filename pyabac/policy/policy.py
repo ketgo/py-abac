@@ -1,11 +1,14 @@
 """
     Policy class implementation
 """
+
 import logging
+import uuid
 
 from jsonpath_ng import parse
-from marshmallow import Schema, fields, validate, post_load, post_dump, ValidationError
+from marshmallow import Schema, fields, validate, post_load, ValidationError
 
+from .conditions.base import ConditionBase
 from .conditions.schema import ConditionSchema
 from ..constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
 from ..exceptions import PolicyCreationError
@@ -13,10 +16,44 @@ from ..exceptions import PolicyCreationError
 log = logging.getLogger(__name__)
 
 
+def _validate_json_path(path):
+    """
+        Method to check if data is in valid jsonPath format
+
+        :param path: json path to validate
+        :raises: ValidationError
+    """
+    try:
+        parse(path)
+    except Exception as err:
+        raise ValidationError(*err.args)
+
+
+def _validate_field(name, value, many=False):
+    """
+        Method to check if policy field is valid
+
+        :param name: name of field
+        :param value: value for policy field
+        :param many: flag to indicate list of values
+        :raises: ValidationError
+    """
+    _value = value if many else [value]
+    if not isinstance(_value, list):
+        raise ValidationError("Invalid policy definition.")
+    for v in _value:
+        if not isinstance(v, dict):
+            raise ValidationError("Invalid type '{}' for policy field '{}'.".format(type(v), name))
+        for k in v:
+            _validate_json_path(k)
+            if not isinstance(v[k], ConditionBase):
+                raise ValidationError("Invalid type '{}' for field attribute '{}'.".format(type(v[k]), k))
+
+
 class Policy(object):
 
-    def __init__(self, uid, description, subjects, resources, actions, context, effect,
-                 collection=DEFAULT_POLICY_COLLECTION):
+    def __init__(self, uid=None, description=None, subjects=None, resources=None, actions=None, context=None,
+                 effect=None, collection=DEFAULT_POLICY_COLLECTION):
         """
             Policy object initialization
 
@@ -29,7 +66,7 @@ class Policy(object):
             :param effect: effect of policy
             :param collection: collection to which this policy belongs
         """
-        self.uid = uid or ''
+        self.uid = uid or str(uuid.uuid4())
         self.description = description or ''
         self.subjects = subjects or []
         self.resources = resources or []
@@ -38,21 +75,18 @@ class Policy(object):
         self.effect = effect or DENY_ACCESS
         self.collection = collection or DEFAULT_POLICY_COLLECTION
 
-        # Storing JSON representation of the policy. This performs type checking via marshmallow
-        try:
-            self._json = PolicySchema().dump(self)
-        except ValidationError as err:
-            raise PolicyCreationError(*err.args)
+        # Validate policy definition
+        self._validate()
 
     def to_json(self):
-        return self._json
+        return PolicySchema().dump(self)
 
     @staticmethod
     def from_json(data):
         try:
             return PolicySchema().load(data)
-        except ValidationError as err:
-            raise PolicyCreationError(err.args)
+        except Exception as err:
+            raise PolicyCreationError(*err.args)
 
     def allow_access(self):
         """
@@ -60,7 +94,7 @@ class Policy(object):
         """
         return self.effect == ALLOW_ACCESS
 
-    def _fits(self, inquiry):
+    def fits(self, inquiry):
         """
             Checks if this policy fits inquiry
 
@@ -68,49 +102,69 @@ class Policy(object):
             :return: True if fits else False
         """
         # Check if any of the subject attribute policies fit the given inquiry
-        subject_fits = any(self._attribute_fits(x, inquiry.subject) for x in self.subjects)
+        if not self._field_fits(self.subjects, inquiry.subject):
+            return False
         # Check if any of the resource attribute policies fit the given inquiry
-        resource_fits = any(self._attribute_fits(x, inquiry.resource) for x in self.resources)
+        if not self._field_fits(self.resources, inquiry.resource):
+            return False
         # Check if any of the action attribute policies fit the given inquiry
-        action_fits = any(self._attribute_fits(x, inquiry.action) for x in self.actions)
+        if not self._field_fits(self.actions, inquiry.action):
+            return False
+        # If all fields fit then return True
+        return True
 
-        return subject_fits and resource_fits and action_fits
-
-    def _attribute_fits(self, field, what):
+    def _field_fits(self, field, what):
         """
-            Checks if a field's attribute policy fits `what`.
+            Checks if a policy field fits `what`
 
             :param field: policy field
             :param what: object to check
             :return: True if fits else False
         """
-        if not isinstance(field, dict):
-            log.error("Incorrect definition '{}' in Policy '{}'. Skipping policy.".format(field, self.uid))
-            return False
+        for query in field:
+            # If any of the query fits inquiry then return True
+            if self._query_fits(query, what):
+                return True
+        # If no query fits inquiry then return False
+        return False
 
-        checks = []
-        for attr_path, condition in field.items():
+    @staticmethod
+    def _query_fits(query, what):
+        """
+            Checks if a policy field's query fits `what`.
+
+            :param query: policy field query
+            :param what: object to check
+            :return: True if fits else False
+        """
+        for attr_path, condition in query.items():
             # Find attribute values from `what` using the path defined in JsonPath format in the policy.
             # If no path found then set the value to `None`.
             matches = parse(attr_path).find(what)
             values = [match.value for match in matches] if matches else [None]
             # Check all extracted values
             for value in values:
-                # Check if the extracted value satisfies the condition for field's attribute
-                checks.append(condition.is_satisfied(value))
+                # Check if the extracted value satisfies the condition for field's attribute. If any
+                # attribute does not match the policy then return False.
+                if not condition.is_satisfied(value):
+                    return False
+        # If all attributes match the policy then return True
+        return True
 
-        # If any attribute does not match the policy then return False
-        return all(checks)
-
-
-def validate_json_path(data):
-    """
-        Method to check if data is in valid jsonPath format
-    """
-    try:
-        parse(data)
-    except Exception as err:
-        raise ValidationError(*err.args)
+    def _validate(self):
+        """
+            Validate Policy definition
+            :raises: PolicyCreationError
+        """
+        try:
+            _validate_field('subjects', self.subjects, True)
+            _validate_field('resources', self.resources, True)
+            _validate_field('actions', self.actions, True)
+            _validate_field('context', self.context, False)
+            if self.effect not in [ALLOW_ACCESS, DENY_ACCESS]:
+                raise ValidationError("Invalid access type '{}'.".format(self.effect))
+        except ValidationError as err:
+            raise PolicyCreationError(*err.args)
 
 
 class PolicySchema(Schema):
@@ -121,34 +175,23 @@ class PolicySchema(Schema):
     uid = fields.UUID(required=True, allow_none=False)
     description = fields.String(default="", missing="")
     subjects = fields.List(
-        fields.Mapping(keys=fields.String(required=True, allow_none=False, validate=validate_json_path),
-                       values=fields.Nested(ConditionSchema, required=True, allow_none=False, many=False),
-                       required=True,
-                       allow_none=False),
+        fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Nested(ConditionSchema)),
         default=[],
         missing=[])
     resources = fields.List(
-        fields.Mapping(keys=fields.String(required=True, allow_none=False, validate=validate_json_path),
-                       values=fields.Nested(ConditionSchema, required=True, allow_none=False, many=False),
-                       required=True, allow_none=False),
+        fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Nested(ConditionSchema)),
         default=[],
         missing=[])
     actions = fields.List(
-        fields.Mapping(keys=fields.String(required=True, allow_none=False, validate=validate_json_path),
-                       values=fields.Nested(ConditionSchema, required=True, allow_none=False, many=False),
-                       required=True,
-                       allow_none=False),
+        fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Nested(ConditionSchema)),
         default=[],
         missing=[])
-    context = fields.Dict(default={}, missing={})
+    context = fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Raw(),
+                          default={}, missing={})
     effect = fields.String(required=True, allow_none=False,
                            validate=validate.OneOf(choices=[DENY_ACCESS, ALLOW_ACCESS]))
     collection = fields.String(default=DEFAULT_POLICY_COLLECTION, missing=DEFAULT_POLICY_COLLECTION)
 
     @post_load
-    def post_load(self, data):
+    def post_load(self, data, **_):
         return Policy(**data)
-
-    @post_dump
-    def post_dump(self, data):
-        return data
