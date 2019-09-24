@@ -34,26 +34,8 @@ class Guard(object):
         policies = self.storage.get_for_inquiry(inquiry)
 
         # filter for matching policies
-        filtered = [policy for policy in policies if
-                    policy.fits(inquiry) and self._check_context_restriction(policy, inquiry)]
+        filtered = [policy for policy in policies if policy.fits(inquiry)]
 
         # no policies -> deny access!
         # if we have 2 or more similar policies - all of them should have allow effect, otherwise -> deny access!
         return len(filtered) > 0 and all(p.allow_access() for p in filtered)
-
-    @staticmethod
-    def _check_context_restriction(policy, inquiry):
-        """
-            Check if context restriction in the policy is satisfied for a given inquiry's context.
-        """
-        for key, condition in policy.context.items():
-            # If at least one rule is not present in Inquiry's context -> deny access
-            try:
-                ctx_value = inquiry.context[key]
-            except KeyError:
-                return False
-            # If at least one rule provided in Inquiry's context is not satisfied -> deny access
-            if not condition.is_satisfied(ctx_value):
-                return False
-
-        return True

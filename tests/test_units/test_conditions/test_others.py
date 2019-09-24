@@ -5,9 +5,9 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.policy.conditions.exists import ExistsCondition
-from pyabac.policy.conditions.exists import NotExistsCondition
-from pyabac.policy.conditions.net import CIDRCondition
+from pyabac.conditions.exists import ExistsCondition
+from pyabac.conditions.exists import NotExistsCondition
+from pyabac.conditions.net import CIDRCondition
 
 
 class TestLogicCondition(object):

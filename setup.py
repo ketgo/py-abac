@@ -33,8 +33,10 @@ if __name__ == '__main__':
         extras_require={
             'dev': [
                 'pytest~=4.0',
+                'pytest-benchmark~=3.2',
+                'pytest-profiling~=1.7',
                 'pytest-cov~=2.6',
-                'pylint~=1.0'
+                'pylint~=1.0',
             ]
         },
         packages=find_packages(exclude='tests'),

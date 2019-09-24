@@ -5,12 +5,12 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.policy.conditions.numeric import EqualCondition
-from pyabac.policy.conditions.numeric import GreaterCondition
-from pyabac.policy.conditions.numeric import GreaterEqualCondition
-from pyabac.policy.conditions.numeric import LessCondition
-from pyabac.policy.conditions.numeric import LessEqualCondition
-from pyabac.policy.conditions.numeric import NotEqualCondition
+from pyabac.conditions.numeric import EqualCondition
+from pyabac.conditions.numeric import GreaterCondition
+from pyabac.conditions.numeric import GreaterEqualCondition
+from pyabac.conditions.numeric import LessCondition
+from pyabac.conditions.numeric import LessEqualCondition
+from pyabac.conditions.numeric import NotEqualCondition
 
 
 class TestNumericCondition(object):

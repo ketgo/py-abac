@@ -5,14 +5,14 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.policy.conditions.collection import AllInCondition
-from pyabac.policy.conditions.collection import AllNotInCondition
-from pyabac.policy.conditions.collection import AnyInCondition
-from pyabac.policy.conditions.collection import AnyNotInCondition
-from pyabac.policy.conditions.collection import IsEmptyCondition
-from pyabac.policy.conditions.collection import IsInCondition
-from pyabac.policy.conditions.collection import IsNotEmptyCondition
-from pyabac.policy.conditions.collection import IsNotInCondition
+from pyabac.conditions.collection import AllInCondition
+from pyabac.conditions.collection import AllNotInCondition
+from pyabac.conditions.collection import AnyInCondition
+from pyabac.conditions.collection import AnyNotInCondition
+from pyabac.conditions.collection import IsEmptyCondition
+from pyabac.conditions.collection import IsInCondition
+from pyabac.conditions.collection import IsNotEmptyCondition
+from pyabac.conditions.collection import IsNotInCondition
 
 
 class TestCollectionCondition(object):

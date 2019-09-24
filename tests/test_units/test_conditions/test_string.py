@@ -5,13 +5,13 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.policy.conditions.string.contains import ContainsCondition
-from pyabac.policy.conditions.string.ends_with import EndsWithCondition
-from pyabac.policy.conditions.string.equals import EqualsCondition
-from pyabac.policy.conditions.string.not_contains import NotContainsCondition
-from pyabac.policy.conditions.string.not_equals import NotEqualsCondition
-from pyabac.policy.conditions.string.regex_match import RegexMatchCondition
-from pyabac.policy.conditions.string.starts_with import StartsWithCondition
+from pyabac.conditions.string import ContainsCondition
+from pyabac.conditions.string.ends_with import EndsWithCondition
+from pyabac.conditions.string import EqualsCondition
+from pyabac.conditions.string import NotContainsCondition
+from pyabac.conditions.string import NotEqualsCondition
+from pyabac.conditions.string import RegexMatchCondition
+from pyabac.conditions.string.starts_with import StartsWithCondition
 
 
 class TestStringCondition(object):

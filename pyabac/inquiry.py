@@ -48,9 +48,5 @@ class InquirySchema(Schema):
     collection = fields.String(default=DEFAULT_POLICY_COLLECTION, missing=DEFAULT_POLICY_COLLECTION)
 
     @post_load
-    def post_load(self, data):
+    def post_load(self, data, **_):
         return Inquiry(**data)
-
-    @post_dump
-    def post_dump(self, data):
-        return data

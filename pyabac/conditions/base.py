@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 
 from marshmallow import ValidationError
 
-from ...exceptions import ConditionCreationError
+from ..exceptions import ConditionCreationError
 
 
 class ConditionBase(metaclass=ABCMeta):

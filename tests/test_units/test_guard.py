@@ -8,10 +8,10 @@ from pyabac.constants import DENY_ACCESS, ALLOW_ACCESS
 from pyabac.guard import Guard
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
-from pyabac.policy.conditions.exists import ExistsCondition
-from pyabac.policy.conditions.logic import OrCondition
-from pyabac.policy.conditions.net import CIDRCondition
-from pyabac.policy.conditions.string import EqualsCondition, RegexMatchCondition
+from pyabac.conditions.exists import ExistsCondition
+from pyabac.conditions.logic import OrCondition
+from pyabac.conditions.net import CIDRCondition
+from pyabac.conditions.string import EqualsCondition, RegexMatchCondition
 from pyabac.storage.memory import MemoryStorage
 
 st = MemoryStorage()
@@ -20,7 +20,7 @@ policies = [
         uid='1',
         description="""
         Max, Nina, Ben, Henry are allowed to create, delete, get the resources
-        only if the client IP matches and the inquiry states that any of them is the resource owner
+        only if the client IP matches.
         """,
         effect=ALLOW_ACCESS,
         subjects=[{"$.name": EqualsCondition('Max')},
@@ -76,9 +76,7 @@ policies = [
         subjects=[{"$.name": EqualsCondition('Nina')}],
         actions=[{"$.method": EqualsCondition('update')}, {"$.method": EqualsCondition('read')}],
         resources=[{'$.id': RegexMatchCondition(r'\d+'), '$.magazine': RegexMatchCondition(r'[\d\w]+')}],
-        context={
-            'id': ExistsCondition()
-        }
+        context={'id': ExistsCondition()}
     ),
 ]
 for policy in policies:
@@ -150,9 +148,7 @@ for policy in policies:
                 subject={'name': 'Nina'},
                 action={'method': 'delete'},
                 resource={'name': 'myrn:example.com:resource:123'},
-                context={
-                    'ip': '127.0.0.1'
-                }
+                context={'ip': '127.0.0.1'}
             ),
             True,
     ),
@@ -162,77 +158,55 @@ for policy in policies:
                 subject={'name': 'Henry'},
                 action={'method': 'get'},
                 resource={'name': 'myrn:example.com:resource:123'},
-                context={
-                    'ip': '127.0.0.1'
-                }
+                context={'ip': '127.0.0.1'}
             ),
             True,
     ),
     (
-            'Policy #1 does not match - one of the contexts was not found (misspelled)',
+            'Policy #1 does not match - context was not found (misspelled)',
             Inquiry(
                 subject={'name': 'Nina'},
                 action={'method': 'delete'},
                 resource={'name': 'myrn:example.com:resource:123'},
-                context={
-                    'IP': '127.0.0.1'
-                }
+                context={'IP': '127.0.0.1'}
             ),
             False,
     ),
     (
-            'Policy #1 does not match - one of the contexts is missing',
+            'Policy #1 does not match - context is missing',
             Inquiry(
-                subject='Nina',
-                action='delete',
+                subject={'name': 'Nina'},
+                action={'method': 'delete'},
                 resource={'name': 'myrn:example.com:resource:123'},
-                context={
-                    'ip': '127.0.0.1'
-                }
-            ),
-            False,
-    ),
-    (
-            'Policy #1 does not match - context says that owner is Ben, not Nina',
-            Inquiry(
-                subject='Nina',
-                action='delete',
-                resource={'name': 'myrn:example.com:resource:123'},
-                context={
-                    'owner': 'Ben',
-                    'ip': '127.0.0.1'
-                }
+                context={}
             ),
             False,
     ),
     (
             'Policy #1 does not match - context says IP is not in the allowed range',
             Inquiry(
-                subject='Nina',
-                action='delete',
+                subject={'name': 'Nina'},
+                action={'method': 'delete'},
                 resource={'name': 'myrn:example.com:resource:123'},
-                context={
-                    'owner': 'Nina',
-                    'ip': '0.0.0.0'
-                }
+                context={'ip': '0.0.0.0'}
             ),
             False,
     ),
     (
             'Policy #5 does not match - action is update, but subjects does not match',
             Inquiry(
-                subject='Sarah',
-                action='update',
-                resource='88',
+                subject={'name': 'Sarah'},
+                action={'method': 'update'},
+                resource={'name': '88'},
             ),
             False,
     ),
     (
             'Policy #5 does not match - action is update, subject is Nina, but resource-name is not digits',
             Inquiry(
-                subject='Nina',
-                action='update',
-                resource='abcd',
+                subject={'name': 'Nina'},
+                action={'method': 'update'},
+                resource={'name': 'abcd'},
             ),
             False,
     ),
@@ -278,9 +252,7 @@ for policy in policies:
                 subject={'name': 'Nina'},
                 action={'method': 'read'},
                 resource={'id': '00678', 'magazine': 'Playboy1'},
-                context={
-                    'id': 'Nina'
-                }
+                context={'id': 'Nina'}
             ),
             False,
     ),
@@ -290,9 +262,7 @@ for policy in policies:
                 subject={'name': 'Nina'},
                 action={'method': 'read'},
                 resource={'id': '00678', 'magazine': 'Playboy1'},
-                context={
-                    'name': 'Nina'
-                }
+                context={'name': 'Nina'}
             ),
             True,
     ),

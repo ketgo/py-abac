@@ -10,8 +10,8 @@ from marshmallow import Schema, fields, validate, post_load, ValidationError
 
 from .conditions.base import ConditionBase
 from .conditions.schema import ConditionSchema
-from ..constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
-from ..exceptions import PolicyCreationError
+from .constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
+from .exceptions import PolicyCreationError
 
 log = logging.getLogger(__name__)
 
@@ -101,16 +101,19 @@ class Policy(object):
             :param inquiry: inquiry to check
             :return: True if fits else False
         """
-        # Check if any of the subject attribute policies fit the given inquiry
+        # Check if any of the subject attributes fit the policy
         if not self._field_fits(self.subjects, inquiry.subject):
             return False
-        # Check if any of the resource attribute policies fit the given inquiry
+        # Check if any of the resource attributes fit the policy
         if not self._field_fits(self.resources, inquiry.resource):
             return False
-        # Check if any of the action attribute policies fit the given inquiry
+        # Check if any of the action attributes fit the policy
         if not self._field_fits(self.actions, inquiry.action):
             return False
-        # If all fields fit then return True
+        # Check if any of the context attributes fit policy
+        if not self._query_fits(self.context, inquiry.context):
+            return False
+        # If the policy fits then return True
         return True
 
     def _field_fits(self, field, what):

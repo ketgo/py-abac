@@ -10,8 +10,10 @@ from pyabac.constants import DEFAULT_POLICY_COLLECTION, DENY_ACCESS, ALLOW_ACCES
 from pyabac.exceptions import PolicyCreationError
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
-from pyabac.policy.conditions.numeric import GreaterCondition
-from pyabac.policy.conditions.string import EqualsCondition
+from pyabac.conditions.logic import OrCondition
+from pyabac.conditions.net import CIDRCondition
+from pyabac.conditions.numeric import GreaterCondition
+from pyabac.conditions.string import EqualsCondition
 
 
 class TestPolicy(object):
@@ -477,6 +479,39 @@ class TestPolicy(object):
                  resource={"url": "/api/v1/health"},
                  action={"method": "PUT"}),
          False),
+        (Policy(subjects=[{"$.name": EqualsCondition("admin")}, {"$.age": GreaterCondition(30)}],
+                resources=[{"$.url": EqualsCondition("/api/v1/health")}],
+                actions=[{"$.method": OrCondition(EqualsCondition("GET"), EqualsCondition("PUT"))}]),
+         Inquiry(subject={"name": "admin", "age": 20},
+                 resource={"url": "/api/v1/health"},
+                 action={"method": "PUT"}),
+         True),
+        (Policy(subjects=[{"$.name": EqualsCondition("admin")}, {"$.age": GreaterCondition(30)}],
+                resources=[{"$.url": EqualsCondition("/api/v1/health")}],
+                actions=[{"$.method": OrCondition(EqualsCondition("GET"), EqualsCondition("PUT"))}],
+                context={"$.ip": CIDRCondition("127.0.0.0/24")}),
+         Inquiry(subject={"name": "admin", "age": 20},
+                 resource={"url": "/api/v1/health"},
+                 action={"method": "PUT"}),
+         False),
+        (Policy(subjects=[{"$.name": EqualsCondition("admin")}, {"$.age": GreaterCondition(30)}],
+                resources=[{"$.url": EqualsCondition("/api/v1/health")}],
+                actions=[{"$.method": OrCondition(EqualsCondition("GET"), EqualsCondition("PUT"))}],
+                context={"$.ip": CIDRCondition("127.0.0.0/24")}),
+         Inquiry(subject={"name": "admin", "age": 20},
+                 resource={"url": "/api/v1/health"},
+                 action={"method": "PUT"},
+                 context={"ip": "192.168.1.100"}),
+         False),
+        (Policy(subjects=[{"$.name": EqualsCondition("admin")}, {"$.age": GreaterCondition(30)}],
+                resources=[{"$.url": EqualsCondition("/api/v1/health")}],
+                actions=[{"$.method": OrCondition(EqualsCondition("GET"), EqualsCondition("PUT"))}],
+                context={"$.ip": CIDRCondition("127.0.0.0/24")}),
+         Inquiry(subject={"name": "admin", "age": 20},
+                 resource={"url": "/api/v1/health"},
+                 action={"method": "PUT"},
+                 context={"ip": "127.0.0.10"}),
+         True),
     ])
     def test_fits(self, policy, inquiry, result):
         assert policy.fits(inquiry) == result
