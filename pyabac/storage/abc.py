@@ -14,44 +14,43 @@ class Storage(metaclass=ABCMeta):
         """
             Store a policy
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def get(self, uid):
         """
             Get specific policy
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def get_all(self, limit, offset, collection=DEFAULT_POLICY_COLLECTION):
         """
             Retrieve all the policies within a window from a policy collection.
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def get_for_inquiry(self, inquiry):
         """
             Get all policies for given inquiry.
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def update(self, policy):
         """
             Update a policy
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def delete(self, uid):
         """
             Delete a policy
         """
-        pass
+        raise NotImplementedError()
 
-    # pragma: no cover
     @staticmethod
     def _check_limit_and_offset(limit, offset):
         if limit < 0:

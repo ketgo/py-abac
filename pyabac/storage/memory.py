@@ -3,7 +3,8 @@
 """
 import logging
 
-from .abc import Storage, DEFAULT_POLICY_COLLECTION
+from ..storage.abc import Storage, DEFAULT_POLICY_COLLECTION
+from ..exceptions import PolicyExistsError
 
 log = logging.getLogger(__name__)
 
@@ -17,6 +18,8 @@ class MemoryStorage(Storage):
     def add(self, policy):
         uid = str(policy.uid)
         collection = str(policy.collection)
+        if uid in self._uid_policies_map:
+            raise PolicyExistsError(uid)
         self._uid_policies_map[uid] = policy
         if collection in self._collection_policies_map:
             self._collection_policies_map[collection][uid] = policy
@@ -28,8 +31,8 @@ class MemoryStorage(Storage):
 
     def get_all(self, limit, offset, collection=DEFAULT_POLICY_COLLECTION):
         self._check_limit_and_offset(limit, offset)
-        policies = self._collection_policies_map.get(collection, {}).values()
-        for policy in policies[offset:offset + limit]:
+        policies = list(self._collection_policies_map.get(collection, {}).values())
+        for policy in policies[offset:(offset + limit)]:
             yield policy
 
     def get_for_inquiry(self, inquiry):
@@ -38,7 +41,10 @@ class MemoryStorage(Storage):
             yield policy
 
     def update(self, policy):
-        self.add(policy)
+        uid = str(policy.uid)
+        collection = str(policy.collection)
+        self._uid_policies_map[uid] = policy
+        self._collection_policies_map[collection][uid] = policy
 
     def delete(self, uid):
         if uid in self._uid_policies_map:

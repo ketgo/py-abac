@@ -175,7 +175,7 @@ class PolicySchema(Schema):
         Policy schema for marshalling JSON
     """
 
-    uid = fields.UUID(required=True, allow_none=False)
+    uid = fields.String(required=True, allow_none=False)
     description = fields.String(default="", missing="")
     subjects = fields.List(
         fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Nested(ConditionSchema)),
