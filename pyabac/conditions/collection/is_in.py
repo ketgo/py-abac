@@ -7,15 +7,14 @@ from marshmallow import post_load
 from .base import CollectionCondition, CollectionConditionSchema
 
 
-class IsInCondition(CollectionCondition):
-    name = "IsIn"
+class IsIn(CollectionCondition):
 
     def is_satisfied(self, what):
         return what in self.value
 
 
-class IsInConditionSchema(CollectionConditionSchema):
+class IsInSchema(CollectionConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return IsInCondition(**data)
+        return IsIn(**data)

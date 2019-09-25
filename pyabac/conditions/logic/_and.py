@@ -7,15 +7,14 @@ from marshmallow import post_load
 from .base import LogicCondition, LogicConditionSchema
 
 
-class AndCondition(LogicCondition):
-    name = "And"
+class And(LogicCondition):
 
     def is_satisfied(self, what):
         return all(value.is_satisfied(what) for value in self.values)
 
 
-class AndConditionSchema(LogicConditionSchema):
+class AndSchema(LogicConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return AndCondition(*data["values"])
+        return And(*data["values"])

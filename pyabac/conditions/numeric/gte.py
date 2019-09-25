@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import NumericCondition, NumericConditionSchema, is_number
 
 
-class GreaterEqualCondition(NumericCondition):
-    name = "GreaterEqual"
+class Gte(NumericCondition):
 
     def is_satisfied(self, what):
         if not is_number(what):
@@ -16,8 +15,8 @@ class GreaterEqualCondition(NumericCondition):
         return what >= self.value
 
 
-class GreaterEqualConditionSchema(NumericConditionSchema):
+class GteSchema(NumericConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return GreaterEqualCondition(**data)
+        return Gte(**data)

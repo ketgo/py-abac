@@ -6,15 +6,14 @@ from marshmallow import Schema, post_load
 from ..base import ConditionBase
 
 
-class ExistsCondition(ConditionBase):
-    name = "Exists"
+class Exists(ConditionBase):
 
     def is_satisfied(self, what):
         return what is not None
 
 
-class ExistsConditionSchema(Schema):
+class ExistsSchema(Schema):
 
     @post_load
     def post_load(self, data, **_):
-        return ExistsCondition()
+        return Exists()

@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import StringCondition, StringConditionSchema, is_string
 
 
-class NotContainsCondition(StringCondition):
-    name = "StringNotContains"
+class NotContains(StringCondition):
 
     def is_satisfied(self, what):
         if not is_string(what):
@@ -18,8 +17,8 @@ class NotContainsCondition(StringCondition):
         return self.value not in what
 
 
-class NotContainsConditionSchema(StringConditionSchema):
+class NotContainsSchema(StringConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return NotContainsCondition(**data)
+        return NotContains(**data)

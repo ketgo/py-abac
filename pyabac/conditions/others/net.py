@@ -9,11 +9,10 @@ from marshmallow import Schema, fields, post_load
 from ..base import ConditionBase, ConditionCreationError
 
 
-class CIDRCondition(ConditionBase):
+class CIDR(ConditionBase):
     """
         Condition that is satisfied when inquiry's IP address is in the provided CIDR.
     """
-    name = "CIDR"
 
     def __init__(self, value):
         if not is_string(value):
@@ -35,9 +34,9 @@ def is_string(value):
     return isinstance(value, str)
 
 
-class CIDRConditionSchema(Schema):
+class CIDRSchema(Schema):
     value = fields.String(required=True, allow_none=False)
 
     @post_load
     def post_load(self, data, **_):
-        return CIDRCondition(**data)
+        return CIDR(**data)

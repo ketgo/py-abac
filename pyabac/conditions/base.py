@@ -11,12 +11,6 @@ from ..exceptions import ConditionCreationError
 
 class ConditionBase(metaclass=ABCMeta):
 
-    @abstractproperty
-    def name(self):
-        """
-            Name of the condition
-        """
-
     @abstractmethod
     def is_satisfied(self, what):
         """

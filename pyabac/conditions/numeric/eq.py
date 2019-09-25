@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import NumericCondition, NumericConditionSchema, is_number
 
 
-class EqualCondition(NumericCondition):
-    name = "Equal"
+class Eq(NumericCondition):
 
     def is_satisfied(self, what):
         if not is_number(what):
@@ -16,8 +15,8 @@ class EqualCondition(NumericCondition):
         return what == self.value
 
 
-class EqualConditionSchema(NumericConditionSchema):
+class EqSchema(NumericConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return EqualCondition(**data)
+        return Eq(**data)

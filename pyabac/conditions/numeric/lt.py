@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import NumericCondition, NumericConditionSchema, is_number
 
 
-class LessCondition(NumericCondition):
-    name = "Less"
+class Lt(NumericCondition):
 
     def is_satisfied(self, what):
         if not is_number(what):
@@ -16,8 +15,8 @@ class LessCondition(NumericCondition):
         return what < self.value
 
 
-class LessConditionSchema(NumericConditionSchema):
+class LtSchema(NumericConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return LessCondition(**data)
+        return Lt(**data)

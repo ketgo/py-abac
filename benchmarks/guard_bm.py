@@ -8,10 +8,10 @@ from pyabac.constants import DENY_ACCESS, ALLOW_ACCESS
 from pyabac.guard import Guard
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
-from conditions.others.exists import ExistsCondition
-from pyabac.conditions.logic import OrCondition
-from conditions.others.net import CIDRCondition
-from pyabac.conditions.string import EqualsCondition, RegexMatchCondition
+from conditions.others.exists import Exists
+from pyabac.conditions.logic import Or
+from conditions.others.net import CIDR
+from pyabac.conditions.string import Equals, RegexMatch
 from pyabac.storage.memory import MemoryStorage
 
 st = MemoryStorage()
@@ -23,32 +23,32 @@ policies = [
         only if the client IP matches.
         """,
         effect=ALLOW_ACCESS,
-        subjects=[{"name": EqualsCondition('Max')},
-                  {"name": EqualsCondition('Nina')},
-                  {"name": OrCondition(EqualsCondition('Ben'), EqualsCondition('Henry'))}],
-        resources=[{"name": OrCondition(
-            EqualsCondition('myrn:example.com:resource:123'),
-            EqualsCondition('myrn:example.com:resource:345'),
-            RegexMatchCondition('myrn:something:foo:.*'))}],
-        actions=[{"method": OrCondition(EqualsCondition('create'), EqualsCondition('delete'))},
-                 {"method": EqualsCondition('get')}],
-        context={'ip': CIDRCondition('127.0.0.1/32')},
+        subjects=[{"name": Equals('Max')},
+                  {"name": Equals('Nina')},
+                  {"name": Or(Equals('Ben'), Equals('Henry'))}],
+        resources=[{"name": Or(
+            Equals('myrn:example.com:resource:123'),
+            Equals('myrn:example.com:resource:345'),
+            RegexMatch('myrn:something:foo:.*'))}],
+        actions=[{"method": Or(Equals('create'), Equals('delete'))},
+                 {"method": Equals('get')}],
+        context={'ip': CIDR('127.0.0.1/32')},
     ),
     Policy(
         uid='2',
         description='Allows Max to update any resource',
         effect=ALLOW_ACCESS,
-        subjects=[{"name": EqualsCondition('Max')}],
-        actions=[{"method": EqualsCondition('update')}],
-        resources=[{"name": RegexMatchCondition('.*')}],
+        subjects=[{"name": Equals('Max')}],
+        actions=[{"method": Equals('update')}],
+        resources=[{"name": RegexMatch('.*')}],
     ),
     Policy(
         uid='3',
         description='Max is not allowed to print any resource',
         effect=DENY_ACCESS,
-        subjects=[{"name": EqualsCondition('Max')}],
-        actions=[{"method": EqualsCondition('print')}],
-        resources=[{"name": RegexMatchCondition('.*')}],
+        subjects=[{"name": Equals('Max')}],
+        actions=[{"method": Equals('print')}],
+        resources=[{"name": RegexMatch('.*')}],
     ),
     Policy(
         uid='4'
@@ -57,26 +57,26 @@ policies = [
         uid='5',
         description='Allows Nina to update any resources that have only digits',
         effect=ALLOW_ACCESS,
-        subjects=[{"name": EqualsCondition('Nina')}],
-        actions=[{"method": EqualsCondition('update')}],
-        resources=[{"name": RegexMatchCondition(r'\d+')}],
+        subjects=[{"name": Equals('Nina')}],
+        actions=[{"method": Equals('update')}],
+        resources=[{"name": RegexMatch(r'\d+')}],
     ),
     Policy(
         uid='6',
         description='Allows Nina to update any resources that have only digits.',
         effect=ALLOW_ACCESS,
-        subjects=[{"name": EqualsCondition('Nina')}],
-        actions=[{"method": EqualsCondition('update')}, {"method": EqualsCondition('read')}],
-        resources=[{'id': RegexMatchCondition(r'\d+'), 'magazine': RegexMatchCondition(r'[\d\w]+')}],
+        subjects=[{"name": Equals('Nina')}],
+        actions=[{"method": Equals('update')}, {"method": Equals('read')}],
+        resources=[{'id': RegexMatch(r'\d+'), 'magazine': RegexMatch(r'[\d\w]+')}],
     ),
     Policy(
         uid='7',
         description='Prevent Nina to update any resources when ID is passed in context',
         effect=DENY_ACCESS,
-        subjects=[{"name": EqualsCondition('Nina')}],
-        actions=[{"method": EqualsCondition('update')}, {"method": EqualsCondition('read')}],
-        resources=[{'id': RegexMatchCondition(r'\d+'), 'magazine': RegexMatchCondition(r'[\d\w]+')}],
-        context={'id': ExistsCondition()}
+        subjects=[{"name": Equals('Nina')}],
+        actions=[{"method": Equals('update')}, {"method": Equals('read')}],
+        resources=[{'id': RegexMatch(r'\d+'), 'magazine': RegexMatch(r'[\d\w]+')}],
+        context={'id': Exists()}
     ),
 ]
 for policy in policies:

@@ -7,15 +7,14 @@ from marshmallow import post_load
 from .base import LogicCondition, LogicConditionSchema
 
 
-class OrCondition(LogicCondition):
-    name = "Or"
+class Or(LogicCondition):
 
     def is_satisfied(self, what):
         return any(value.is_satisfied(what) for value in self.values)
 
 
-class OrConditionSchema(LogicConditionSchema):
+class OrSchema(LogicConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return OrCondition(*data["values"])
+        return Or(*data["values"])

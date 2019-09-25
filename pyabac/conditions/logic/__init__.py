@@ -1,3 +1,3 @@
-from ._and import AndCondition
-from ._not import NotCondition
-from ._or import OrCondition
+from ._and import And
+from ._not import Not
+from ._or import Or
