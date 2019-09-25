@@ -8,9 +8,9 @@ from pyabac.constants import DENY_ACCESS, ALLOW_ACCESS
 from pyabac.guard import Guard
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
-from pyabac.conditions.exists import ExistsCondition
+from conditions.others.exists import ExistsCondition
 from pyabac.conditions.logic import OrCondition
-from pyabac.conditions.net import CIDRCondition
+from conditions.others.net import CIDRCondition
 from pyabac.conditions.string import EqualsCondition, RegexMatchCondition
 from pyabac.storage.memory import MemoryStorage
 

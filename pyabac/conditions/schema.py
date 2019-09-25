@@ -14,15 +14,10 @@ from .collection.is_empty import IsEmptyCondition, IsEmptyConditionSchema
 from .collection.is_in import IsInCondition, IsInConditionSchema
 from .collection.is_not_empty import IsNotEmptyCondition, IsNotEmptyConditionSchema
 from .collection.is_not_in import IsNotInCondition, IsNotInConditionSchema
-# --- Other Conditions ---
-from .exists import ExistsCondition, ExistsConditionSchema
-from .exists import NotExistsCondition, NotExistsConditionSchema
 # --- Logic Conditions ---
 from .logic._and import AndCondition, AndConditionSchema
 from .logic._not import NotCondition, NotConditionSchema
 from .logic._or import OrCondition, OrConditionSchema
-# --- Network Conditions ---
-from .net import CIDRCondition, CIDRConditionSchema
 # --- Numeric Conditions ---
 from .numeric.eq import EqualCondition, EqualConditionSchema
 from .numeric.gt import GreaterCondition, GreaterConditionSchema
@@ -30,6 +25,11 @@ from .numeric.gte import GreaterEqualCondition, GreaterEqualConditionSchema
 from .numeric.lt import LessCondition, LessConditionSchema
 from .numeric.lte import LessEqualCondition, LessEqualConditionSchema
 from .numeric.neq import NotEqualCondition, NotEqualConditionSchema
+# --- Other Conditions ---
+from .others.exists import ExistsCondition, ExistsConditionSchema
+from .others.not_exists import NotExistsCondition, NotExistsConditionSchema
+from .others.net import CIDRCondition, CIDRConditionSchema
+from .others.any import AnyValueCondition, AnyValueConditionSchema
 # --- String Conditions ---
 from .string.contains import ContainsCondition, ContainsConditionSchema
 from .string.ends_with import EndsWithCondition, EndsWithConditionSchema
@@ -71,11 +71,11 @@ class ConditionSchema(OneOfSchema):
         AndCondition.name: AndConditionSchema,
         OrCondition.name: OrConditionSchema,
         NotCondition.name: NotConditionSchema,
-        # --- Network Conditions ---
-        CIDRCondition.name: CIDRConditionSchema,
         # --- Other Conditions ---
+        CIDRCondition.name: CIDRConditionSchema,
         ExistsCondition.name: ExistsConditionSchema,
         NotExistsCondition.name: NotExistsConditionSchema,
+        AnyValueCondition.name: AnyValueConditionSchema,
     }
 
     def get_obj_type(self, obj):

@@ -11,7 +11,7 @@ from pyabac.exceptions import PolicyCreationError
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
 from pyabac.conditions.logic import OrCondition
-from pyabac.conditions.net import CIDRCondition
+from pyabac.conditions.others import CIDRCondition
 from pyabac.conditions.numeric import GreaterCondition
 from pyabac.conditions.string import EqualsCondition
 

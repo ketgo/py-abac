@@ -5,7 +5,7 @@
 import pytest
 
 from pyabac.conditions.logic import OrCondition
-from pyabac.conditions.net import CIDRCondition
+from conditions.others.net import CIDRCondition
 from pyabac.conditions.numeric import GreaterCondition
 from pyabac.conditions.string import EqualsCondition
 from pyabac.inquiry import Inquiry

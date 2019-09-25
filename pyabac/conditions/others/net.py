@@ -6,7 +6,7 @@ import ipaddress
 
 from marshmallow import Schema, fields, post_load
 
-from .base import ConditionBase, ConditionCreationError
+from ..base import ConditionBase, ConditionCreationError
 
 
 class CIDRCondition(ConditionBase):

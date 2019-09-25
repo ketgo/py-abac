@@ -4,7 +4,7 @@
 
 import pytest
 
-from pyabac.conditions.exists import ExistsCondition
+from pyabac.conditions.others import ExistsCondition
 from pyabac.conditions.logic import OrCondition
 from pyabac.conditions.string import EqualsCondition
 from pyabac.constants import DEFAULT_POLICY_COLLECTION

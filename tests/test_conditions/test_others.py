@@ -5,17 +5,19 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.conditions.exists import ExistsCondition
-from pyabac.conditions.exists import NotExistsCondition
-from pyabac.conditions.net import CIDRCondition
+from pyabac.conditions.others import ExistsCondition
+from pyabac.conditions.others import NotExistsCondition
+from pyabac.conditions.others import CIDRCondition
+from pyabac.conditions.others import AnyValueCondition
 
 
-class TestLogicCondition(object):
+class TestOtherCondition(object):
 
     @pytest.mark.parametrize("condition, condition_json", [
         (CIDRCondition("127.0.0.0/16"), {"condition": CIDRCondition.name, "value": "127.0.0.0/16"}),
         (ExistsCondition(), {"condition": ExistsCondition.name}),
         (NotExistsCondition(), {"condition": NotExistsCondition.name}),
+        (AnyValueCondition(), {"condition": AnyValueCondition.name}),
     ])
     def test_to_json(self, condition, condition_json):
         assert condition.to_json() == condition_json
@@ -24,6 +26,7 @@ class TestLogicCondition(object):
         (CIDRCondition("127.0.0.0/16"), {"condition": CIDRCondition.name, "value": "127.0.0.0/16"}),
         (ExistsCondition(), {"condition": ExistsCondition.name}),
         (NotExistsCondition(), {"condition": NotExistsCondition.name}),
+        (AnyValueCondition(), {"condition": AnyValueCondition.name}),
     ])
     def test_from_json(self, condition, condition_json):
         new_condition = condition.__class__.from_json(condition_json)
@@ -57,6 +60,11 @@ class TestLogicCondition(object):
 
         (NotExistsCondition(), None, True),
         (NotExistsCondition(), 1.0, False),
+
+        (AnyValueCondition(), None, True),
+        (AnyValueCondition(), 1.0, True),
+        (AnyValueCondition(), {"value": 1.0}, True),
+        (AnyValueCondition(), [1.0, 2.0, "a"], True),
     ])
     def test_is_satisfied(self, condition, what, result):
         assert condition.is_satisfied(what) == result
