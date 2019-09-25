@@ -23,32 +23,32 @@ policies = [
         only if the client IP matches.
         """,
         effect=ALLOW_ACCESS,
-        subjects=[{"$.name": EqualsCondition('Max')},
-                  {"$.name": EqualsCondition('Nina')},
-                  {"$.name": OrCondition(EqualsCondition('Ben'), EqualsCondition('Henry'))}],
-        resources=[{"$.name": OrCondition(
+        subjects=[{"name": EqualsCondition('Max')},
+                  {"name": EqualsCondition('Nina')},
+                  {"name": OrCondition(EqualsCondition('Ben'), EqualsCondition('Henry'))}],
+        resources=[{"name": OrCondition(
             EqualsCondition('myrn:example.com:resource:123'),
             EqualsCondition('myrn:example.com:resource:345'),
             RegexMatchCondition('myrn:something:foo:.*'))}],
-        actions=[{"$.method": OrCondition(EqualsCondition('create'), EqualsCondition('delete'))},
-                 {"$.method": EqualsCondition('get')}],
+        actions=[{"method": OrCondition(EqualsCondition('create'), EqualsCondition('delete'))},
+                 {"method": EqualsCondition('get')}],
         context={'ip': CIDRCondition('127.0.0.1/32')},
     ),
     Policy(
         uid='2',
         description='Allows Max to update any resource',
         effect=ALLOW_ACCESS,
-        subjects=[{"$.name": EqualsCondition('Max')}],
-        actions=[{"$.method": EqualsCondition('update')}],
-        resources=[{"$.name": RegexMatchCondition('.*')}],
+        subjects=[{"name": EqualsCondition('Max')}],
+        actions=[{"method": EqualsCondition('update')}],
+        resources=[{"name": RegexMatchCondition('.*')}],
     ),
     Policy(
         uid='3',
         description='Max is not allowed to print any resource',
         effect=DENY_ACCESS,
-        subjects=[{"$.name": EqualsCondition('Max')}],
-        actions=[{"$.method": EqualsCondition('print')}],
-        resources=[{"$.name": RegexMatchCondition('.*')}],
+        subjects=[{"name": EqualsCondition('Max')}],
+        actions=[{"method": EqualsCondition('print')}],
+        resources=[{"name": RegexMatchCondition('.*')}],
     ),
     Policy(
         uid='4'
@@ -57,25 +57,25 @@ policies = [
         uid='5',
         description='Allows Nina to update any resources that have only digits',
         effect=ALLOW_ACCESS,
-        subjects=[{"$.name": EqualsCondition('Nina')}],
-        actions=[{"$.method": EqualsCondition('update')}],
-        resources=[{"$.name": RegexMatchCondition(r'\d+')}],
+        subjects=[{"name": EqualsCondition('Nina')}],
+        actions=[{"method": EqualsCondition('update')}],
+        resources=[{"name": RegexMatchCondition(r'\d+')}],
     ),
     Policy(
         uid='6',
         description='Allows Nina to update any resources that have only digits.',
         effect=ALLOW_ACCESS,
-        subjects=[{"$.name": EqualsCondition('Nina')}],
-        actions=[{"$.method": EqualsCondition('update')}, {"$.method": EqualsCondition('read')}],
-        resources=[{'$.id': RegexMatchCondition(r'\d+'), '$.magazine': RegexMatchCondition(r'[\d\w]+')}],
+        subjects=[{"name": EqualsCondition('Nina')}],
+        actions=[{"method": EqualsCondition('update')}, {"method": EqualsCondition('read')}],
+        resources=[{'id': RegexMatchCondition(r'\d+'), 'magazine': RegexMatchCondition(r'[\d\w]+')}],
     ),
     Policy(
         uid='7',
         description='Prevent Nina to update any resources when ID is passed in context',
         effect=DENY_ACCESS,
-        subjects=[{"$.name": EqualsCondition('Nina')}],
-        actions=[{"$.method": EqualsCondition('update')}, {"$.method": EqualsCondition('read')}],
-        resources=[{'$.id': RegexMatchCondition(r'\d+'), '$.magazine': RegexMatchCondition(r'[\d\w]+')}],
+        subjects=[{"name": EqualsCondition('Nina')}],
+        actions=[{"method": EqualsCondition('update')}, {"method": EqualsCondition('read')}],
+        resources=[{'id': RegexMatchCondition(r'\d+'), 'magazine': RegexMatchCondition(r'[\d\w]+')}],
         context={'id': ExistsCondition()}
     ),
 ]
@@ -267,7 +267,17 @@ for policy in policies:
             True,
     ),
 ])
-def test_is_allowed(desc, inquiry, should_be_allowed, benchmark):
+def test_is_allowed(desc, inquiry, should_be_allowed):
     g = Guard(st)
-    result = benchmark(g.is_allowed, inquiry)
-    assert should_be_allowed == result
+    assert should_be_allowed == g.is_allowed(inquiry)
+
+
+def test_guard_create_error():
+    with pytest.raises(TypeError):
+        Guard(None)
+
+
+def test_is_allowed_error():
+    g = Guard(st)
+    with pytest.raises(TypeError):
+        g.is_allowed(None)

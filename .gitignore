@@ -164,3 +164,9 @@ ENV/
 # mutation testing
 .mutmut-cache
 
+# benchmark and profile testing
+**/.benchmarks/*
+**/prof/*
+
+# others
+**/.idea/*

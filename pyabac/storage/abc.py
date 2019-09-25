@@ -51,6 +51,7 @@ class Storage(metaclass=ABCMeta):
         """
         pass
 
+    # pragma: no cover
     @staticmethod
     def _check_limit_and_offset(limit, offset):
         if limit < 0:

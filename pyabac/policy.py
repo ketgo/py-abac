@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 def _validate_json_path(path):
     """
-        Method to check if data is in valid jsonPath format
+        Method to check if path is in valid jsonPath format
 
         :param path: json path to validate
         :raises: ValidationError
