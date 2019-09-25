@@ -26,9 +26,9 @@ if __name__ == '__main__':
         python_requires='>=3.4',
         install_requires=[
             'pymongo~=3.5',
-            'marshmallow',
-            'marshmallow-oneofschema',
-            'jsonpath-ng'
+            'marshmallow~=3.2',
+            'marshmallow-oneofschema~=2.0',
+            'jsonpath-ng~=1.4'
         ],
         extras_require={
             'dev': [
