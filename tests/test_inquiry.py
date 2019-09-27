@@ -4,8 +4,8 @@
 
 import pytest
 
-from pyabac.inquiry import Inquiry
 from pyabac.constants import DEFAULT_POLICY_COLLECTION
+from pyabac.inquiry import Inquiry
 
 
 class TestInquiry(object):

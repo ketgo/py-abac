@@ -2,11 +2,11 @@
     Operation base class
 """
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 from marshmallow import ValidationError
 
-from ..exceptions import ConditionCreationError
+from pyabac.exceptions import ConditionCreationError
 
 
 class ConditionBase(metaclass=ABCMeta):

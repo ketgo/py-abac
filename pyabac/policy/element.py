@@ -1,0 +1,3 @@
+"""
+    Inquiry element-attribute condition
+"""

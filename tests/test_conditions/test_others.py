@@ -5,10 +5,10 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.conditions.others import Exists
-from pyabac.conditions.others import NotExists
-from pyabac.conditions.others import CIDR
-from pyabac.conditions.others import Any
+from pyabac.policy.conditions.others import Any
+from pyabac.policy.conditions.others import CIDR
+from pyabac.policy.conditions.others import Exists
+from pyabac.policy.conditions.others import NotExists
 
 
 class TestOtherCondition(object):

@@ -2,8 +2,9 @@
     MongoDB storage
 """
 
-import logging
 import json
+import logging
+
 from pymongo.errors import DuplicateKeyError
 
 from .abc import Storage, DEFAULT_POLICY_COLLECTION

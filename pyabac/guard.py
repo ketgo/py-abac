@@ -1,8 +1,8 @@
 """
     This file contains implementation fo the ABAC engine
 """
-from .inquiry import Inquiry
-from .storage.abc import Storage
+from pyabac.inquiry import Inquiry
+from pyabac.storage.abc import Storage
 
 
 class Guard(object):

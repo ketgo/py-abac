@@ -2,7 +2,6 @@
     Condition one-of schema
 """
 
-from marshmallow import ValidationError
 from marshmallow_oneofschema import OneOfSchema
 
 # --- Collection Conditions ---
@@ -25,11 +24,11 @@ from .numeric.gte import Gte, GteSchema
 from .numeric.lt import Lt, LtSchema
 from .numeric.lte import Lte, LteSchema
 from .numeric.neq import Neq, NeqSchema
+from .others.any import Any, AnySchema
+from .others.cidr import CIDR, CIDRSchema
 # --- Other Conditions ---
 from .others.exists import Exists, ExistsSchema
 from .others.not_exists import NotExists, NotExistsSchema
-from .others.net import CIDR, CIDRSchema
-from .others.any import Any, AnySchema
 # --- String Conditions ---
 from .string.contains import Contains, ContainsSchema
 from .string.ends_with import EndsWith, EndsWithSchema

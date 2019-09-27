@@ -4,13 +4,13 @@
 
 import pytest
 
-from pyabac.conditions.others import Exists
-from pyabac.conditions.logic import Or
-from pyabac.conditions.string import Equals
 from pyabac.constants import DEFAULT_POLICY_COLLECTION
 from pyabac.exceptions import PolicyExistsError
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
+from pyabac.policy.conditions.logic import Or
+from pyabac.policy.conditions.others import Exists
+from pyabac.policy.conditions.string import Equals
 from pyabac.storage.memory import MemoryStorage
 
 

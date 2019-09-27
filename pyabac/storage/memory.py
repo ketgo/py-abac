@@ -3,8 +3,8 @@
 """
 import logging
 
-from ..storage.abc import Storage, DEFAULT_POLICY_COLLECTION
 from ..exceptions import PolicyExistsError
+from ..storage.abc import Storage, DEFAULT_POLICY_COLLECTION
 
 log = logging.getLogger(__name__)
 

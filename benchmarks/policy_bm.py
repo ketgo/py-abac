@@ -4,10 +4,10 @@
 
 import pytest
 
-from pyabac.conditions.logic import Or
-from conditions.others.net import CIDR
-from pyabac.conditions.numeric import Gt
-from pyabac.conditions.string import Equals
+from policy.conditions.logic import Or
+from policy.conditions import CIDR
+from policy.conditions import Gt
+from policy.conditions import Equals
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
 

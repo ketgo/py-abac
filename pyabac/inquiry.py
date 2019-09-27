@@ -2,9 +2,9 @@
     Inquiry class
 """
 
-from marshmallow import Schema, fields, post_dump, post_load
+from marshmallow import Schema, fields, post_load
 
-from .constants import DEFAULT_POLICY_COLLECTION
+from pyabac.constants import DEFAULT_POLICY_COLLECTION
 
 
 class Inquiry(object):
