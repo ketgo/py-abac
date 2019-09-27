@@ -4,8 +4,8 @@
 
 import pytest
 
-from pyabac.constants import DEFAULT_POLICY_COLLECTION
-from pyabac.exceptions import PolicyExistsError
+from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
+from pyabac.common.exceptions import PolicyExistsError
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
 from pyabac.conditions.logic import Or

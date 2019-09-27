@@ -6,8 +6,8 @@ import uuid
 
 import pytest
 
-from pyabac.constants import DEFAULT_POLICY_COLLECTION, DENY_ACCESS, ALLOW_ACCESS
-from pyabac.exceptions import PolicyCreationError
+from pyabac.common.constants import DEFAULT_POLICY_COLLECTION, DENY_ACCESS, ALLOW_ACCESS
+from pyabac.common.exceptions import PolicyCreationError
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
 from pyabac.conditions.logic import Or

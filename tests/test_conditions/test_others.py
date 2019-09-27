@@ -4,7 +4,7 @@
 
 import pytest
 
-from pyabac.exceptions import ConditionCreationError
+from pyabac.common.exceptions import ConditionCreationError
 from pyabac.conditions.others import Any
 from pyabac.conditions.others import CIDR
 from pyabac.conditions.others import Exists

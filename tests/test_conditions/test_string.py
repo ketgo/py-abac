@@ -4,7 +4,7 @@
 
 import pytest
 
-from pyabac.exceptions import ConditionCreationError
+from pyabac.common.exceptions import ConditionCreationError
 from pyabac.conditions.string import Contains
 from pyabac.conditions.string import EndsWith
 from pyabac.conditions.string import Equals

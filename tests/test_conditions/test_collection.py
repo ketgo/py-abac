@@ -4,7 +4,7 @@
 
 import pytest
 
-from pyabac.exceptions import ConditionCreationError
+from pyabac.common.exceptions import ConditionCreationError
 from pyabac.conditions.collection import AllIn
 from pyabac.conditions.collection import AllNotIn
 from pyabac.conditions.collection import AnyIn

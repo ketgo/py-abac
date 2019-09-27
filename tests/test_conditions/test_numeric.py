@@ -4,7 +4,7 @@
 
 import pytest
 
-from pyabac.exceptions import ConditionCreationError
+from pyabac.common.exceptions import ConditionCreationError
 from pyabac.conditions.numeric import Eq
 from pyabac.conditions.numeric import Gt
 from pyabac.conditions.numeric import Gte

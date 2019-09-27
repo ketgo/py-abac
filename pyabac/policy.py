@@ -5,28 +5,15 @@
 import logging
 import uuid
 
-from jsonpath_ng import parse
 from marshmallow import Schema, fields, validate, post_load, ValidationError
 
-from pyabac.constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
-from pyabac.exceptions import PolicyCreationError
+from pyabac.common.constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
+from pyabac.common.exceptions import PolicyCreationError
+from pyabac.common.json_path import is_json_path, find_json_path
 from pyabac.conditions.base import ConditionBase
 from pyabac.conditions.schema import ConditionSchema
 
 log = logging.getLogger(__name__)
-
-
-def _validate_json_path(path):
-    """
-        Method to check if path is in valid jsonPath format
-
-        :param path: json path to validate
-        :raises: ValidationError
-    """
-    try:
-        parse(path)
-    except Exception as err:
-        raise ValidationError(*err.args)
 
 
 def _validate_field(name, value, many=False):
@@ -40,14 +27,15 @@ def _validate_field(name, value, many=False):
     """
     _value = value if many else [value]
     if not isinstance(_value, list):
-        raise ValidationError("Invalid policy definition.")
+        raise PolicyCreationError("Invalid policy definition.")
     for v in _value:
         if not isinstance(v, dict):
-            raise ValidationError("Invalid type '{}' for policy field '{}'.".format(type(v), name))
+            raise PolicyCreationError("Invalid type '{}' for policy field '{}'.".format(type(v), name))
         for k in v:
-            _validate_json_path(k)
+            if not is_json_path(k):
+                raise PolicyCreationError("Invalid JSON path '{}' for attribute.".format(k))
             if not isinstance(v[k], ConditionBase):
-                raise ValidationError("Invalid type '{}' for field attribute '{}'.".format(type(v[k]), k))
+                raise PolicyCreationError("Invalid type '{}' for field attribute '{}'.".format(type(v[k]), k))
 
 
 class Policy(object):
@@ -78,6 +66,18 @@ class Policy(object):
         # Validate policy definition
         self._validate()
 
+    def _validate(self):
+        """
+            Validate Policy definition
+            :raises: PolicyCreationError
+        """
+        _validate_field('subjects', self.subjects, True)
+        _validate_field('resources', self.resources, True)
+        _validate_field('actions', self.actions, True)
+        _validate_field('context', self.context, False)
+        if self.effect not in [ALLOW_ACCESS, DENY_ACCESS]:
+            raise PolicyCreationError("Invalid access type '{}'.".format(self.effect))
+
     def to_json(self):
         return PolicySchema().dump(self)
 
@@ -85,7 +85,7 @@ class Policy(object):
     def from_json(data):
         try:
             return PolicySchema().load(data)
-        except Exception as err:
+        except ValidationError as err:
             raise PolicyCreationError(*err.args)
 
     def allow_access(self):
@@ -142,9 +142,7 @@ class Policy(object):
         """
         for attr_path, condition in query.items():
             # Find attribute values from `what` using the path defined in JsonPath format in the policy.
-            # If no path found then set the value to `None`.
-            matches = parse(attr_path).find(what)
-            values = [match.value for match in matches] if matches else [None]
+            values = find_json_path(attr_path, what)
             # Check all extracted values
             for value in values:
                 # Check if the extracted value satisfies the condition for field's attribute. If any
@@ -153,21 +151,6 @@ class Policy(object):
                     return False
         # If all attributes match the policy then return True
         return True
-
-    def _validate(self):
-        """
-            Validate Policy definition
-            :raises: PolicyCreationError
-        """
-        try:
-            _validate_field('subjects', self.subjects, True)
-            _validate_field('resources', self.resources, True)
-            _validate_field('actions', self.actions, True)
-            _validate_field('context', self.context, False)
-            if self.effect not in [ALLOW_ACCESS, DENY_ACCESS]:
-                raise ValidationError("Invalid access type '{}'.".format(self.effect))
-        except ValidationError as err:
-            raise PolicyCreationError(*err.args)
 
 
 class PolicySchema(Schema):
@@ -178,18 +161,18 @@ class PolicySchema(Schema):
     uid = fields.String(required=True, allow_none=False)
     description = fields.String(default="", missing="")
     subjects = fields.List(
-        fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Nested(ConditionSchema)),
+        fields.Dict(keys=fields.String(), values=fields.Nested(ConditionSchema)),
         default=[],
         missing=[])
     resources = fields.List(
-        fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Nested(ConditionSchema)),
+        fields.Dict(keys=fields.String(), values=fields.Nested(ConditionSchema)),
         default=[],
         missing=[])
     actions = fields.List(
-        fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Nested(ConditionSchema)),
+        fields.Dict(keys=fields.String(), values=fields.Nested(ConditionSchema)),
         default=[],
         missing=[])
-    context = fields.Dict(keys=fields.String(validate=_validate_json_path), values=fields.Raw(),
+    context = fields.Dict(keys=fields.String(), values=fields.Raw(),
                           default={}, missing={})
     effect = fields.String(required=True, allow_none=False,
                            validate=validate.OneOf(choices=[DENY_ACCESS, ALLOW_ACCESS]))

@@ -4,7 +4,7 @@
 
 import pytest
 
-from pyabac.exceptions import ConditionCreationError
+from pyabac.common.exceptions import ConditionCreationError
 from pyabac.conditions.logic import And
 from pyabac.conditions.logic import Not
 from pyabac.conditions.logic import Or

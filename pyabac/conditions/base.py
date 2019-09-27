@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 
 from marshmallow import ValidationError
 
-from pyabac.exceptions import ConditionCreationError
+from pyabac.common.exceptions import ConditionCreationError
 
 
 class ConditionBase(metaclass=ABCMeta):

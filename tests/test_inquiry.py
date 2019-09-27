@@ -4,7 +4,7 @@
 
 import pytest
 
-from pyabac.constants import DEFAULT_POLICY_COLLECTION
+from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
 from pyabac.inquiry import Inquiry
 
 
