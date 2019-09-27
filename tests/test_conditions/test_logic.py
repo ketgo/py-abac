@@ -5,10 +5,10 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.policy.conditions.logic import And
-from pyabac.policy.conditions.logic import Not
-from pyabac.policy.conditions.logic import Or
-from pyabac.policy.conditions.numeric import Gt, Lt
+from pyabac.conditions.logic import And
+from pyabac.conditions.logic import Not
+from pyabac.conditions.logic import Or
+from pyabac.conditions.numeric import Gt, Lt
 
 
 class TestLogicCondition(object):

@@ -10,10 +10,10 @@ from pyabac.constants import DEFAULT_POLICY_COLLECTION, DENY_ACCESS, ALLOW_ACCES
 from pyabac.exceptions import PolicyCreationError
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
-from pyabac.policy.conditions.logic import Or
-from pyabac.policy.conditions.numeric import Gt
-from pyabac.policy.conditions.others import CIDR
-from pyabac.policy.conditions.string import Equals
+from pyabac.conditions.logic import Or
+from pyabac.conditions.numeric import Gt
+from pyabac.conditions.others import CIDR
+from pyabac.conditions.string import Equals
 
 
 class TestPolicy(object):

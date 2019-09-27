@@ -5,12 +5,12 @@
 import pytest
 
 from pyabac.exceptions import ConditionCreationError
-from pyabac.policy.conditions.numeric import Eq
-from pyabac.policy.conditions.numeric import Gt
-from pyabac.policy.conditions.numeric import Gte
-from pyabac.policy.conditions.numeric import Lt
-from pyabac.policy.conditions.numeric import Lte
-from pyabac.policy.conditions.numeric import Neq
+from pyabac.conditions.numeric import Eq
+from pyabac.conditions.numeric import Gt
+from pyabac.conditions.numeric import Gte
+from pyabac.conditions.numeric import Lt
+from pyabac.conditions.numeric import Lte
+from pyabac.conditions.numeric import Neq
 
 
 class TestNumericCondition(object):

@@ -10,8 +10,8 @@ from marshmallow import Schema, fields, validate, post_load, ValidationError
 
 from pyabac.constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
 from pyabac.exceptions import PolicyCreationError
-from .conditions.base import ConditionBase
-from .conditions.schema import ConditionSchema
+from pyabac.conditions.base import ConditionBase
+from pyabac.conditions.schema import ConditionSchema
 
 log = logging.getLogger(__name__)
 

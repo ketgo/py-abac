@@ -8,10 +8,10 @@ from pyabac.constants import DENY_ACCESS, ALLOW_ACCESS
 from pyabac.guard import Guard
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
-from pyabac.policy.conditions.logic import Or
-from pyabac.policy.conditions.others import CIDR
-from pyabac.policy.conditions.others import Exists
-from pyabac.policy.conditions.string import Equals, RegexMatch
+from pyabac.conditions.logic import Or
+from pyabac.conditions.others import CIDR
+from pyabac.conditions.others import Exists
+from pyabac.conditions.string import Equals, RegexMatch
 from pyabac.storage.memory import MemoryStorage
 
 st = MemoryStorage()

@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 'pylint~=1.0',
             ]
         },
-        packages=find_packages(exclude='tests'),
+        packages=find_packages(exclude=('tests', 'benchmarks')),
         classifiers=[
             'Intended Audience :: Developers',
             'License :: OSI Approved :: Apache Software License',
