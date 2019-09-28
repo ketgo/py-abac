@@ -41,7 +41,7 @@ class Checker(object):
         if not self._policy_fits(self._action_tree, policy.actions):
             return False
         # Check if any of the context attributes fit policy
-        if not self._policy_fits(self._context_tree, policy.context):
+        if not self._rule_fits(self._context_tree, policy.context):
             return False
         # If the policy fits then return True
         return True
@@ -71,7 +71,7 @@ class Checker(object):
     @staticmethod
     def _extract_values(element_tree, attribute_path):
         rvalue = element_tree.execute(attribute_path)
-        if not rvalue:
+        if rvalue is None:
             return [None]
         if isinstance(rvalue, types.GeneratorType):
             return list(rvalue)

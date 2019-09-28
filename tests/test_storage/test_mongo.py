@@ -7,11 +7,11 @@ from pymongo import MongoClient
 
 from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
 from pyabac.common.exceptions import PolicyExistsError
-from pyabac.inquiry import Inquiry
-from pyabac.policy import Policy
 from pyabac.conditions.logic import Or
 from pyabac.conditions.others import Exists
 from pyabac.conditions.string import Equals
+from pyabac.inquiry import Inquiry
+from pyabac.policy import Policy
 from pyabac.storage.mongo import MongoStorage
 
 MONGO_HOST = '127.0.0.1'
