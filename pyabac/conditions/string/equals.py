@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import StringCondition, StringConditionSchema, is_string
 
 
-class EqualsCondition(StringCondition):
-    name = "StringEquals"
+class Equals(StringCondition):
 
     def is_satisfied(self, what):
         if not is_string(what):
@@ -18,8 +17,8 @@ class EqualsCondition(StringCondition):
         return what == self.value
 
 
-class EqualsConditionSchema(StringConditionSchema):
+class EqualsSchema(StringConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return EqualsCondition(**data)
+        return Equals(**data)

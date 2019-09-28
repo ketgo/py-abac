@@ -9,8 +9,7 @@ from marshmallow import Schema, fields, post_load
 from .base import ConditionBase, ConditionCreationError, is_string
 
 
-class RegexMatchCondition(ConditionBase):
-    name = "StringRegexMatch"
+class RegexMatch(ConditionBase):
 
     def __init__(self, value):
         if not is_regex(value):
@@ -32,9 +31,9 @@ def is_regex(value):
     return True
 
 
-class RegexMatchConditionSchema(Schema):
+class RegexMatchSchema(Schema):
     value = fields.String(required=True, allow_none=False)
 
     @post_load
     def post_load(self, data, **_):
-        return RegexMatchCondition(**data)
+        return RegexMatch(**data)

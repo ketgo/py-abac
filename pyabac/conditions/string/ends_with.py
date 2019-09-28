@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import StringCondition, StringConditionSchema, is_string
 
 
-class EndsWithCondition(StringCondition):
-    name = "StringEndsWith"
+class EndsWith(StringCondition):
 
     def is_satisfied(self, what):
         if not is_string(what):
@@ -18,8 +17,8 @@ class EndsWithCondition(StringCondition):
         return what.endswith(self.value)
 
 
-class EndsWithConditionSchema(StringConditionSchema):
+class EndsWithSchema(StringConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return EndsWithCondition(**data)
+        return EndsWith(**data)

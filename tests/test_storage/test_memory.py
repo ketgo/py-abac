@@ -4,11 +4,11 @@
 
 import pytest
 
-from pyabac.conditions.exists import ExistsCondition
-from pyabac.conditions.logic import OrCondition
-from pyabac.conditions.string import EqualsCondition
-from pyabac.constants import DEFAULT_POLICY_COLLECTION
-from pyabac.exceptions import PolicyExistsError
+from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
+from pyabac.common.exceptions import PolicyExistsError
+from pyabac.conditions.logic import Or
+from pyabac.conditions.others import Exists
+from pyabac.conditions.string import Equals
 from pyabac.inquiry import Inquiry
 from pyabac.policy import Policy
 from pyabac.storage.memory import MemoryStorage
@@ -24,16 +24,16 @@ def test_add(st):
     assert '1' == st.get('1').uid
     assert 'foo' == st.get('1').description
     st.add(Policy('2',
-                  actions=[{"$.method": EqualsCondition("delete")},
-                           {"$.method": OrCondition(EqualsCondition("get"), EqualsCondition("put"))}],
-                  subjects=[{"$.name": ExistsCondition()}],
-                  resources=[{'$.books': EqualsCondition('Harry')}]))
+                  actions=[{"$.method": Equals("delete")},
+                           {"$.method": Or(Equals("get"), Equals("put"))}],
+                  subjects=[{"$.name": Exists()}],
+                  resources=[{'$.books': Equals('Harry')}]))
     assert '2' == st.get('2').uid
     assert 2 == len(st.get('2').actions)
     assert 1 == len(st.get('2').subjects)
-    assert isinstance(st.get('2').subjects[0]["$.name"], ExistsCondition)
+    assert isinstance(st.get('2').subjects[0]["$.name"], Exists)
     assert 1 == len(st.get('2').resources)
-    assert isinstance(st.get('2').resources[0]['$.books'], EqualsCondition)
+    assert isinstance(st.get('2').resources[0]['$.books'], Equals)
     assert 'Harry' == st.get('2').resources[0]['$.books'].value
 
 
@@ -91,9 +91,9 @@ def test_get_all_with_incorrect_args(st):
 
 
 def test_find_for_inquiry(st):
-    st.add(Policy('1', subjects=[{"$.name": EqualsCondition('max')}, {"$.name": EqualsCondition('bob')}]))
-    st.add(Policy('2', subjects=[{"$.name": EqualsCondition('sam')}, {"$.name": EqualsCondition('nina')}]))
-    st.add(Policy('3', subjects=[{"$.name": EqualsCondition('max')}, {"$.name": EqualsCondition('bob')}]))
+    st.add(Policy('1', subjects=[{"$.name": Equals('max')}, {"$.name": Equals('bob')}]))
+    st.add(Policy('2', subjects=[{"$.name": Equals('sam')}, {"$.name": Equals('nina')}]))
+    st.add(Policy('3', subjects=[{"$.name": Equals('max')}, {"$.name": Equals('bob')}]))
     inquiry = Inquiry(subject={"name": 'sam'}, action={"method": 'get'}, resource={"name": 'books'})
     found = st.get_for_inquiry(inquiry)
     found = list(found)
@@ -110,10 +110,10 @@ def test_update(st):
     st.update(policy)
     assert '1' == st.get('1').uid
     assert 'foo' == st.get('1').description
-    p = Policy('2', actions=[{'$.name': ExistsCondition()}])
+    p = Policy('2', actions=[{'$.name': Exists()}])
     st.add(p)
     assert '2' == st.get('2').uid
-    p.actions = [{"$.name": EqualsCondition('get')}]
+    p.actions = [{"$.name": Equals('get')}]
     st.update(p)
     assert 1 == len(st.get('2').actions)
     assert 'get' == st.get('2').actions[0]['$.name'].value

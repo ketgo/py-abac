@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import CollectionCondition, CollectionConditionSchema, is_collection
 
 
-class AllNotInCondition(CollectionCondition):
-    name = "AllNotIn"
+class AllNotIn(CollectionCondition):
 
     def is_satisfied(self, what):
         # If `what` is not a collection then return False
@@ -17,8 +16,8 @@ class AllNotInCondition(CollectionCondition):
         return not set(what).issubset(self.value)
 
 
-class AllNotInConditionSchema(CollectionConditionSchema):
+class AllNotInSchema(CollectionConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return AllNotInCondition(**data)
+        return AllNotIn(**data)

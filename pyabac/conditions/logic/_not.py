@@ -7,8 +7,7 @@ from marshmallow import Schema, fields, post_load
 from .base import ConditionBase, ConditionCreationError, is_condition
 
 
-class NotCondition(ConditionBase):
-    name = "Not"
+class Not(ConditionBase):
 
     def __init__(self, value):
         if not is_condition(value):
@@ -19,9 +18,9 @@ class NotCondition(ConditionBase):
         return not self.value.is_satisfied(what)
 
 
-class NotConditionSchema(Schema):
+class NotSchema(Schema):
     value = fields.Nested("ConditionSchema", required=True, allow_none=False, many=False)
 
     @post_load
     def post_load(self, data, **_):
-        return NotCondition(**data)
+        return Not(**data)

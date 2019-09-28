@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import StringCondition, StringConditionSchema, is_string
 
 
-class NotEqualsCondition(StringCondition):
-    name = "StringNotEquals"
+class NotEquals(StringCondition):
 
     def is_satisfied(self, what):
         if not is_string(what):
@@ -18,8 +17,8 @@ class NotEqualsCondition(StringCondition):
         return what != self.value
 
 
-class NotEqualsConditionSchema(StringConditionSchema):
+class NotEqualsSchema(StringConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return NotEqualsCondition(**data)
+        return NotEquals(**data)

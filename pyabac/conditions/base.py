@@ -2,20 +2,14 @@
     Operation base class
 """
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 from marshmallow import ValidationError
 
-from ..exceptions import ConditionCreationError
+from pyabac.common.exceptions import ConditionCreationError
 
 
 class ConditionBase(metaclass=ABCMeta):
-
-    @abstractproperty
-    def name(self):
-        """
-            Name of the condition
-        """
 
     @abstractmethod
     def is_satisfied(self, what):

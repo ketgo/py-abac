@@ -2,9 +2,13 @@
     Logic condition base class
 """
 
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields
 
 from ..base import ConditionBase, ABCMeta, ConditionCreationError
+
+
+def is_condition(value):
+    return isinstance(value, ConditionBase)
 
 
 class LogicCondition(ConditionBase, metaclass=ABCMeta):
@@ -18,10 +22,5 @@ class LogicCondition(ConditionBase, metaclass=ABCMeta):
         self.values = values
 
 
-def is_condition(value):
-    return isinstance(value, ConditionBase)
-
-
 class LogicConditionSchema(Schema):
-    values = fields.Nested("ConditionSchema", required=True, allow_none=False, many=True,
-                           validate=validate.Length(min=1, error='May not be an empty list'))
+    values = fields.Nested("ConditionSchema", required=True, allow_none=False, many=True)

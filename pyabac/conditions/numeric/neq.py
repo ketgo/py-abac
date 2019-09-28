@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import NumericCondition, NumericConditionSchema, is_number
 
 
-class NotEqualCondition(NumericCondition):
-    name = "NotEqual"
+class Neq(NumericCondition):
 
     def is_satisfied(self, what):
         if not is_number(what):
@@ -16,8 +15,8 @@ class NotEqualCondition(NumericCondition):
         return what != self.value
 
 
-class NotEqualConditionSchema(NumericConditionSchema):
+class NeqSchema(NumericConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return NotEqualCondition(**data)
+        return Neq(**data)

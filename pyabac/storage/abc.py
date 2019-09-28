@@ -4,7 +4,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-from ..constants import DEFAULT_POLICY_COLLECTION
+from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
 
 
 class Storage(metaclass=ABCMeta):

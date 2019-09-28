@@ -7,8 +7,7 @@ from marshmallow import Schema, post_load
 from .base import ConditionBase, is_collection
 
 
-class IsEmptyCondition(ConditionBase):
-    name = "IsEmpty"
+class IsEmpty(ConditionBase):
 
     def is_satisfied(self, what):
         if not is_collection(what):
@@ -16,8 +15,8 @@ class IsEmptyCondition(ConditionBase):
         return len(what) == 0
 
 
-class IsEmptyConditionSchema(Schema):
+class IsEmptySchema(Schema):
 
     @post_load
     def post_load(self, data, **_):
-        return IsEmptyCondition()
+        return IsEmpty()

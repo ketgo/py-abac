@@ -7,8 +7,7 @@ from marshmallow import post_load
 from .base import StringCondition, StringConditionSchema, is_string
 
 
-class StartsWithCondition(StringCondition):
-    name = "StringStartsWith"
+class StartsWith(StringCondition):
 
     def is_satisfied(self, what):
         if not is_string(what):
@@ -18,8 +17,8 @@ class StartsWithCondition(StringCondition):
         return what.startswith(self.value)
 
 
-class StartsWithConditionSchema(StringConditionSchema):
+class StartsWithSchema(StringConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return StartsWithCondition(**data)
+        return StartsWith(**data)

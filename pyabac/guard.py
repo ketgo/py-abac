@@ -1,8 +1,10 @@
 """
     This file contains implementation fo the ABAC engine
 """
-from .inquiry import Inquiry
-from .storage.abc import Storage
+
+from pyabac.checker import Checker
+from pyabac.inquiry import Inquiry
+from pyabac.storage.abc import Storage
 
 
 class Guard(object):
@@ -34,7 +36,8 @@ class Guard(object):
         policies = self.storage.get_for_inquiry(inquiry)
 
         # filter for matching policies
-        filtered = [policy for policy in policies if policy.fits(inquiry)]
+        checker = Checker(inquiry)
+        filtered = [policy for policy in policies if checker.fits(policy)]
 
         # no policies -> deny access!
         # if we have 2 or more similar policies - all of them should have allow effect, otherwise -> deny access!
