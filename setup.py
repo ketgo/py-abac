@@ -28,7 +28,7 @@ if __name__ == '__main__':
             'pymongo~=3.5',
             'marshmallow~=3.2',
             'marshmallow-oneofschema~=2.0',
-            'jsonpath-ng~=1.4'
+            'objectpath~=0.6'
         ],
         extras_require={
             'dev': [

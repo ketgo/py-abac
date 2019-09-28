@@ -3,6 +3,13 @@
 """
 
 
+class InquiryCreationError(Exception):
+    """
+        Error occurred during Inquiry creation.
+    """
+    pass
+
+
 class PolicyCreationError(Exception):
     """
         Error occurred during Policy creation.

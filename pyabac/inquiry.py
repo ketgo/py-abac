@@ -2,9 +2,10 @@
     Inquiry class
 """
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, ValidationError
 
 from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
+from pyabac.common.exceptions import InquiryCreationError
 
 
 class Inquiry(object):
@@ -12,7 +13,7 @@ class Inquiry(object):
         Inquiry wrapper class to support policy scope. The default scope is set to `default`.
     """
 
-    def __init__(self, subject=None, resource=None, action=None, context=None, collection=None):
+    def __init__(self, subject=None, resource=None, action=None, context=None, collection=None, _validate=True):
         """
             Inquiry object initialization
 
@@ -21,6 +22,7 @@ class Inquiry(object):
             :param action: action taken by subject
             :param context: access context
             :param collection: collection of policies to inquire
+            :param _validate: flag to validate input
         """
         self.subject = subject or {}
         self.resource = resource or {}
@@ -28,12 +30,30 @@ class Inquiry(object):
         self.context = context or {}
         self.collection = collection or DEFAULT_POLICY_COLLECTION
 
+        if _validate:
+            self._validate()
+
+    def _validate(self):
+        if not isinstance(self.subject, dict):
+            raise InquiryCreationError("Invalid type '{}' for subject.".format(type(self.subject)))
+        if not isinstance(self.resource, dict):
+            raise InquiryCreationError("Invalid type '{}' for resource.".format(type(self.resource)))
+        if not isinstance(self.action, dict):
+            raise InquiryCreationError("Invalid type '{}' for action.".format(type(self.action)))
+        if not isinstance(self.context, dict):
+            raise InquiryCreationError("Invalid type '{}' for context.".format(type(self.context)))
+        if not isinstance(self.collection, str):
+            raise InquiryCreationError("Invalid collection '{}'.".format(self.collection))
+
     def to_json(self):
         return InquirySchema().dump(self)
 
     @staticmethod
     def from_json(data):
-        return InquirySchema().load(data)
+        try:
+            return InquirySchema().load(data)
+        except ValidationError as err:
+            raise InquiryCreationError(*err.args)
 
 
 class InquirySchema(Schema):
