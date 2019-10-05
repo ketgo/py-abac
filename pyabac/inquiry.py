@@ -10,7 +10,7 @@ from pyabac.common.exceptions import InquiryCreationError
 
 class Inquiry(object):
     """
-        Inquiry wrapper class to support policy scope. The default scope is set to `default`.
+        Inquiry class implementation.
     """
 
     def __init__(self, subject=None, resource=None, action=None, context=None, collection=None, _validate=True):
