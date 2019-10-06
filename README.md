@@ -1,5 +1,5 @@
-# pyabac
-Attribute Based Access Control (ABAC) SDK for python. This project is a fork of the [vakt](https://github.com/kolotaev/vakt) SDK.
+# py-ABAC
+Attribute Based Access Control (ABAC) SDK for python. 
 
 ## Introduction
 
@@ -13,7 +13,7 @@ ABAC comes with a recommended architecture which is as follows:
 
 1. The PEP or Policy Enforcement Point: it is responsible for protecting the apps & data you want to apply ABAC to. The PEP inspects the request and generates an authorization request from it which it sends to the PDP.
 2. The PDP or Policy Decision Point is the brain of the architecture. This is the piece which evaluates incoming requests against policies it has been configured with. The PDP returns a Permit / Deny decision. The PDP may also use PIPs to retrieve missing metadata
-3. The PIP or Policy Information Point bridges the PDP to external sources of attributes e.g. LDAP or databases. They are yet not supported in **pyabac**.
+3. The PIP or Policy Information Point bridges the PDP to external sources of attributes e.g. LDAP or databases. This is yet not supported in **pyabac**.
 4. The PAP or Policy Administration Point: manages the creation, update and deletion of policies. 
 
 ## Access Control Elements
@@ -27,13 +27,13 @@ In most if not every access control protocol, the following four elements are in
 
 In **pyabac** one defines policies containing conditions on one or more attributes of these four elements. If these conditions are satisfied, an access decision is returned by the PDP using an evaluation algorithm. Thus with ABAC you can have as many policies as you like that cater to many different scenarios and technologies. There are three different evaluation algorithms supported by **pyabac**:
 
-1. `PermitOverrides`: PDP returns *permit* if any decision evaluates to *permit*; and returns *deny* if all decisions evaluate to *deny*.
-2. `DenyOverrides`: PDP returns *deny* if any decision evaluates to *deny*; returns *permit* if all decisions evaluate to *permit*.
-3. `HighestPriority`: PDP returns the highest priority decision that evaluates to either *permit* or *deny*. If there are multiple equally highest priority decisions that conflict, then `DenyOverrides` algorithm would be applied among those highest priority decisions.
+1. `AllowOverrides`: PDP returns *allow* if any decision evaluates to *allow*; and returns *deny* if all decisions evaluate to *deny*.
+2. `DenyOverrides`: PDP returns *deny* if any decision evaluates to *deny*; returns *allow* if all decisions evaluate to *allow*.
+3. `HighestPriority`: PDP returns the highest priority decision that evaluates to either *allow* or *deny*. If there are multiple equally highest priority decisions that conflict, then `DenyOverrides` algorithm would be applied among those highest priority decisions.
 
 ## Policy Language
 
-We now present the policy language used by **pyabac**. This section is divided into two subsections. The first subsection discusses JSON-based definition of a Policy, while the latter about that for Inquiry. 
+We now present the policy language used by **pyabac**. This section is divided into two subsections. The first subsection discusses JSON-based definition of a policy, while the latter about that authorization request. 
 
 ### Policy
 
@@ -50,7 +50,7 @@ A policy object consists of id, description, conditions, targets, effect, and pr
 }
 ```
 
-where <conditions_block> and `<targets_block>` are JSON blocks explained in the following sections. The `"id"` field is a string value that uniquely identifies a policy. The `"description"` stores description of the policy provided by the policy creator. The two fields `"conditions"` and `"targets"` indicate the attributes of the access control elements to which the policy apply. The `"effect"` is the returned decision of the policy and can be either *permit* or *deny*. Finally, `"priority"` provides a numeric value indicating the weight of the policy when its decision conflicts with other policy under the `HighestPriority` evaluation algorithm. By default, this field is set to `0` for all policies.
+where <conditions_block> and `<targets_block>` are JSON blocks explained in the following sections. The `"id"` field is a string value that uniquely identifies a policy. The `"description"` stores description of the policy provided by the policy creator. The two fields `"conditions"` and `"targets"` indicate the attributes of the access control elements to which the policy apply. The `"effect"` is the returned decision of the policy and can be either *allow* or *deny*. Finally, `"priority"` provides a numeric value indicating the weight of the policy when its decision conflicts with other policy under the `HighestPriority` evaluation algorithm. By default, this field is set to `0` for all policies.
 
 #### Conditions Block
 
@@ -70,10 +70,10 @@ with `<boolean_expression>` being a JSON block for Boolean expression.
 A policy is considered applicable only when each of the Boolean expressions are satisfied. These expressions are constraints on the attribute values of the field for which they are defined. These constraints can be simple, involving only a single attribute, or can be complex consisting of multiple attributes. A simple Boolean expression consists of a key-value pair as shown below:
 
 ```json
-{"<attribute_location>": <condition_expression>}
+{"<attribute_path>": <condition_expression>}
 ```
 
-The key specifies an attribute location in *JsonPath* format while the value is a condition expression. The condition expression is a JSON block specifying specifically the requirements that the attribute value needs to meet. The different supported condition expressions by **pyabac** are shown in Appendix. As an example, the condition block for the requirement that name attribute of subject field should be Max is shown below:
+The key specifies an attribute path in *ObjectPath* format while the value is a condition expression. The condition expression is a JSON block specifying specifically the requirements that the attribute value needs to meet. The different supported condition expressions by **pyabac** are shown in Appendix. As an example, the condition block for the requirement that name attribute of subject field should be Max is shown below:
 
 ```json
 {
@@ -153,9 +153,9 @@ If a target block is not explicitly specified, the policy is considered to be al
 }
 ```
 
-### Inquiry
+### Authorization Request
 
-An inquiry is a data object sent by PEP to PDP as part of the authorization request. This object contains all the information needed by the PDP to evaluate the policies and return access decision. The JSON schema of an inquiry is given by
+An authorization request is a data object sent by PEP to PDP. This object contains all the information needed by the PDP to evaluate the policies and return access decision. The JSON schema of the object is given by
 
 ```json
 {   
@@ -175,7 +175,7 @@ An inquiry is a data object sent by PEP to PDP as part of the authorization requ
 }
 ```
 
-where <attribute_block> is just a JSON block containing one or more attribute-value pairs. An example inquiry is shown below:
+where `<attribute_block>` is just a JSON block containing one or more attribute-value pairs. An example request is shown below:
 
 ```json
 {
@@ -199,8 +199,6 @@ where <attribute_block> is just a JSON block containing one or more attribute-va
   "context": {}
 }
 ```
-
-where <attribute_block> is just a JSON block containing one or more attribute-value pairs. An example inquiry is shown below:
 
 ## Appendix
 
