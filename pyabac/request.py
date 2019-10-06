@@ -2,7 +2,7 @@
     Authorization request class
 """
 
-from marshmallow import Schema, fields, ValidationError
+from marshmallow import Schema, fields, ValidationError, post_load
 from objectpath import Tree
 
 from .exceptions import RequestCreateError, InvalidAccessControlElementError, InvalidAttributePathError
@@ -13,25 +13,28 @@ class Request(object):
         Authorization request sent by PEP
     """
 
-    def __init__(self, data):
-        try:
-            _data = _RequestSchema().load(data)
-        except ValidationError as err:
-            raise RequestCreateError(*err.args)
+    def __init__(self, subject, resource, action, context):
 
-        self._subject_id = _data.get("subject", {}).get("id", "")
-        self._subject_tree = Tree(_data.get("subject", {}).get("attributes", {}))
+        self._subject_id = subject.get("id", "")
+        self._subject_tree = Tree(subject.get("attributes", {}))
 
-        self._resource_id = _data.get("resource", {}).get("id", "")
-        self._resource_tree = Tree(_data.get("resource", {}).get("attributes", {}))
+        self._resource_id = resource.get("id", "")
+        self._resource_tree = Tree(resource.get("attributes", {}))
 
-        self._action_id = _data.get("action", {}).get("id", "")
-        self._action_tree = Tree(_data.get("action", {}).get("attributes", {}))
+        self._action_id = action.get("id", "")
+        self._action_tree = Tree(action.get("attributes", {}))
 
-        self._context_tree = Tree(_data.get("context", {}))
+        self._context_tree = Tree(context)
 
         # Cache of attribute location and value pairs per access element used for quick attribute value retrieval
         self._attribute_values_cache = {"subject": {}, "resource": {}, "action": {}, "context": {}}
+
+    @staticmethod
+    def from_json(data):
+        try:
+            return _RequestSchema().load(data)
+        except ValidationError as err:
+            raise RequestCreateError(*err.args)
 
     @property
     def subject_id(self):
@@ -91,3 +94,7 @@ class _RequestSchema(Schema):
     resource = fields.Nested(_AccessElementSchema, required=True)
     action = fields.Nested(_AccessElementSchema, required=True)
     context = fields.Dict(required=True)
+
+    @post_load
+    def post_load(self, data, **_):
+        return Request(**data)

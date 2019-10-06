@@ -29,7 +29,7 @@ def test_create():
         },
         "context": {}
     }
-    request = Request(request_json)
+    request = Request.from_json(request_json)
 
     assert request_json["subject"]["id"] == request.subject_id
     assert request_json["resource"]["id"] == request.resource_id
@@ -57,7 +57,7 @@ def test_get_value():
         },
         "context": {}
     }
-    request = Request(request_json)
+    request = Request.from_json(request_json)
 
     assert request_json["subject"]["attributes"]["firstName"] == request.get_value("subject", "$.firstName")
     assert request_json["subject"]["attributes"]["lastName"] == request.get_value("subject", "$.lastName")
@@ -89,7 +89,7 @@ def test_invalid_ace_error():
         },
         "context": {}
     }
-    request = Request(request_json)
+    request = Request.from_json(request_json)
     with pytest.raises(InvalidAccessControlElementError):
         request.get_value("test", "$.test")
 
@@ -115,7 +115,7 @@ def test_invalid_attribute_path_error():
         },
         "context": {}
     }
-    request = Request(request_json)
+    request = Request.from_json(request_json)
     with pytest.raises(InvalidAttributePathError):
         request.get_value("subject", ")")
 
@@ -222,4 +222,4 @@ def test_invalid_attribute_path_error():
 ])
 def test_create_error(request_json):
     with pytest.raises(RequestCreateError):
-        Request(request_json)
+        Request.from_json(request_json)
