@@ -13,7 +13,7 @@ class Request(object):
         Authorization request sent by PEP
     """
 
-    def __init__(self, subject, resource, action, context):
+    def __init__(self, subject: dict, resource: dict, action: dict, context: dict):
 
         self._subject_id = subject.get("id", "")
         self._subject_tree = Tree(subject.get("attributes", {}))
@@ -30,7 +30,7 @@ class Request(object):
         self._attribute_values_cache = {"subject": {}, "resource": {}, "action": {}, "context": {}}
 
     @staticmethod
-    def from_json(data):
+    def from_json(data: dict):
         try:
             return _RequestSchema().load(data)
         except ValidationError as err:
@@ -48,7 +48,7 @@ class Request(object):
     def action_id(self):
         return self._action_id
 
-    def get_value(self, ace, path):
+    def get_value(self, ace: str, path: str):
         """
             Get attribute value for given access control element and attribute path
 
