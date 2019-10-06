@@ -4,17 +4,15 @@
 
 from marshmallow import post_load
 
-from .base import StringCondition, StringConditionSchema, is_string
+from .base import StringCondition, StringConditionSchema
 
 
 class StartsWith(StringCondition):
 
-    def is_satisfied(self, ctx):
-        if not is_string(ctx):
-            return False
+    def _is_satisfied(self, what):
         if self.case_insensitive:
-            return ctx.lower().startswith(self.value.lower())
-        return ctx.startswith(self.value)
+            return what.lower().startswith(self.value.lower())
+        return what.startswith(self.value)
 
 
 class StartsWithSchema(StringConditionSchema):

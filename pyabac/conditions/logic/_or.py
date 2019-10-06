@@ -17,4 +17,4 @@ class AnyOfSchema(LogicConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
-        return AnyOf(*data["values"])
+        return AnyOf(**data)

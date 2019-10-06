@@ -4,17 +4,15 @@
 
 from marshmallow import post_load
 
-from .base import StringCondition, StringConditionSchema, is_string
+from .base import StringCondition, StringConditionSchema
 
 
 class Equals(StringCondition):
 
-    def is_satisfied(self, ctx):
-        if not is_string(ctx):
-            return False
+    def _is_satisfied(self, what):
         if self.case_insensitive:
-            return ctx.lower() == self.value.lower()
-        return ctx == self.value
+            return what.lower() == self.value.lower()
+        return what == self.value
 
 
 class EqualsSchema(StringConditionSchema):

@@ -9,8 +9,8 @@ from .base import NumericCondition, NumericConditionSchema
 
 class Eq(NumericCondition):
 
-    def _is_satisfied(self, value):
-        return value == self.value
+    def _is_satisfied(self, what):
+        return what == self.value
 
 
 class EqSchema(NumericConditionSchema):

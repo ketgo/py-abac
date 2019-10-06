@@ -4,35 +4,27 @@
 
 import re
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, ValidationError
 
-from .base import ConditionBase, ConditionCreationError, is_string
-
-
-class RegexMatch(ConditionBase):
-
-    def __init__(self, value):
-        if not is_regex(value):
-            raise ConditionCreationError("Argument '{}' not a valid regexp string.".format(value))
-        self.value = value
-
-    def is_satisfied(self, ctx):
-        if not is_string(ctx):
-            return False
-        return re.search(self.value, ctx) is not None
+from .base import StringCondition
 
 
-def is_regex(value):
+class RegexMatch(StringCondition):
+
+    def _is_satisfied(self, what):
+        return re.search(self.value, what) is not None
+
+
+def validate_regex(value):
     # noinspection PyBroadException
     try:
         re.compile(value)
     except Exception:
-        return False
-    return True
+        raise ValidationError("Invalid regex expression '{}'.".format(value))
 
 
 class RegexMatchSchema(Schema):
-    value = fields.String(required=True, allow_none=False)
+    value = fields.String(required=True, allow_none=False, validate=validate_regex)
 
     @post_load
     def post_load(self, data, **_):

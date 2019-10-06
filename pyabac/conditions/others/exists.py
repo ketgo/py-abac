@@ -9,7 +9,7 @@ from ..base import ConditionBase
 class Exists(ConditionBase):
 
     def is_satisfied(self, ctx):
-        return ctx is not None
+        return ctx.attribute_value is not None
 
 
 class ExistsSchema(Schema):

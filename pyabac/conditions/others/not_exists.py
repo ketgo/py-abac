@@ -10,7 +10,7 @@ from ..base import ConditionBase
 class NotExists(ConditionBase):
 
     def is_satisfied(self, ctx):
-        return ctx is None
+        return ctx.attribute_value is None
 
 
 class NotExistsSchema(Schema):

@@ -3,10 +3,13 @@
 """
 
 import ipaddress
+import logging
 
 from marshmallow import Schema, fields, post_load
 
-from ..base import ConditionBase, ConditionCreationError
+from ..base import ConditionBase
+
+log = logging.getLogger(__name__)
 
 
 def is_cidr(value):
@@ -19,15 +22,18 @@ class CIDR(ConditionBase):
     """
 
     def __init__(self, value):
-        if not is_cidr(value):
-            raise ConditionCreationError("Invalid argument type '{}' for network condition.".format(type(value)))
         self.value = value
 
     def is_satisfied(self, ctx):
-        if not isinstance(ctx, str):
+        if not isinstance(ctx.attribute_value, str):
+            log.debug("Invalid type '{}' for attribute value at path '{}' for element '{}'. "
+                      "Condition not satisfied.".format(ctx.attribute_value, ctx.attribute_path, ctx.ace))
             return False
+        return self._is_satisfied(ctx.attribute_value)
+
+    def _is_satisfied(self, what):
         try:
-            ip = ipaddress.ip_address(ctx)
+            ip = ipaddress.ip_address(what)
             net = ipaddress.ip_network(self.value)
         except ValueError:
             return False
