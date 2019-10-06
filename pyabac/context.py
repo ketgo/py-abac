@@ -2,18 +2,22 @@
     PDP policy evaluation context
 """
 
+from .request import Request
+
 
 class EvaluationContext(object):
     """
         Evaluation context class
     """
 
-    def __init__(self, request):
+    def __init__(self, request: Request):
         """
             Initialize evaluation context object
 
             :param request: request object
         """
+        if not isinstance(request, Request):
+            raise TypeError("Invalid type '{}' for authorization request.".format(type(request)))
         self._request = request
         # Access control element being evaluated
         self._ace = None
@@ -29,7 +33,7 @@ class EvaluationContext(object):
         return self._ace
 
     @ace.setter
-    def ace(self, value):
+    def ace(self, value: str):
         self._ace = value
 
     @property
@@ -37,7 +41,7 @@ class EvaluationContext(object):
         return self._attribute_path
 
     @attribute_path.setter
-    def attribute_path(self, path):
+    def attribute_path(self, path: str):
         self._attribute_path = path
 
     @property
