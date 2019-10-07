@@ -1,12 +1,12 @@
 """
-    Policy conditions class
+    Policy condition class
 """
 
 from marshmallow import Schema, fields, post_load
 from marshmallow_union import Union
 
-from ..conditions.others.equals_attribute import validate_path
-from ..conditions.schema import ConditionSchema
+from ..condition.others.equals_attribute import validate_path
+from ..condition.schema import ConditionSchema
 from ..context import EvaluationContext
 from ..request import Request
 
@@ -21,7 +21,7 @@ class Conditions(object):
 
     def is_satisfied(self, request: Request):
         """
-            Check if request satisfies all conditions
+            Check if request satisfies all condition
 
             :param request: authorization request
             :return: True if satisfied else False
@@ -36,7 +36,7 @@ class Conditions(object):
             Check if the access control element satisfies request
 
             :param ace_name: access control element name
-            :param ace_conditions: access control element conditions
+            :param ace_conditions: access control element condition
             :param request: authorization request
             :return: True if satisfied else False
         """
@@ -53,7 +53,7 @@ class Conditions(object):
             # If even one of the condition is satisfied, return True
             if self._implicit_and(ace_name, _ace_conditions, request):
                 return True
-        # If no conditions are satisfied, return False
+        # If no condition are satisfied, return False
         return False
 
     @staticmethod
@@ -65,7 +65,7 @@ class Conditions(object):
             # If even one of the condition is not satisfied, return False
             if not condition.is_satisfied(context):
                 return False
-        # If all conditions are satisfied, return True
+        # If all condition are satisfied, return True
         return True
 
 

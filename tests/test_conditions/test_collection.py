@@ -5,15 +5,15 @@
 import pytest
 from marshmallow import ValidationError
 
-from py_abac.conditions.collection import AllIn
-from py_abac.conditions.collection import AllNotIn
-from py_abac.conditions.collection import AnyIn
-from py_abac.conditions.collection import AnyNotIn
-from py_abac.conditions.collection import IsEmpty
-from py_abac.conditions.collection import IsIn
-from py_abac.conditions.collection import IsNotEmpty
-from py_abac.conditions.collection import IsNotIn
-from py_abac.conditions.schema import ConditionSchema
+from py_abac.condition.collection import AllIn
+from py_abac.condition.collection import AllNotIn
+from py_abac.condition.collection import AnyIn
+from py_abac.condition.collection import AnyNotIn
+from py_abac.condition.collection import IsEmpty
+from py_abac.condition.collection import IsIn
+from py_abac.condition.collection import IsNotEmpty
+from py_abac.condition.collection import IsNotIn
+from py_abac.condition.schema import ConditionSchema
 from py_abac.context import EvaluationContext
 from py_abac.request import Request
 

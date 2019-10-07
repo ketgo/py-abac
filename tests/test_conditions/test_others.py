@@ -1,16 +1,16 @@
 """
-    Other conditions tests
+    Other condition tests
 """
 
 import pytest
 from marshmallow import ValidationError
 
-from py_abac.conditions.others import Any
-from py_abac.conditions.others import CIDR
-from py_abac.conditions.others import EqualsAttribute
-from py_abac.conditions.others import Exists
-from py_abac.conditions.others import NotExists
-from py_abac.conditions.schema import ConditionSchema
+from py_abac.condition.others import Any
+from py_abac.condition.others import CIDR
+from py_abac.condition.others import EqualsAttribute
+from py_abac.condition.others import Exists
+from py_abac.condition.others import NotExists
+from py_abac.condition.schema import ConditionSchema
 from py_abac.context import EvaluationContext
 from py_abac.request import Request
 

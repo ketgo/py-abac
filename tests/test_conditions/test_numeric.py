@@ -5,13 +5,13 @@
 import pytest
 from marshmallow import ValidationError
 
-from py_abac.conditions.numeric import Eq
-from py_abac.conditions.numeric import Gt
-from py_abac.conditions.numeric import Gte
-from py_abac.conditions.numeric import Lt
-from py_abac.conditions.numeric import Lte
-from py_abac.conditions.numeric import Neq
-from py_abac.conditions.schema import ConditionSchema
+from py_abac.condition.numeric import Eq
+from py_abac.condition.numeric import Gt
+from py_abac.condition.numeric import Gte
+from py_abac.condition.numeric import Lt
+from py_abac.condition.numeric import Lte
+from py_abac.condition.numeric import Neq
+from py_abac.condition.schema import ConditionSchema
 from py_abac.context import EvaluationContext
 from py_abac.request import Request
 

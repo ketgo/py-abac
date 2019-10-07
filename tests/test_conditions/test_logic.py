@@ -5,11 +5,11 @@
 import pytest
 from marshmallow import ValidationError
 
-from py_abac.conditions.logic import AllOf
-from py_abac.conditions.logic import AnyOf
-from py_abac.conditions.logic import Not
-from py_abac.conditions.numeric import Gt, Lt
-from py_abac.conditions.schema import ConditionSchema
+from py_abac.condition.logic import AllOf
+from py_abac.condition.logic import AnyOf
+from py_abac.condition.logic import Not
+from py_abac.condition.numeric import Gt, Lt
+from py_abac.condition.schema import ConditionSchema
 from py_abac.context import EvaluationContext
 from py_abac.request import Request
 
