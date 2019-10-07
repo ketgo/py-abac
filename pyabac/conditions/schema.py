@@ -24,9 +24,12 @@ from .numeric.gte import Gte, GteSchema
 from .numeric.lt import Lt, LtSchema
 from .numeric.lte import Lte, LteSchema
 from .numeric.neq import Neq, NeqSchema
+# --- Object Conditions ---
+from .object.equals_object import EqualsObject, EqualsObjectSchema
 # --- Other Conditions ---
 from .others.any import Any, AnySchema
 from .others.cidr import CIDR, CIDRSchema
+from .others.equals_attribute import EqualsAttribute, EqualsAttributeSchema
 from .others.exists import Exists, ExistsSchema
 from .others.not_exists import NotExists, NotExistsSchema
 # --- String Conditions ---
@@ -75,4 +78,7 @@ class ConditionSchema(OneOfSchema):
         Exists.__name__: ExistsSchema,
         NotExists.__name__: NotExistsSchema,
         Any.__name__: AnySchema,
+        EqualsAttribute.__name__: EqualsAttributeSchema,
+        # --- Object Condition ---
+        EqualsObject.__name__: EqualsObjectSchema,
     }
