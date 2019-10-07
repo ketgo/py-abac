@@ -4,7 +4,6 @@
 
 from enum import Enum
 
-from .context import EvaluationContext
 from .request import Request
 from .storage.base import StorageBase
 
@@ -51,6 +50,5 @@ class PDP(object):
             raise ValueError("Invalid evaluation algorithm '{}'.".format(algorithm))
 
         policies = self.storage.get_for_request(request)
-        context = EvaluationContext(request)
 
         return False

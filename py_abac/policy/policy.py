@@ -4,8 +4,8 @@
 
 from marshmallow import Schema, fields, post_load, ValidationError, validate
 
-from .conditions import Conditions
-from .targets import Targets
+from .rules import Rules, RulesSchema
+from .targets import Targets, TargetsSchema
 from ..exceptions import PolicyCreateError
 from ..request import Request
 
@@ -16,11 +16,11 @@ ALLOW_ACCESS = "allow"
 
 class Policy(object):
 
-    def __init__(self, policy_id: str, description: str, conditions: Conditions, targets: Targets, effect: str,
+    def __init__(self, policy_id: str, description: str, rules: Rules, targets: Targets, effect: str,
                  priority: int):
         self.policy_id = policy_id
         self.description = description
-        self.conditions = conditions
+        self.rules = rules
         self.targets = targets
         self.effect = effect
         self.priority = priority
@@ -42,7 +42,7 @@ class Policy(object):
             :param request: authorization request
             :return: Tre if fits else False
         """
-        return self.conditions.is_satisfied(request) and self.targets.match(request)
+        return self.rules.is_satisfied(request) and self.targets.match(request)
 
     @property
     def is_allowed(self):
@@ -52,7 +52,8 @@ class Policy(object):
 class PolicySchema(Schema):
     policy_id = fields.String(required=True)
     description = fields.String(default="", missing="")
-
+    rules = fields.Nested(RulesSchema, required=True)
+    targets = fields.Nested(TargetsSchema, required=True)
     effect = fields.String(required=True, validate=validate.OneOf([DENY_ACCESS, ALLOW_ACCESS]))
     priority = fields.Integer(default=0, missing=0)
 
