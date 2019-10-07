@@ -5,14 +5,14 @@
 import pytest
 from marshmallow import ValidationError
 
-from pyabac.conditions.others import Any
-from pyabac.conditions.others import CIDR
-from pyabac.conditions.others import EqualsAttribute
-from pyabac.conditions.others import Exists
-from pyabac.conditions.others import NotExists
-from pyabac.conditions.schema import ConditionSchema
-from pyabac.context import EvaluationContext
-from pyabac.request import Request
+from py_abac.conditions.others import Any
+from py_abac.conditions.others import CIDR
+from py_abac.conditions.others import EqualsAttribute
+from py_abac.conditions.others import Exists
+from py_abac.conditions.others import NotExists
+from py_abac.conditions.schema import ConditionSchema
+from py_abac.context import EvaluationContext
+from py_abac.request import Request
 
 
 class TestOtherCondition(object):

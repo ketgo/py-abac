@@ -1,5 +1,5 @@
 """
-    pyabac global constants
+    py_abac global constants
 """
 
 # Access decisions

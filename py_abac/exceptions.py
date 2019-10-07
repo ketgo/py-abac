@@ -1,5 +1,5 @@
 """
-    All pyabac exceptions
+    All py_abac exceptions
 """
 
 

@@ -5,10 +5,10 @@
 import pytest
 from marshmallow import ValidationError
 
-from pyabac.conditions.object import EqualsObject
-from pyabac.conditions.schema import ConditionSchema
-from pyabac.context import EvaluationContext
-from pyabac.request import Request
+from py_abac.conditions.object import EqualsObject
+from py_abac.conditions.schema import ConditionSchema
+from py_abac.context import EvaluationContext
+from py_abac.request import Request
 
 
 class TestCollectionCondition(object):

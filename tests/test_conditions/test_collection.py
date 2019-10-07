@@ -5,17 +5,17 @@
 import pytest
 from marshmallow import ValidationError
 
-from pyabac.conditions.collection import AllIn
-from pyabac.conditions.collection import AllNotIn
-from pyabac.conditions.collection import AnyIn
-from pyabac.conditions.collection import AnyNotIn
-from pyabac.conditions.collection import IsEmpty
-from pyabac.conditions.collection import IsIn
-from pyabac.conditions.collection import IsNotEmpty
-from pyabac.conditions.collection import IsNotIn
-from pyabac.conditions.schema import ConditionSchema
-from pyabac.context import EvaluationContext
-from pyabac.request import Request
+from py_abac.conditions.collection import AllIn
+from py_abac.conditions.collection import AllNotIn
+from py_abac.conditions.collection import AnyIn
+from py_abac.conditions.collection import AnyNotIn
+from py_abac.conditions.collection import IsEmpty
+from py_abac.conditions.collection import IsIn
+from py_abac.conditions.collection import IsNotEmpty
+from py_abac.conditions.collection import IsNotIn
+from py_abac.conditions.schema import ConditionSchema
+from py_abac.context import EvaluationContext
+from py_abac.request import Request
 
 
 class TestCollectionCondition(object):

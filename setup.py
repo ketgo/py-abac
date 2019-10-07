@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 about = {}
-with open(path.join(here, 'pyabac', 'version.py'), mode='r', encoding='utf-8') as f:
+with open(path.join(here, 'py_abac', 'version.py'), mode='r', encoding='utf-8') as f:
     exec(f.read(), about)
 
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 if __name__ == '__main__':
     setup(
-        name='pyabac',
+        name='py_abac',
         description='Attribute-based access control (ABAC)',
         keywords='ACL ABAC access-control policy security authorization permission',
         version=about['__version__'],
@@ -22,7 +22,7 @@ if __name__ == '__main__':
         url='https://github.com/ketgo/pyabac.git',
         long_description=long_description,
         long_description_content_type='text/markdown',
-        py_modules=['pyabac'],
+        py_modules=['py_abac'],
         python_requires='>=3.4',
         install_requires=[
             'pymongo~=3.5',

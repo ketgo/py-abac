@@ -5,13 +5,13 @@
 import pytest
 from marshmallow import ValidationError
 
-from pyabac.conditions.logic import AllOf
-from pyabac.conditions.logic import AnyOf
-from pyabac.conditions.logic import Not
-from pyabac.conditions.numeric import Gt, Lt
-from pyabac.conditions.schema import ConditionSchema
-from pyabac.context import EvaluationContext
-from pyabac.request import Request
+from py_abac.conditions.logic import AllOf
+from py_abac.conditions.logic import AnyOf
+from py_abac.conditions.logic import Not
+from py_abac.conditions.numeric import Gt, Lt
+from py_abac.conditions.schema import ConditionSchema
+from py_abac.context import EvaluationContext
+from py_abac.request import Request
 
 
 class TestLogicCondition(object):

@@ -4,8 +4,8 @@
 
 import pytest
 
-from pyabac.exceptions import RequestCreateError, InvalidAccessControlElementError, InvalidAttributePathError
-from pyabac.request import Request
+from py_abac.exceptions import RequestCreateError, InvalidAccessControlElementError, InvalidAttributePathError
+from py_abac.request import Request
 
 
 def test_create():
