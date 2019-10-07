@@ -4,9 +4,9 @@
 
 import pytest
 
-from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
-from pyabac.common.exceptions import InquiryCreationError
-from pyabac.inquiry import Inquiry
+from py_abac.common.constants import DEFAULT_POLICY_COLLECTION
+from py_abac.common.exceptions import InquiryCreationError
+from py_abac.inquiry import Inquiry
 
 
 class TestInquiry(object):

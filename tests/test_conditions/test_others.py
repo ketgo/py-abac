@@ -4,11 +4,11 @@
 
 import pytest
 
-from pyabac.common.exceptions import ConditionCreationError
-from pyabac.conditions.others import Any
-from pyabac.conditions.others import CIDR
-from pyabac.conditions.others import Exists
-from pyabac.conditions.others import NotExists
+from py_abac.common.exceptions import ConditionCreationError
+from py_abac.conditions.others import Any
+from py_abac.conditions.others import CIDR
+from py_abac.conditions.others import Exists
+from py_abac.conditions.others import NotExists
 
 
 class TestOtherCondition(object):

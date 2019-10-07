@@ -4,13 +4,13 @@
 
 import pytest
 
-from pyabac.checker import Checker
-from pyabac.conditions.logic import Or
-from pyabac.conditions.numeric import Gt
-from pyabac.conditions.others import CIDR
-from pyabac.conditions.string import Equals, RegexMatch
-from pyabac.inquiry import Inquiry
-from pyabac.policy import Policy
+from py_abac.checker import Checker
+from py_abac.conditions.logic import Or
+from py_abac.conditions.numeric import Gt
+from py_abac.conditions.others import CIDR
+from py_abac.conditions.string import Equals, RegexMatch
+from py_abac.inquiry import Inquiry
+from py_abac.policy import Policy
 
 
 class TestChecker(object):

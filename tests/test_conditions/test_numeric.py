@@ -4,13 +4,13 @@
 
 import pytest
 
-from pyabac.common.exceptions import ConditionCreationError
-from pyabac.conditions.numeric import Eq
-from pyabac.conditions.numeric import Gt
-from pyabac.conditions.numeric import Gte
-from pyabac.conditions.numeric import Lt
-from pyabac.conditions.numeric import Lte
-from pyabac.conditions.numeric import Neq
+from py_abac.common.exceptions import ConditionCreationError
+from py_abac.conditions.numeric import Eq
+from py_abac.conditions.numeric import Gt
+from py_abac.conditions.numeric import Gte
+from py_abac.conditions.numeric import Lt
+from py_abac.conditions.numeric import Lte
+from py_abac.conditions.numeric import Neq
 
 
 class TestNumericCondition(object):

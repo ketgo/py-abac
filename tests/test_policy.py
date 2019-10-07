@@ -6,10 +6,10 @@ import uuid
 
 import pytest
 
-from pyabac.common.constants import DEFAULT_POLICY_COLLECTION, DENY_ACCESS, ALLOW_ACCESS
-from pyabac.common.exceptions import PolicyCreationError
-from pyabac.conditions.string import Equals
-from pyabac.policy import Policy
+from py_abac.common.constants import DEFAULT_POLICY_COLLECTION, DENY_ACCESS, ALLOW_ACCESS
+from py_abac.common.exceptions import PolicyCreationError
+from py_abac.conditions.string import Equals
+from py_abac.policy import Policy
 
 
 class TestPolicy(object):
@@ -18,7 +18,7 @@ class TestPolicy(object):
         uid = uuid.uuid4()
         policy = Policy(uid=uid,
                         description="test",
-                        subjects=[{"$.name": Equals("pyabac")}],
+                        subjects=[{"$.name": Equals("py_abac")}],
                         resources=[],
                         actions=[],
                         context={},
@@ -28,7 +28,7 @@ class TestPolicy(object):
             "uid": str(uid),
             "description": "test",
             "subjects": [{"$.name": {"condition": "Equals",
-                                     "value": "pyabac",
+                                     "value": "py_abac",
                                      "case_insensitive": False}}],
             "resources": [],
             "actions": [],
@@ -42,7 +42,7 @@ class TestPolicy(object):
         uid = str(uuid.uuid4())
         policy = Policy(uid=uid,
                         description="test",
-                        subjects=[{"$.name": Equals("pyabac")}],
+                        subjects=[{"$.name": Equals("py_abac")}],
                         resources=[],
                         actions=[],
                         context={},
@@ -52,7 +52,7 @@ class TestPolicy(object):
             "uid": uid,
             "description": "test",
             "subjects": [{"$.name": {"condition": "Equals",
-                                     "value": "pyabac",
+                                     "value": "py_abac",
                                      "case_insensitive": False}}],
             "resources": [],
             "actions": [],
@@ -279,7 +279,7 @@ class TestPolicy(object):
     def test_allow_access(self):
         policy = Policy(uid=uuid.uuid4(),
                         description="test",
-                        subjects=[{"$.name": Equals("pyabac")}],
+                        subjects=[{"$.name": Equals("py_abac")}],
                         resources=[],
                         actions=[],
                         context={},

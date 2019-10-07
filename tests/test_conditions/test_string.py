@@ -4,14 +4,14 @@
 
 import pytest
 
-from pyabac.common.exceptions import ConditionCreationError
-from pyabac.conditions.string import Contains
-from pyabac.conditions.string import EndsWith
-from pyabac.conditions.string import Equals
-from pyabac.conditions.string import NotContains
-from pyabac.conditions.string import NotEquals
-from pyabac.conditions.string import RegexMatch
-from pyabac.conditions.string import StartsWith
+from py_abac.common.exceptions import ConditionCreationError
+from py_abac.conditions.string import Contains
+from py_abac.conditions.string import EndsWith
+from py_abac.conditions.string import Equals
+from py_abac.conditions.string import NotContains
+from py_abac.conditions.string import NotEquals
+from py_abac.conditions.string import RegexMatch
+from py_abac.conditions.string import StartsWith
 
 
 class TestStringCondition(object):

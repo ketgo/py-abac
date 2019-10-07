@@ -4,15 +4,15 @@
 
 import pytest
 
-from pyabac.common.constants import DENY_ACCESS, ALLOW_ACCESS
-from pyabac.conditions.logic import Or
-from pyabac.conditions.others import CIDR
-from pyabac.conditions.others import Exists
-from pyabac.conditions.string import Equals, RegexMatch
-from pyabac.guard import Guard
-from pyabac.inquiry import Inquiry
-from pyabac.policy import Policy
-from pyabac.storage.memory import MemoryStorage
+from py_abac.common.constants import DENY_ACCESS, ALLOW_ACCESS
+from py_abac.conditions.logic import Or
+from py_abac.conditions.others import CIDR
+from py_abac.conditions.others import Exists
+from py_abac.conditions.string import Equals, RegexMatch
+from py_abac.guard import Guard
+from py_abac.inquiry import Inquiry
+from py_abac.policy import Policy
+from py_abac.storage.memory import MemoryStorage
 
 st = MemoryStorage()
 policies = [

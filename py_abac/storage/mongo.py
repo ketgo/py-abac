@@ -7,7 +7,7 @@ import logging
 
 from pymongo.errors import DuplicateKeyError
 
-from pyabac.common.exceptions import PolicyExistsError
+from py_abac.common.exceptions import PolicyExistsError
 from .abc import Storage, DEFAULT_POLICY_COLLECTION
 from ..policy import Policy
 

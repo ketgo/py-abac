@@ -3,7 +3,7 @@
 """
 import logging
 
-from pyabac.common.exceptions import PolicyExistsError
+from py_abac.common.exceptions import PolicyExistsError
 from ..storage.abc import Storage, DEFAULT_POLICY_COLLECTION
 
 log = logging.getLogger(__name__)

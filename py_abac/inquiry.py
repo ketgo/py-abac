@@ -4,8 +4,8 @@
 
 from marshmallow import Schema, fields, post_load, ValidationError
 
-from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
-from pyabac.common.exceptions import InquiryCreationError
+from py_abac.common.constants import DEFAULT_POLICY_COLLECTION
+from py_abac.common.exceptions import InquiryCreationError
 
 
 class Inquiry(object):

@@ -5,14 +5,14 @@
 import pytest
 from pymongo import MongoClient
 
-from pyabac.common.constants import DEFAULT_POLICY_COLLECTION
-from pyabac.common.exceptions import PolicyExistsError
-from pyabac.conditions.logic import Or
-from pyabac.conditions.others import Exists
-from pyabac.conditions.string import Equals
-from pyabac.inquiry import Inquiry
-from pyabac.policy import Policy
-from pyabac.storage.mongo import MongoStorage
+from py_abac.common.constants import DEFAULT_POLICY_COLLECTION
+from py_abac.common.exceptions import PolicyExistsError
+from py_abac.conditions.logic import Or
+from py_abac.conditions.others import Exists
+from py_abac.conditions.string import Equals
+from py_abac.inquiry import Inquiry
+from py_abac.policy import Policy
+from py_abac.storage.mongo import MongoStorage
 
 MONGO_HOST = '127.0.0.1'
 MONGO_PORT = 27017

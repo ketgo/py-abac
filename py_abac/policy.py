@@ -8,10 +8,10 @@ import uuid
 from marshmallow import Schema, fields, validate, post_load, ValidationError
 from objectpath import Tree
 
-from pyabac.common.constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
-from pyabac.common.exceptions import PolicyCreationError
-from pyabac.conditions.base import ConditionBase
-from pyabac.conditions.schema import ConditionSchema
+from py_abac.common.constants import DENY_ACCESS, ALLOW_ACCESS, DEFAULT_POLICY_COLLECTION
+from py_abac.common.exceptions import PolicyCreationError
+from py_abac.conditions.base import ConditionBase
+from py_abac.conditions.schema import ConditionSchema
 
 log = logging.getLogger(__name__)
 

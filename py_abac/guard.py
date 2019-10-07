@@ -2,9 +2,9 @@
     This file contains implementation fo the ABAC engine
 """
 
-from pyabac.checker import Checker
-from pyabac.inquiry import Inquiry
-from pyabac.storage.abc import Storage
+from py_abac.checker import Checker
+from py_abac.inquiry import Inquiry
+from py_abac.storage.abc import Storage
 
 
 class Guard(object):

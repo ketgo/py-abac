@@ -4,11 +4,11 @@
 
 import pytest
 
-from pyabac.common.exceptions import ConditionCreationError
-from pyabac.conditions.logic import And
-from pyabac.conditions.logic import Not
-from pyabac.conditions.logic import Or
-from pyabac.conditions.numeric import Gt, Lt
+from py_abac.common.exceptions import ConditionCreationError
+from py_abac.conditions.logic import And
+from py_abac.conditions.logic import Not
+from py_abac.conditions.logic import Or
+from py_abac.conditions.numeric import Gt, Lt
 
 
 class TestLogicCondition(object):
