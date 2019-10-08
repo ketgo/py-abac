@@ -2,11 +2,12 @@
     Policy targets class
 """
 
-import re
+import fnmatch
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, validate
+from marshmallow_union import Union
 
-from ..request import Request
+from .context import EvaluationContext
 
 
 class Targets(object):
@@ -16,40 +17,40 @@ class Targets(object):
         self.resource_id = resource_id
         self.action_id = action_id
 
-    def match(self, request: Request):
+    def match(self, ctx: EvaluationContext):
         """
             Check if request matches policy targets
 
-            :param request: authorization request
+            :param ctx: policy evaluation context
             :return: True if matches else False
         """
-        return self._is_in(self.subject_id, request.subject_id) and \
-               self._is_in(self.resource_id, request.resource_id) and \
-               self._is_in(self.action_id, request.action_id)
+        return self._is_in(self.subject_id, ctx.request.subject_id) and \
+               self._is_in(self.resource_id, ctx.request.resource_id) and \
+               self._is_in(self.action_id, ctx.request.action_id)
 
-    def _is_in(self, ace_ids: list, ace_id: str):
+    @staticmethod
+    def _is_in(ace_ids, ace_id: str):
         """
             Returns True if `ace_id` is in `ace_ids`.
         """
-        for _id in ace_ids:
-            if self.__same(_id, ace_id):
+        _ace_ids = ace_ids if isinstance(ace_ids, list) else [ace_ids]
+        for _id in _ace_ids:
+            # Unix file name type string matching
+            if fnmatch.fnmatch(ace_id, _id):
                 return True
+        return False
 
-    @staticmethod
-    def __same(pattern: str, what: str):
-        rvalue = False
-        # If `pattern` is substring of `what` then return False as regex match returns True
-        if len(pattern) < len(what) and pattern in what:
-            return rvalue
-        if re.search(pattern, what):
-            rvalue = True
-        return rvalue
+
+TargetsField = Union([
+    fields.String(validate=validate.Length(min=1), missing="*", default="*"),
+    fields.List(fields.String(validate=validate.Length(min=1)), missing=["*"], default=["*"])
+])
 
 
 class TargetsSchema(Schema):
-    subject_id = fields.List(fields.String(required=True), default=[r".*"], missing=[r".*"])
-    resource_id = fields.List(fields.String(required=True), default=[r".*"], missing=[r".*"])
-    action_id = fields.List(fields.String(required=True), default=[r".*"], missing=[r".*"])
+    subject_id = TargetsField
+    resource_id = TargetsField
+    action_id = TargetsField
 
     @post_load
     def post_load(self, data, **_):

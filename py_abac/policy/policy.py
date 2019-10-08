@@ -4,6 +4,7 @@
 
 from marshmallow import Schema, fields, post_load, ValidationError, validate
 
+from .context import EvaluationContext
 from .rules import Rules, RulesSchema
 from .targets import Targets, TargetsSchema
 from ..exceptions import PolicyCreateError
@@ -42,7 +43,8 @@ class Policy(object):
             :param request: authorization request
             :return: Tre if fits else False
         """
-        return self.rules.is_satisfied(request) and self.targets.match(request)
+        ctx = EvaluationContext(request)
+        return self.rules.is_satisfied(ctx) and self.targets.match(ctx)
 
     @property
     def is_allowed(self):

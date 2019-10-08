@@ -8,7 +8,6 @@ from marshmallow_union import Union
 from .conditions.others.equals_attribute import validate_path
 from .conditions.schema import ConditionSchema
 from .context import EvaluationContext
-from ..request import Request
 
 
 class Rules(object):
@@ -19,59 +18,58 @@ class Rules(object):
         self.action = action
         self.context = context
 
-    def is_satisfied(self, request: Request):
+    def is_satisfied(self, ctx: EvaluationContext):
         """
             Check if request satisfies all conditions
 
-            :param request: authorization request
+            :param ctx: policy evaluation context
             :return: True if satisfied else False
         """
-        return self._is_satisfied("subject", self.subject, request) and \
-               self._is_satisfied("resource", self.resource, request) and \
-               self._is_satisfied("action", self.action, request) and \
-               self._is_satisfied("context", self.context, request)
+        return self._is_satisfied("subject", self.subject, ctx) and \
+               self._is_satisfied("resource", self.resource, ctx) and \
+               self._is_satisfied("action", self.action, ctx) and \
+               self._is_satisfied("context", self.context, ctx)
 
-    def _is_satisfied(self, ace_name: str, ace_conditions, request: Request):
+    def _is_satisfied(self, ace_name: str, ace_conditions, ctx: EvaluationContext):
         """
             Check if the access control element satisfies request
 
             :param ace_name: access control element name
             :param ace_conditions: access control element conditions
-            :param request: authorization request
+            :param ctx: policy evaluation context
             :return: True if satisfied else False
         """
         if isinstance(ace_conditions, list):
-            return self._implicit_or(ace_name, ace_conditions, request)
+            return self._implicit_or(ace_name, ace_conditions, ctx)
         if isinstance(ace_conditions, dict):
-            return self._implicit_and(ace_name, ace_conditions, request)
+            return self._implicit_and(ace_name, ace_conditions, ctx)
 
         # If ace is not in correct format, return False
         return False
 
-    def _implicit_or(self, ace_name: str, ace_conditions: list, request: Request):
+    def _implicit_or(self, ace_name: str, ace_conditions: list, ctx: EvaluationContext):
         for _ace_conditions in ace_conditions:
             # If even one of the conditions is satisfied, return True
-            if self._implicit_and(ace_name, _ace_conditions, request):
+            if self._implicit_and(ace_name, _ace_conditions, ctx):
                 return True
         # If no conditions are satisfied, return False
         return False
 
     @staticmethod
-    def _implicit_and(ace_name: str, ace_conditions: dict, request: Request):
+    def _implicit_and(ace_name: str, ace_conditions: dict, ctx: EvaluationContext):
         for attribute_path, condition in ace_conditions.items():
-            context = EvaluationContext(request)
-            context.ace = ace_name
-            context.attribute_path = attribute_path
+            ctx.ace = ace_name
+            ctx.attribute_path = attribute_path
             # If even one of the conditions is not satisfied, return False
-            if not condition.is_satisfied(context):
+            if not condition.is_satisfied(ctx):
                 return False
         # If all conditions are satisfied, return True
         return True
 
 
 RulesField = Union([
-    fields.Dict(keys=fields.String(validate=validate_path), values=fields.Nested(ConditionSchema), default={},
-                missing={}),
+    fields.Dict(keys=fields.String(validate=validate_path), values=fields.Nested(ConditionSchema),
+                default={}, missing={}),
     fields.List(fields.Dict(keys=fields.String(validate=validate_path), values=fields.Nested(ConditionSchema)),
                 default=[], missing=[])
 ])
