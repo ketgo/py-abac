@@ -5,9 +5,9 @@
 import pytest
 from marshmallow import ValidationError
 
+from py_abac.policy.context import EvaluationContext
 from py_abac.policy.targets import Targets, TargetsSchema
 from py_abac.request import Request
-from py_abac.policy.context import EvaluationContext
 
 
 def test_create():
