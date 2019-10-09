@@ -2,6 +2,7 @@
     MongoDB policy model test
 """
 
+import fnmatch
 import json
 
 import pytest
@@ -131,7 +132,7 @@ def test__targets_to_tags(policy_json, tags):
     assert PolicyModel._targets_to_tags(policy.targets) == tags
 
 
-@pytest.mark.parametrize("string, splits", [
+@pytest.mark.parametrize("wc_id, splits", [
     ("a", ["a"]),
     ("*", ["*"]),
 
@@ -164,5 +165,22 @@ def test__targets_to_tags(policy_json, tags):
     ("a***", ["a*"]),
     ("****", ["*"]),
 ])
-def test__split_id(string, splits):
-    assert _split_id(string) == splits
+def test__split_id(wc_id, splits):
+    target_id = "abcd"
+    assert _split_id(wc_id) == splits
+    assert fnmatch.fnmatch(target_id, wc_id) == all(fnmatch.fnmatch(target_id, x) for x in splits)
+
+
+@pytest.mark.parametrize("target_id, wc_ids", [
+    ("a", ["a", "*a", "a*"]),
+    ("ab", ["ab", "*ab", "ab*", "a*", "*b"]),
+    ("abc", ["abc", "*abc", "abc*", "ab*", "a*c", "*bc", "*b*"]),
+    ("abcd", ["abcd", "*abcd", "abcd*", "abc*", "ab*d", "a*cd", "*bcd", "*b*d", "*bc*", "a*c*"]),
+])
+def test__get_all_ids(target_id, wc_ids):
+    # assert _get_all_ids(target_id) == wc_ids
+    assert all(fnmatch.fnmatch(target_id, x) for x in wc_ids)
+
+
+def test_get_filter_query():
+    pass

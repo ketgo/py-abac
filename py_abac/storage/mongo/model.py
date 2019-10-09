@@ -1,5 +1,5 @@
 """
-    MongoDB data storage model
+    MongoDB policy storage model
 """
 
 import json
@@ -9,10 +9,24 @@ from ...policy import Policy
 from ...policy.targets import Targets
 
 
-def _split_id(string: str) -> list:
+def _split_id(wc_id: str) -> list:
+    """
+        This method splits a wildcard-ed ID `wc_id` in such a way that if `wc_id`
+        matches an arbitrary string, then all its members also match that string.
+        This is achieved by splitting the ID by the wildcard "*". Furthermore, each
+        member of the split is prefixed and suffixed with the wildcard, depending
+        on the location of the wildcard itself.
+
+            Examples:
+                "ab*c" -> ["ab*", "*c"]
+                "*a*b" -> ["*a*", "*b"]
+                "ab**" -> ["ab*"]
+
+        See unit tests for more examples.
+    """
     # Remove consecutive wildcard duplicates, e.g. ab** -> ab*
-    _string = string
-    for rep in re.findall(r"\*\**", string):
+    _string = wc_id
+    for rep in re.findall(r"\*\**", wc_id):
         _string = _string.replace(rep, "*")
 
     # Split if wildcard is in string and length of string is greater than 1 character
@@ -36,6 +50,18 @@ def _split_id(string: str) -> list:
         return splits
 
     return [_string]
+
+
+def _get_all_ids(target_id: str) -> list:
+    """
+        This method computes all possible wildcard-ed IDs for a given target ID.
+
+            Examples:
+
+
+        See unit tests for more examples.
+    """
+    return [target_id]
 
 
 class PolicyModel(object):
@@ -77,13 +103,15 @@ class PolicyModel(object):
         """
             Get query using target ids to retrieve policies
         """
-        return {}
+        return {"subject": {"$elemMatch": {"$in": _get_all_ids(subject_id)}},
+                "resource": {"$elemMatch": {"$in": _get_all_ids(resource_id)}},
+                "action": {"$elemMatch": {"$in": _get_all_ids(action_id)}}}
 
     @staticmethod
     def _targets_to_tags(targets: Targets):
-        subject_ids = targets.subject_id if isinstance(targets.subject_id, list) else [targets.subject_id]
-        resource_ids = targets.resource_id if isinstance(targets.resource_id, list) else [targets.resource_id]
-        action_ids = targets.action_id if isinstance(targets.action_id, list) else [targets.action_id]
-        return {"subject": [{"id": _split_id(subject_id)} for subject_id in subject_ids],
-                "resource": [{"id": _split_id(resource_id)} for resource_id in resource_ids],
-                "action": [{"id": _split_id(action_id)} for action_id in action_ids]}
+        wc_subject_ids = targets.subject_id if isinstance(targets.subject_id, list) else [targets.subject_id]
+        wc_resource_ids = targets.resource_id if isinstance(targets.resource_id, list) else [targets.resource_id]
+        wc_action_ids = targets.action_id if isinstance(targets.action_id, list) else [targets.action_id]
+        return {"subject": [{"id": _split_id(x)} for x in wc_subject_ids],
+                "resource": [{"id": _split_id(x)} for x in wc_resource_ids],
+                "action": [{"id": _split_id(x)} for x in wc_action_ids]}
