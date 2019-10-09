@@ -17,9 +17,9 @@ ALLOW_ACCESS = "allow"
 
 class Policy(object):
 
-    def __init__(self, policy_id: str, description: str, rules: Rules, targets: Targets, effect: str,
+    def __init__(self, uid: str, description: str, rules: Rules, targets: Targets, effect: str,
                  priority: int):
-        self.policy_id = policy_id
+        self.uid = uid
         self.description = description
         self.rules = rules
         self.targets = targets
@@ -52,12 +52,12 @@ class Policy(object):
 
 
 class PolicySchema(Schema):
-    policy_id = fields.String(required=True)
+    uid = fields.String(required=True)
     description = fields.String(default="", missing="")
     rules = fields.Nested(RulesSchema, required=True)
     targets = fields.Nested(TargetsSchema, required=True)
     effect = fields.String(required=True, validate=validate.OneOf([DENY_ACCESS, ALLOW_ACCESS]))
-    priority = fields.Integer(default=0, missing=0)
+    priority = fields.Integer(default=0, missing=0, validate=validate.Range(min=0))
 
     @post_load
     def post_load(self, data, **_):

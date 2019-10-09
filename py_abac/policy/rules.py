@@ -3,7 +3,6 @@
 """
 
 from marshmallow import Schema, fields, post_load
-from marshmallow_union import Union
 
 from .conditions.others.equals_attribute import validate_path
 from .conditions.schema import ConditionSchema
@@ -67,19 +66,31 @@ class Rules(object):
         return True
 
 
-RulesField = Union([
-    fields.Dict(keys=fields.String(validate=validate_path), values=fields.Nested(ConditionSchema),
-                default={}, missing={}),
-    fields.List(fields.Dict(keys=fields.String(validate=validate_path), values=fields.Nested(ConditionSchema)),
-                default=[], missing=[])
-])
+class RuleField(fields.Field):
+    """
+        Marshmallow field class for rules
+    """
+    _implicit_and_field = fields.Dict(keys=fields.String(validate=validate_path),
+                                      values=fields.Nested(ConditionSchema))
+    _implicit_or_field = fields.List(fields.Dict(keys=fields.String(validate=validate_path),
+                                                 values=fields.Nested(ConditionSchema)))
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        if isinstance(value, list):
+            return self._implicit_or_field._serialize(value, attr, obj, **kwargs)
+        return self._implicit_and_field._serialize(value, attr, obj, **kwargs)
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, list):
+            return self._implicit_or_field._deserialize(value, attr, data, **kwargs)
+        return self._implicit_and_field._deserialize(value, attr, data, **kwargs)
 
 
 class RulesSchema(Schema):
-    subject = RulesField
-    resource = RulesField
-    action = RulesField
-    context = RulesField
+    subject = RuleField(default={}, missing={})
+    resource = RuleField(default={}, missing={})
+    action = RuleField(default={}, missing={})
+    context = RuleField(default={}, missing={})
 
     @post_load
     def post_load(self, data, **_):

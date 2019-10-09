@@ -5,7 +5,6 @@
 import fnmatch
 
 from marshmallow import Schema, fields, post_load, validate
-from marshmallow_union import Union
 
 from .context import EvaluationContext
 
@@ -41,16 +40,28 @@ class Targets(object):
         return False
 
 
-TargetsField = Union([
-    fields.String(validate=validate.Length(min=1), missing="*", default="*"),
-    fields.List(fields.String(validate=validate.Length(min=1)), missing=["*"], default=["*"])
-])
+class TargetField(fields.Field):
+    """
+        Marshmallow field class for targets
+    """
+    _single = fields.String(validate=validate.Length(min=1))
+    _many = fields.List(fields.String(validate=validate.Length(min=1)), validate=validate.Length(min=1))
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        if isinstance(value, list):
+            return self._many._serialize(value, attr, obj, **kwargs)
+        return self._single._serialize(value, attr, obj, **kwargs)
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, list):
+            return self._many.deserialize(value, attr, data, **kwargs)
+        return self._single.deserialize(value, attr, data, **kwargs)
 
 
 class TargetsSchema(Schema):
-    subject_id = TargetsField
-    resource_id = TargetsField
-    action_id = TargetsField
+    subject_id = TargetField(missing="*", default="*")
+    resource_id = TargetField(missing="*", default="*")
+    action_id = TargetField(missing="*", default="*")
 
     @post_load
     def post_load(self, data, **_):

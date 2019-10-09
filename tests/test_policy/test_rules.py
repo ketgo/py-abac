@@ -28,6 +28,17 @@ def test_create():
     assert rules.action == {}
     assert rules.context == {}
 
+    rules_json = {
+        "subject": {"$.uid": {"condition": "Eq", "value": 1.0}},
+    }
+    rules = RulesSchema().load(rules_json)
+    assert isinstance(rules, Rules)
+    assert isinstance(rules.subject["$.uid"], Eq)
+    assert rules.subject["$.uid"].value == 1.0
+    assert rules.resource == {}
+    assert rules.action == {}
+    assert rules.context == {}
+
 
 @pytest.mark.parametrize("rules_json", [
     {"subject": None},

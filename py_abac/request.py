@@ -83,7 +83,7 @@ class _AccessElementSchema(Schema):
         JSON schema for access element
     """
     id = fields.String(required=True)
-    attributes = fields.Dict(required=True)
+    attributes = fields.Dict(default={}, missing={})
 
 
 class _RequestSchema(Schema):
@@ -93,7 +93,7 @@ class _RequestSchema(Schema):
     subject = fields.Nested(_AccessElementSchema, required=True)
     resource = fields.Nested(_AccessElementSchema, required=True)
     action = fields.Nested(_AccessElementSchema, required=True)
-    context = fields.Dict(required=True)
+    context = fields.Dict(default={}, missing={})
 
     @post_load
     def post_load(self, data, **_):
