@@ -172,10 +172,27 @@ def test__split_id(wc_id, splits):
 
 
 @pytest.mark.parametrize("target_id, wc_ids", [
-    ("a", ["a", "*a", "a*"]),
-    ("ab", ["ab", "*ab", "ab*", "a*", "*b"]),
-    ("abc", ["abc", "*abc", "abc*", "ab*", "a*c", "*bc", "*b*"]),
-    ("abcd", ["abcd", "*abcd", "abcd*", "abc*", "ab*d", "a*cd", "*bcd", "*b*d", "*bc*", "a*c*"]),
+    ("a", ["a",
+           "*a", "a*"]),
+    ("ab", ["ab",
+            "*ab", "ab*", "*ab*",
+            "a*", "*a*",
+            "*b", "*b*"]),
+    ("abc", ["abc",
+             "*abc", "abc*", "*abc*",
+             "ab*", "*ab*",
+             "a*c", "*a*c", "a*c*", "*a*c*",
+             "*bc", "*bc*",
+             "*b*"]),
+    ("abcd", ["abcd",
+              "*abcd", "abcd*", "*abcd*",
+              "abc*", "*abc*",
+              "ab*d", "*ab*d", "ab*d*", "*ab*d*",
+              "a*cd", "*a*cd", "a*cd*", "*a*cd*",
+              "*bcd", "*bcd*",
+              "*b*d", "*b*d*",
+              "*bc*",
+              "a*c*", "*a*c*"]),
 ])
 def test__get_all_ids(target_id, wc_ids):
     # assert _get_all_ids(target_id) == wc_ids
