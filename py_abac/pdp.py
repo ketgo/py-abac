@@ -49,6 +49,42 @@ class PDP(object):
         if algorithm not in EvaluationAlgorithm:
             raise ValueError("Invalid evaluation algorithm '{}'.".format(algorithm))
 
-        policies = self.storage.get_for_request(request)
+        # Get filtered policies based on targets from storage
+        policies = self.storage.get_for_target(request.subject_id, request.resource_id, request.action_id)
+        # Filter policies based on fit with authorization request
+        policies = [p for p in policies if p.fits(request)]
 
-        return False
+        # Run appropriate evaluation algorithm
+        evaluate = getattr(self, "_{}".format(algorithm.value))
+
+        return evaluate(policies)
+
+    @staticmethod
+    def _allow_overrides(policies):
+        """
+            Allow overrides evaluation algorithm
+
+            :param policies: list of policies to evaluate
+            :return: True if request is authorized else False
+        """
+        raise NotImplementedError()
+
+    @staticmethod
+    def _deny_overrides(policies):
+        """
+            Deny overrides evaluation algorithm
+
+            :param policies: list of policies to evaluate
+            :return: True if request is authorized else False
+        """
+        raise NotImplementedError()
+
+    @staticmethod
+    def _highest_priority(policies):
+        """
+            Highest priority evaluation algorithm
+
+            :param policies: list of policies to evaluate
+            :return: True if request is authorized else False
+        """
+        raise NotImplementedError()

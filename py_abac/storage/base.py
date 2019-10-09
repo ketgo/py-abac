@@ -4,53 +4,55 @@
 
 from abc import ABCMeta, abstractmethod
 
+from ..policy import Policy
+
 
 class StorageBase(metaclass=ABCMeta):
 
     @abstractmethod
-    def add(self, policy):
+    def add(self, policy: Policy):
         """
             Store a policy
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def get(self, uid):
+    def get(self, uid: str):
         """
             Get specific policy
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def get_all(self, limit, offset):
+    def get_all(self, limit: int, offset: int):
         """
             Retrieve all the policies within a window
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def get_for_request(self, request):
+    def get_for_target(self, subject_id: str, resource_id: str, action_id: str):
         """
-            Get all policies for given request.
+            Get all policies for given target IDs.
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def update(self, policy):
+    def update(self, policy: Policy):
         """
             Update a policy
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def delete(self, uid):
+    def delete(self, uid: str):
         """
             Delete a policy
         """
         raise NotImplementedError()
 
     @staticmethod
-    def _check_limit_and_offset(limit, offset):
+    def _check_limit_and_offset(limit: int, offset: int):
         if limit < 0:
             raise ValueError("Limit can't be negative")
         if offset < 0:
