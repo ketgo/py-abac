@@ -61,7 +61,21 @@ def _get_all_ids(target_id: str) -> list:
 
         See unit tests for more examples.
     """
-    return [target_id]
+    rvalue = {target_id: True}
+    length = len(target_id)
+    # Compute all N-grams
+    for N in range(length):
+        # Compute N-grams
+        size = length - N
+        span = N + 1
+        rvalue["*" + target_id[:span] + "*"] = True
+        rvalue[target_id[:span] + "*"] = True
+        for i in range(1, size - 1):
+            rvalue["*" + target_id[i:i + span] + "*"] = True
+        rvalue["*" + target_id[size - 1:size - 1 + span]] = True
+        rvalue["*" + target_id[size - 1:size - 1 + span] + "*"] = True
+
+    return list(rvalue.keys())
 
 
 class PolicyModel(object):

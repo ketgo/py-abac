@@ -2,7 +2,7 @@
     Authorization request class
 """
 
-from marshmallow import Schema, fields, ValidationError, post_load
+from marshmallow import Schema, fields, validate, ValidationError, post_load
 from objectpath import Tree
 
 from .exceptions import RequestCreateError, InvalidAccessControlElementError, InvalidAttributePathError
@@ -82,7 +82,7 @@ class _AccessElementSchema(Schema):
     """
         JSON schema for access element
     """
-    id = fields.String(required=True)
+    id = fields.String(required=True, validate=validate.Length(max=400))
     attributes = fields.Dict(default={}, missing={})
 
 

@@ -8,7 +8,7 @@ import json
 import pytest
 
 from py_abac.policy import Policy
-from py_abac.storage.mongo.model import PolicyModel, _split_id
+from py_abac.storage.mongo.model import PolicyModel, _split_id, _get_all_ids
 
 
 def test_from_policy():
@@ -172,32 +172,38 @@ def test__split_id(wc_id, splits):
 
 
 @pytest.mark.parametrize("target_id, wc_ids", [
-    ("a", ["a",
-           "*a", "a*"]),
-    ("ab", ["ab",
-            "*ab", "ab*", "*ab*",
-            "a*", "*a*",
-            "*b", "*b*"]),
-    ("abc", ["abc",
-             "*abc", "abc*", "*abc*",
-             "ab*", "*ab*",
-             "a*c", "*a*c", "a*c*", "*a*c*",
-             "*bc", "*bc*",
-             "*b*"]),
-    ("abcd", ["abcd",
-              "*abcd", "abcd*", "*abcd*",
-              "abc*", "*abc*",
-              "ab*d", "*ab*d", "ab*d*", "*ab*d*",
-              "a*cd", "*a*cd", "a*cd*", "*a*cd*",
-              "*bcd", "*bcd*",
-              "*b*d", "*b*d*",
-              "*bc*",
-              "a*c*", "*a*c*"]),
+    ("a", ['a', '*a*', 'a*', '*a']),
+    ("ab", ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']),
+    ("abc", ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']),
+    ("abcd",
+     ['abcd', '*a*', 'a*', '*b*', '*c*', '*d', '*d*', '*ab*', 'ab*', '*bc*', '*cd', '*cd*', '*abc*', 'abc*', '*bcd',
+      '*bcd*', '*abcd*', 'abcd*', '*abcd'])
 ])
 def test__get_all_ids(target_id, wc_ids):
-    # assert _get_all_ids(target_id) == wc_ids
+    assert _get_all_ids(target_id) == wc_ids
     assert all(fnmatch.fnmatch(target_id, x) for x in wc_ids)
 
 
-def test_get_filter_query():
-    pass
+@pytest.mark.parametrize("subject_id, resource_id, action_id, query", [
+    ("ab", "ab", "ab",
+     {"subject": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
+      "resource": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
+      "action": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}}),
+    ("abc", "ab", "ab",
+     {"subject": {"$elemMatch": {
+         "$in": ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']}},
+      "resource": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
+      "action": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}}),
+    ("ab", "abc", "ab",
+     {"subject": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
+      "resource": {"$elemMatch": {
+          "$in": ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']}},
+      "action": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}}),
+    ("ab", "ab", "abc",
+     {"subject": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
+      "resource": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
+      "action": {"$elemMatch": {
+          "$in": ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']}}}),
+])
+def test_get_filter_query(subject_id, resource_id, action_id, query):
+    assert PolicyModel.get_filter_query(subject_id, resource_id, action_id) == query
