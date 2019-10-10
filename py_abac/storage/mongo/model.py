@@ -117,9 +117,9 @@ class PolicyModel(object):
         """
             Get query using target ids to retrieve policies
         """
-        return {"subject": {"$elemMatch": {"$in": _get_all_ids(subject_id)}},
-                "resource": {"$elemMatch": {"$in": _get_all_ids(resource_id)}},
-                "action": {"$elemMatch": {"$in": _get_all_ids(action_id)}}}
+        return {"tags.subject": {"$elemMatch": {"id": {"$in": _get_all_ids(subject_id)}}},
+                "tags.resource": {"$elemMatch": {"id": {"$in": _get_all_ids(resource_id)}}},
+                "tags.action": {"$elemMatch": {"id": {"$in": _get_all_ids(action_id)}}}}
 
     @staticmethod
     def _targets_to_tags(targets: Targets):
