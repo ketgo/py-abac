@@ -5,6 +5,7 @@
 import pytest
 from marshmallow import ValidationError
 
+from py_abac.context import EvaluationContext
 from py_abac.policy.conditions.schema import ConditionSchema
 from py_abac.policy.conditions.string import Contains
 from py_abac.policy.conditions.string import EndsWith
@@ -13,7 +14,6 @@ from py_abac.policy.conditions.string import NotContains
 from py_abac.policy.conditions.string import NotEquals
 from py_abac.policy.conditions.string import RegexMatch
 from py_abac.policy.conditions.string import StartsWith
-from py_abac.policy.context import EvaluationContext
 from py_abac.request import Request
 
 

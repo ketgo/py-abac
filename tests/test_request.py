@@ -31,9 +31,9 @@ def test_create():
     }
     request = Request.from_json(request_json)
 
-    assert request_json["subject"]["id"] == request.subject_id
-    assert request_json["resource"]["id"] == request.resource_id
-    assert request_json["action"]["id"] == request.action_id
+    assert request_json["subject"]["id"] == request._subject_id
+    assert request_json["resource"]["id"] == request._resource_id
+    assert request_json["action"]["id"] == request._action_id
 
 
 def test_get_value():

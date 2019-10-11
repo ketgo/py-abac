@@ -4,7 +4,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-from ..context import EvaluationContext
+from py_abac.context import EvaluationContext
 
 
 class ConditionBase(metaclass=ABCMeta):

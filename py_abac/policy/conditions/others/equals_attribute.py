@@ -19,7 +19,7 @@ class EqualsAttribute(ConditionBase):
 
     def is_satisfied(self, ctx):
         # Extract attribute value from request and check if it matches that in the context
-        return ctx.request.get_value(self.ace, self.path) == ctx.attribute_value
+        return ctx.get_attribute_value(self.ace, self.path) == ctx.attribute_value
 
 
 def validate_path(path):

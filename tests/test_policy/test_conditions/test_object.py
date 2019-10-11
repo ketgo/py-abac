@@ -5,9 +5,9 @@
 import pytest
 from marshmallow import ValidationError
 
+from py_abac.context import EvaluationContext
 from py_abac.policy.conditions.object import EqualsObject
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.policy.context import EvaluationContext
 from py_abac.request import Request
 
 

@@ -5,13 +5,13 @@
 import pytest
 from marshmallow import ValidationError
 
+from py_abac.context import EvaluationContext
 from py_abac.policy.conditions.others import Any
 from py_abac.policy.conditions.others import CIDR
 from py_abac.policy.conditions.others import EqualsAttribute
 from py_abac.policy.conditions.others import Exists
 from py_abac.policy.conditions.others import NotExists
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.policy.context import EvaluationContext
 from py_abac.request import Request
 
 

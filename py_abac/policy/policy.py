@@ -4,11 +4,10 @@
 
 from marshmallow import Schema, fields, post_load, ValidationError, validate
 
-from .context import EvaluationContext
+from py_abac.context import EvaluationContext
 from .rules import Rules, RulesSchema
 from .targets import Targets, TargetsSchema
 from ..exceptions import PolicyCreateError
-from ..request import Request
 
 # Access decisions
 DENY_ACCESS = "deny"
@@ -36,14 +35,13 @@ class Policy(object):
     def to_json(self):
         return PolicySchema().dump(self)
 
-    def fits(self, request: Request):
+    def fits(self, ctx: EvaluationContext):
         """
             Check if the request fits policy
 
-            :param request: authorization request
+            :param ctx: evaluation context
             :return: Tre if fits else False
         """
-        ctx = EvaluationContext(request)
         return self.rules.is_satisfied(ctx) and self.targets.match(ctx)
 
     @property

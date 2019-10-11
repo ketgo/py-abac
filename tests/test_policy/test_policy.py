@@ -6,6 +6,7 @@ import uuid
 
 import pytest
 
+from py_abac.context import EvaluationContext
 from py_abac.exceptions import PolicyCreateError
 from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
@@ -340,6 +341,6 @@ class TestPolicy(object):
         ),
     ])
     def test_fits(self, desc, policy_json, request_json, result):
-        request = Request.from_json(request_json)
+        ctx = EvaluationContext(Request.from_json(request_json))
         policy = Policy.from_json(policy_json)
-        assert policy.fits(request) == result
+        assert policy.fits(ctx) == result

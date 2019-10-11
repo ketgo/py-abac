@@ -5,6 +5,7 @@
 import pytest
 from marshmallow import ValidationError
 
+from py_abac.context import EvaluationContext
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.numeric import Gt
 from py_abac.policy.conditions.numeric import Gte
@@ -12,7 +13,6 @@ from py_abac.policy.conditions.numeric import Lt
 from py_abac.policy.conditions.numeric import Lte
 from py_abac.policy.conditions.numeric import Neq
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.policy.context import EvaluationContext
 from py_abac.request import Request
 
 

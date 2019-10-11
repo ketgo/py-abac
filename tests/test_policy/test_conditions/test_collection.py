@@ -5,6 +5,7 @@
 import pytest
 from marshmallow import ValidationError
 
+from py_abac.context import EvaluationContext
 from py_abac.policy.conditions.collection import AllIn
 from py_abac.policy.conditions.collection import AllNotIn
 from py_abac.policy.conditions.collection import AnyIn
@@ -14,7 +15,6 @@ from py_abac.policy.conditions.collection import IsIn
 from py_abac.policy.conditions.collection import IsNotEmpty
 from py_abac.policy.conditions.collection import IsNotIn
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.policy.context import EvaluationContext
 from py_abac.request import Request
 
 

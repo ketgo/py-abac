@@ -36,18 +36,6 @@ class Request(object):
         except ValidationError as err:
             raise RequestCreateError(*err.args)
 
-    @property
-    def subject_id(self):
-        return self._subject_id
-
-    @property
-    def resource_id(self):
-        return self._resource_id
-
-    @property
-    def action_id(self):
-        return self._action_id
-
     def get_value(self, ace: str, path: str):
         """
             Get attribute value for given access control element and attribute path

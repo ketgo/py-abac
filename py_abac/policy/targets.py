@@ -6,7 +6,7 @@ import fnmatch
 
 from marshmallow import Schema, fields, post_load, validate
 
-from .context import EvaluationContext
+from ..context import EvaluationContext
 
 
 class Targets(object):
@@ -23,9 +23,9 @@ class Targets(object):
             :param ctx: policy evaluation context
             :return: True if matches else False
         """
-        return self._is_in(self.subject_id, ctx.request.subject_id) and \
-               self._is_in(self.resource_id, ctx.request.resource_id) and \
-               self._is_in(self.action_id, ctx.request.action_id)
+        return self._is_in(self.subject_id, ctx.subject_id) and \
+               self._is_in(self.resource_id, ctx.resource_id) and \
+               self._is_in(self.action_id, ctx.action_id)
 
     @staticmethod
     def _is_in(ace_ids, ace_id: str):

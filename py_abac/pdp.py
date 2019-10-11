@@ -4,6 +4,7 @@
 
 from enum import Enum
 
+from .context import EvaluationContext
 from .request import Request
 from .storage.base import StorageBase
 
@@ -38,7 +39,7 @@ class PDP(object):
 
     def is_allowed(self, request: Request, algorithm: EvaluationAlgorithm):
         """
-            Check request authorization
+            Check if authorization request is allowed
 
             :param request: request object
             :param algorithm: evaluation algorithm
@@ -49,13 +50,15 @@ class PDP(object):
         if algorithm not in EvaluationAlgorithm:
             raise ValueError("Invalid evaluation algorithm '{}'.".format(algorithm))
 
-        # Get filtered policies based on targets from storage
-        policies = self.storage.get_for_target(request.subject_id, request.resource_id, request.action_id)
-        # Filter policies based on fit with authorization request
-        policies = [p for p in policies if p.fits(request)]
-
-        # Run appropriate evaluation algorithm
+        # Get appropriate evaluation algorithm handler
         evaluate = getattr(self, "_{}".format(algorithm.value))
+        # Create evaluation context
+        ctx = EvaluationContext(request)
+
+        # Get filtered policies based on targets from storage
+        policies = self.storage.get_for_target(ctx.subject_id, ctx.resource_id, ctx.action_id)
+        # Filter policies based on fit with authorization request
+        policies = [p for p in policies if p.fits(ctx)]
 
         return evaluate(policies)
 

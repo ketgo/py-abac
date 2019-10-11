@@ -6,7 +6,7 @@ from marshmallow import Schema, fields, post_load
 
 from .conditions.others.equals_attribute import validate_path
 from .conditions.schema import ConditionSchema
-from .context import EvaluationContext
+from ..context import EvaluationContext
 
 
 class Rules(object):

@@ -5,12 +5,12 @@
 import pytest
 from marshmallow import ValidationError
 
+from py_abac.context import EvaluationContext
 from py_abac.policy.conditions.logic import AllOf
 from py_abac.policy.conditions.logic import AnyOf
 from py_abac.policy.conditions.logic import Not
 from py_abac.policy.conditions.numeric import Gt, Lt
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.policy.context import EvaluationContext
 from py_abac.request import Request
 
 

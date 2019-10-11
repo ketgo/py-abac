@@ -4,7 +4,7 @@
 
 import pytest
 
-from py_abac.policy.context import EvaluationContext
+from py_abac.context import EvaluationContext
 from py_abac.request import Request, InvalidAccessControlElementError, InvalidAttributePathError
 
 
@@ -31,7 +31,9 @@ def test_create():
     }
     request = Request.from_json(request_json)
     context = EvaluationContext(request)
-    assert context.request == request
+    assert context.subject_id == request._subject_id
+    assert context.resource_id == request._resource_id
+    assert context.action_id == request._action_id
     assert context.ace is None
     assert context.attribute_path is None
 

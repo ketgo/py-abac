@@ -2,7 +2,7 @@
     PDP policy evaluation context
 """
 
-from ..request import Request
+from .request import Request
 
 
 class EvaluationContext(object):
@@ -19,14 +19,24 @@ class EvaluationContext(object):
         if not isinstance(request, Request):
             raise TypeError("Invalid type '{}' for authorization request.".format(type(request)))
         self._request = request
+        # TODO: Other attribute value providers as part of PIP
+        self._providers = []  # pragma: no cover
         # Access control element being evaluated
         self._ace = None
         # Path of attribute being evaluated
         self._attribute_path = None
 
     @property
-    def request(self):
-        return self._request
+    def subject_id(self):
+        return self._request._subject_id
+
+    @property
+    def resource_id(self):
+        return self._request._resource_id
+
+    @property
+    def action_id(self):
+        return self._request._action_id
 
     @property
     def ace(self):
@@ -46,4 +56,15 @@ class EvaluationContext(object):
 
     @property
     def attribute_value(self):
-        return self.request.get_value(self.ace, self.attribute_path)
+        return self.get_attribute_value(self.ace, self.attribute_path)
+
+    def get_attribute_value(self, ace: str, attribute_path: str):
+        """
+            Get attribute value for given access control element and attribute path
+
+            :param ace: access control element
+            :param attribute_path: attribute path in ObjectPath format
+            :return: attribute value
+        """
+        # TODO: Add attribute value providers as part of PIP
+        return self._request.get_value(ace, attribute_path)

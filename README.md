@@ -11,7 +11,7 @@ This document describes the Policy Language (PL) implemented in **pyabac** for d
 
 ABAC comes with a recommended architecture which is as follows:
 
-1. The PEP or Policy Enforcement Point: it is responsible for protecting the apps & data you want to apply ABAC to. The PEP inspects the request and generates an authorization request from it which it sends to the PDP.
+1. The PEP or Policy Enforcement Point: it is responsible for protecting the apps & data you want to apply ABAC to. The PEP inspects the user request and generates an authorization request which it sends to the PDP.
 2. The PDP or Policy Decision Point is the brain of the architecture. This is the piece which evaluates incoming requests against policies it has been configured with. The PDP returns a Permit / Deny decision. The PDP may also use PIPs to retrieve missing metadata
 3. The PIP or Policy Information Point bridges the PDP to external sources of attributes e.g. LDAP or databases. This is yet not supported in **pyabac**.
 4. The PAP or Policy Administration Point: manages the creation, update and deletion of policies. 
