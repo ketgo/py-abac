@@ -36,6 +36,7 @@ class StorageBase(metaclass=ABCMeta):
         """
             Get all policies for given target IDs.
         """
+        # TODO: Add policy retrieval caching
         raise NotImplementedError()
 
     @abstractmethod

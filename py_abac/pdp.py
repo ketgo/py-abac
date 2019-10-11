@@ -23,31 +23,40 @@ class PDP(object):
         Policy decision point
     """
 
-    def __init__(self, storage: StorageBase):
+    def __init__(self, storage: StorageBase, algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES):
         """
             Initialize PDP class object
 
             :param storage: policy storage
+            :param algorithm: evaluation algorithm
         """
         if not isinstance(storage, StorageBase):
             raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
         self._storage = storage
+        self.algorithm = algorithm
 
-    def is_allowed(self, request: Request, algorithm: EvaluationAlgorithm):
+    @property
+    def algorithm(self):
+        return self._algorithm
+
+    @algorithm.setter
+    def algorithm(self, alg):
+        if alg not in EvaluationAlgorithm:
+            raise ValueError("Invalid evaluation algorithm '{}'.".format(alg))
+        self._algorithm = alg.value
+
+    def is_allowed(self, request: Request):
         """
             Check if authorization request is allowed
 
             :param request: request object
-            :param algorithm: evaluation algorithm
             :return: True if authorized else False
         """
         if not isinstance(request, Request):
             raise ValueError("Invalid authorization request object '{}'.".format(request))
-        if algorithm not in EvaluationAlgorithm:
-            raise ValueError("Invalid evaluation algorithm '{}'.".format(algorithm))
 
         # Get appropriate evaluation algorithm handler
-        evaluate = getattr(self, "_{}".format(algorithm.value))
+        evaluate = getattr(self, "_{}".format(self._algorithm))
         # Create evaluation context
         ctx = EvaluationContext(request)
 
