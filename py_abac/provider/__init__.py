@@ -1,0 +1,5 @@
+"""
+    Attribute providers
+"""
+
+raise NotImplementedError()
