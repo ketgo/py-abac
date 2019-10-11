@@ -33,10 +33,6 @@ class PDP(object):
             raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
         self._storage = storage
 
-    @property
-    def storage(self):
-        return self._storage
-
     def is_allowed(self, request: Request, algorithm: EvaluationAlgorithm):
         """
             Check if authorization request is allowed
@@ -56,7 +52,7 @@ class PDP(object):
         ctx = EvaluationContext(request)
 
         # Get filtered policies based on targets from storage
-        policies = self.storage.get_for_target(ctx.subject_id, ctx.resource_id, ctx.action_id)
+        policies = self._storage.get_for_target(ctx.subject_id, ctx.resource_id, ctx.action_id)
         # Filter policies based on fit with authorization request
         policies = [p for p in policies if p.fits(ctx)]
 
@@ -70,7 +66,10 @@ class PDP(object):
             :param policies: list of policies to evaluate
             :return: True if request is authorized else False
         """
-        raise NotImplementedError()
+        for p in policies:
+            if p.is_allowed:
+                return True
+        return False
 
     @staticmethod
     def _deny_overrides(policies):
@@ -80,14 +79,25 @@ class PDP(object):
             :param policies: list of policies to evaluate
             :return: True if request is authorized else False
         """
-        raise NotImplementedError()
+        for p in policies:
+            if not p.is_allowed:
+                return False
+        return True
 
-    @staticmethod
-    def _highest_priority(policies):
+    def _highest_priority(self, policies):
         """
             Highest priority evaluation algorithm
 
             :param policies: list of policies to evaluate
             :return: True if request is authorized else False
         """
-        raise NotImplementedError()
+        policy_groups = {}
+        max_priority = -1
+        for p in policies:
+            if p.priority > max_priority:
+                max_priority = p.priority
+            if p.priority in policy_groups:
+                policy_groups[p.priority].append(p)
+            else:
+                policy_groups[p.priority] = []
+        return self._deny_overrides(policy_groups[max_priority])
