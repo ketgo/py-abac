@@ -12,10 +12,6 @@ from ..base import ConditionBase
 log = logging.getLogger(__name__)
 
 
-def is_cidr(value):
-    return isinstance(value, str)
-
-
 class CIDR(ConditionBase):
     """
         Condition that is satisfied when inquiry's IP address is in the provided CIDR.

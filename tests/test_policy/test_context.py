@@ -46,6 +46,11 @@ def test_create():
     assert context.attribute_value == "Calendar"
 
 
+def test_create_type_error():
+    with pytest.raises(TypeError):
+        EvaluationContext(None)
+
+
 def test_attribute_value_raises():
     request_json = {
         "subject": {

@@ -10,9 +10,9 @@ from py_abac.storage.mongo.migrations import MongoMigrationSet, MongoMigration0T
 
 MONGO_HOST = '127.0.0.1'
 MONGO_PORT = 27017
-DB_NAME = 'vakt_db_test'
-COLLECTION = 'vakt_policies_test'
-MIGRATION_COLLECTION = 'vakt_policies_migration_ver_test'
+DB_NAME = 'db_test'
+COLLECTION = 'policies_migration_test'
+MIGRATION_COLLECTION = 'policies_migration_ver_test'
 
 
 def create_client():
@@ -21,16 +21,14 @@ def create_client():
 
 class TestMongoMigrationSet:
 
-    @pytest.yield_fixture
-    def storage(self):
+    @pytest.fixture
+    def migration_set(self):
         client = create_client()
-        yield MongoStorage(client, DB_NAME, collection=COLLECTION)
-        client[DB_NAME][COLLECTION].delete_many({})
+        storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
+        yield MongoMigrationSet(storage, MIGRATION_COLLECTION)
+        client[DB_NAME][COLLECTION].drop()
+        client[DB_NAME][MIGRATION_COLLECTION].drop()
         client.close()
-
-    @pytest.yield_fixture
-    def migration_set(self, storage):
-        yield MongoMigrationSet(storage)
 
     def test_application_of_migration_number(self, migration_set):
         assert 0 == migration_set.last_applied()
@@ -57,12 +55,8 @@ class TestMongoMigration0To0x2x0:
     def storage(self):
         client = create_client()
         yield MongoStorage(client, DB_NAME, collection=COLLECTION)
-        client[DB_NAME][COLLECTION].delete_many({})
+        client[DB_NAME][COLLECTION].drop()
         client.close()
-
-    @pytest.yield_fixture
-    def migration_set(self, storage):
-        yield MongoMigrationSet(storage)
 
     @pytest.yield_fixture
     def migration(self, storage):

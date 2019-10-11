@@ -2,8 +2,8 @@
     Policy Storage abstract class
 """
 
-from types import GeneratorType
 from abc import ABCMeta, abstractmethod
+from types import GeneratorType
 
 from ..policy import Policy
 

@@ -61,7 +61,7 @@ def _get_all_ids(target_id: str) -> list:
 
         See unit tests for more examples.
     """
-    rvalue = {target_id: True}
+    rvalue = {target_id: True, "*": True}
     length = len(target_id)
     # Compute all N-grams
     for N in range(length):
@@ -83,7 +83,7 @@ class PolicyModel(object):
         Model to store policy as document on MongoDB
     """
 
-    def __init__(self, _id: str, policy_str: str, tags: dict):
+    def __init__(self, _id: str, policy_str: str, tags: dict = None):
         """
             Initialize mongodb document
 
@@ -113,13 +113,33 @@ class PolicyModel(object):
         return self.__dict__
 
     @staticmethod
-    def get_filter_query(subject_id: str, resource_id: str, action_id: str):
+    def get_aggregate_pipeline(subject_id: str, resource_id: str, action_id: str):
         """
             Get query using target ids to retrieve policies
         """
-        return {"tags.subject": {"$elemMatch": {"id": {"$in": _get_all_ids(subject_id)}}},
-                "tags.resource": {"$elemMatch": {"id": {"$in": _get_all_ids(resource_id)}}},
-                "tags.action": {"$elemMatch": {"id": {"$in": _get_all_ids(action_id)}}}}
+        # Compute wildcard-ed IDs
+        subject_wildcarded_ids = _get_all_ids(subject_id)
+        resource_wildcarded_ids = _get_all_ids(resource_id)
+        action_wildcarded_ids = _get_all_ids(action_id)
+        # Stage 1 filter query which utilizes indexes: Checks if any member of ID set
+        # in tags is member of wildcard-ed ID set
+        stage_1 = {
+            "$match": {
+                "tags.subject.id": {"$in": subject_wildcarded_ids},
+                "tags.resource.id": {"$in": resource_wildcarded_ids},
+                "tags.action.id": {"$in": action_wildcarded_ids}
+            }
+        }
+        # Stage 2 filter query for exact match: Checks if ID set in tags is subset of
+        # wildcard-ed ID set
+        stage_2 = {
+            "$match": {
+                "tags.subject.id": {"$not": {"$elemMatch": {"$nin": subject_wildcarded_ids}}},
+                "tags.resource.id": {"$not": {"$elemMatch": {"$nin": resource_wildcarded_ids}}},
+                "tags.action.id": {"$not": {"$elemMatch": {"$nin": action_wildcarded_ids}}}
+            }
+        }
+        return [stage_1, stage_2]
 
     @staticmethod
     def _targets_to_tags(targets: Targets):

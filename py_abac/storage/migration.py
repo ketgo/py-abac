@@ -17,17 +17,17 @@ class Migration(metaclass=ABCMeta):
     @abstractmethod
     def order(self):
         """ Number of this migration in the row of migrations """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def up(self):
         """ Migrate DB schema up """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def down(self):
         """ Migrate DB schema down """
-        pass
+        raise NotImplementedError()
 
 
 class MigrationSet(metaclass=ABCMeta):
@@ -40,21 +40,21 @@ class MigrationSet(metaclass=ABCMeta):
         """
             Get migrations. Subclasses should defile a list of storage migrations here
         """
-        return []
+        raise NotImplementedError()
 
     @abstractmethod
     def save_applied_number(self, number: int):
         """
             Save the last applied up migration number
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def last_applied(self):
         """
             Number of the last migration that was applied up
         """
-        pass
+        raise NotImplementedError()
 
     def _get_migrations(self, number: int = None, reverse: bool = False):
         """

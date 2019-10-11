@@ -1,5 +1,5 @@
 """
-    MongoDB storage
+    MongoDB storage implementation
 """
 
 import logging
@@ -49,9 +49,9 @@ class MongoStorage(StorageBase):
             yield PolicyModel.from_doc(doc).to_policy()
 
     def get_for_target(self, subject_id: str, resource_id: str, action_id: str):
-        filter_query = PolicyModel.get_filter_query(subject_id, resource_id, action_id)
-        print(filter_query)
-        cur = self.collection.find(filter_query)
+        pipeline = PolicyModel.get_aggregate_pipeline(subject_id, resource_id, action_id)
+        print(pipeline)
+        cur = self.collection.aggregate(pipeline)
         for doc in cur:
             yield PolicyModel.from_doc(doc).to_policy()
 

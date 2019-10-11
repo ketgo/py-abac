@@ -43,8 +43,8 @@ class Rules(object):
         if isinstance(ace_conditions, dict):
             return self._implicit_and(ace_name, ace_conditions, ctx)
 
-        # If ace is not in correct format, return False
-        return False
+        # If ace is not in correct format, return False. This condition is just for best practice and will never happen
+        return False  # pragma: no cover
 
     def _implicit_or(self, ace_name: str, ace_conditions: list, ctx: EvaluationContext):
         for _ace_conditions in ace_conditions:

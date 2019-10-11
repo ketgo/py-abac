@@ -14,7 +14,7 @@ class MMigration(Migration):
     @property
     @abstractmethod
     def letter(self):
-        pass
+        raise NotImplementedError()
 
     def up(self):
         self.db['data'] += self.letter

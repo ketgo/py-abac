@@ -12,6 +12,7 @@ from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.request import Request
+from py_abac.storage.mongo import MongoMigrationSet
 from py_abac.storage.mongo import MongoStorage
 
 MONGO_HOST = '127.0.0.1'
@@ -27,7 +28,11 @@ def create_client():
 @pytest.fixture
 def st():
     client = create_client()
-    yield MongoStorage(client, DB_NAME, collection=COLLECTION)
+    storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
+    migration_set = MongoMigrationSet(storage)
+    migration_set.up()
+    yield storage
+    migration_set.down()
     client[DB_NAME][COLLECTION].delete_many({})
     client.close()
 
@@ -138,7 +143,34 @@ def test_get_all_with_incorrect_args(st):
     assert "Offset can't be negative" == str(e.value)
 
 
-def test_find_for_target(st):
+@pytest.mark.parametrize("request_json, num", [
+    ({
+         "subject": {"id": "a"},
+         "resource": {"id": str(uuid.uuid4())},
+         "action": {"id": str(uuid.uuid4())}
+     }, 1),
+    ({
+         "subject": {"id": "ab"},
+         "resource": {"id": str(uuid.uuid4())},
+         "action": {"id": str(uuid.uuid4())}
+     }, 3),
+    ({
+         "subject": {"id": "abc"},
+         "resource": {"id": str(uuid.uuid4())},
+         "action": {"id": str(uuid.uuid4())}
+     }, 3),
+    ({
+         "subject": {"id": "acb"},
+         "resource": {"id": str(uuid.uuid4())},
+         "action": {"id": str(uuid.uuid4())}
+     }, 2),
+    ({
+         "subject": {"id": "axc"},
+         "resource": {"id": str(uuid.uuid4())},
+         "action": {"id": str(uuid.uuid4())}
+     }, 1),
+])
+def test_find_for_target(st, request_json, num):
     st.add(Policy.from_json({"uid": "1",
                              "rules": {},
                              "targets": {},
@@ -149,16 +181,17 @@ def test_find_for_target(st):
                              "effect": "deny"}))
     st.add(Policy.from_json({"uid": "3",
                              "rules": {},
+                             "targets": {"subject_id": "a*b"},
+                             "effect": "deny"}))
+    st.add(Policy.from_json({"uid": "4",
+                             "rules": {},
                              "targets": {"subject_id": "ab*c"},
                              "effect": "deny"}))
-    request = Request.from_json({
-        "subject": {"id": "a"},
-        "resource": {"id": str(uuid.uuid4())},
-        "action": {"id": str(uuid.uuid4())}
-    })
+
+    request = Request.from_json(request_json)
     found = st.get_for_target(request.subject_id, request.resource_id, request.action_id)
     found = list(found)
-    assert 1 == len(found)
+    assert num == len(found)
 
 
 def test_update(st):

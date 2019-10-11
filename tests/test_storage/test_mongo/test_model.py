@@ -172,11 +172,12 @@ def test__split_id(wc_id, splits):
 
 
 @pytest.mark.parametrize("target_id, wc_ids", [
-    ("a", ['a', '*a*', 'a*', '*a']),
-    ("ab", ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']),
-    ("abc", ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']),
+    ("a", ['a', '*', '*a*', 'a*', '*a']),
+    ("ab", ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']),
+    ("abc", ['abc', '*', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']),
     ("abcd",
-     ['abcd', '*a*', 'a*', '*b*', '*c*', '*d', '*d*', '*ab*', 'ab*', '*bc*', '*cd', '*cd*', '*abc*', 'abc*', '*bcd',
+     ['abcd', '*', '*a*', 'a*', '*b*', '*c*', '*d', '*d*', '*ab*', 'ab*', '*bc*', '*cd', '*cd*', '*abc*', 'abc*',
+      '*bcd',
       '*bcd*', '*abcd*', 'abcd*', '*abcd'])
 ])
 def test__get_all_ids(target_id, wc_ids):
@@ -184,26 +185,38 @@ def test__get_all_ids(target_id, wc_ids):
     assert all(fnmatch.fnmatch(target_id, x) for x in wc_ids)
 
 
-@pytest.mark.parametrize("subject_id, resource_id, action_id, query", [
+@pytest.mark.parametrize("subject_id, resource_id, action_id, pipeline", [
     ("ab", "ab", "ab",
-     {"subject": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
-      "resource": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
-      "action": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}}),
+     [{'$match': {'tags.action.id': {'$in': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']},
+                  'tags.resource.id': {'$in': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']},
+                  'tags.subject.id': {'$in': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}},
+      {'$match': {
+          'tags.action.id': {
+              '$not': {'$elemMatch': {'$nin': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}
+          },
+          'tags.resource.id': {
+              '$not': {'$elemMatch': {'$nin': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}
+          },
+          'tags.subject.id': {
+              '$not': {'$elemMatch': {'$nin': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}
+          }}
+      }]),
     ("abc", "ab", "ab",
-     {"subject": {"$elemMatch": {
-         "$in": ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']}},
-      "resource": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
-      "action": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}}),
-    ("ab", "abc", "ab",
-     {"subject": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
-      "resource": {"$elemMatch": {
-          "$in": ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']}},
-      "action": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}}),
-    ("ab", "ab", "abc",
-     {"subject": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
-      "resource": {"$elemMatch": {"$in": ['ab', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}},
-      "action": {"$elemMatch": {
-          "$in": ['abc', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']}}}),
+     [{'$match': {'tags.action.id': {'$in': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']},
+                  'tags.resource.id': {'$in': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']},
+                  'tags.subject.id': {
+                      '$in': ['abc', '*', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*',
+                              'abc*', '*abc']}}},
+      {'$match': {
+          'tags.action.id': {
+              '$not': {'$elemMatch': {'$nin': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}},
+          'tags.resource.id': {
+              '$not': {'$elemMatch': {'$nin': ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']}}},
+          'tags.subject.id': {
+              '$not': {'$elemMatch': {
+                  '$nin': ['abc', '*', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*',
+                           '*abc']}}}}}]
+     ),
 ])
-def test_get_filter_query(subject_id, resource_id, action_id, query):
-    assert PolicyModel.get_filter_query(subject_id, resource_id, action_id) == query
+def test_get_aggregate_pipeline(subject_id, resource_id, action_id, pipeline):
+    assert PolicyModel.get_aggregate_pipeline(subject_id, resource_id, action_id) == pipeline
