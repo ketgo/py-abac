@@ -19,7 +19,7 @@ class EvaluationContext(object):
         if not isinstance(request, Request):
             raise TypeError("Invalid type '{}' for authorization request.".format(type(request)))
         self._request = request
-        # TODO: Other attribute value providers as part of PIP
+        # TODO: Other attribute value provider as part of PIP
         self._providers = []  # pragma: no cover
         # Access control element being evaluated
         self._ace = None
@@ -66,5 +66,5 @@ class EvaluationContext(object):
             :param attribute_path: attribute path in ObjectPath format
             :return: attribute value
         """
-        # TODO: Add attribute value providers as part of PIP
+        # TODO: Add attribute value provider as part of PIP
         return self._request.get_value(ace, attribute_path)

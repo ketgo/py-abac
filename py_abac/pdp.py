@@ -20,7 +20,7 @@ class EvaluationAlgorithm(Enum):
 
 class PDP(object):
     """
-        Policy decision point class
+        Policy decision point
     """
 
     def __init__(self, storage: StorageBase):
