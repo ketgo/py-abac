@@ -311,5 +311,5 @@ def test_guard_create_error(st):
 
 def test_is_allowed_error(st):
     g = PDP(st)
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         g.is_allowed(None)

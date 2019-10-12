@@ -32,6 +32,8 @@ class PDP(object):
         """
         if not isinstance(storage, StorageBase):
             raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
+        if not isinstance(algorithm, EvaluationAlgorithm):
+            raise TypeError("Invalid type '{}' for evaluation algorithm.".format(type(algorithm)))
         self._storage = storage
         self.algorithm = algorithm
 
@@ -75,6 +77,8 @@ class PDP(object):
             :param policies: list of policies to evaluate
             :return: True if request is authorized else False
         """
+        if not policies:
+            return True
         for p in policies:
             if p.is_allowed:
                 return True
@@ -88,6 +92,8 @@ class PDP(object):
             :param policies: list of policies to evaluate
             :return: True if request is authorized else False
         """
+        if not policies:
+            return False
         for p in policies:
             if not p.is_allowed:
                 return False

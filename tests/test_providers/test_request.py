@@ -4,9 +4,9 @@
 
 import pytest
 
-from py_abac.exceptions import RequestCreateError, InvalidAccessControlElementError, InvalidAttributePathError
-from py_abac.request import Request
+from py_abac.exceptions import InvalidAccessControlElementError, InvalidAttributePathError
 from py_abac.provider.request import RequestAttributeProvider
+from py_abac.request import Request
 
 
 def test_get_attribute_value():
