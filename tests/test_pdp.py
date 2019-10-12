@@ -15,24 +15,32 @@ MONGO_PORT = 27017
 DB_NAME = 'db_test'
 COLLECTION = 'policies_test'
 POLICIES = [
-    Policy(
-        uid='1',
-        description="""
+    {
+        "uid": "1",
+        "description": """
         Max, Nina, Ben, Henry are allowed to create, delete, get the resources
         only if the client IP matches.
         """,
-        effect=ALLOW_ACCESS,
-        subjects=[{"$.name": Equals('Max')},
-                  {"$.name": Equals('Nina')},
-                  {"$.name": Or(Equals('Ben'), Equals('Henry'))}],
-        resources=[{"$.name": Or(
-            Equals('myrn:example.com:resource:123'),
-            Equals('myrn:example.com:resource:345'),
-            RegexMatch('myrn:something:foo:.*'))}],
-        actions=[{"$.method": Or(Equals('create'), Equals('delete'))},
-                 {"$.method": Equals('get')}],
-        context={'$.ip': CIDR('127.0.0.1/32')},
-    ),
+        "effect": "allow",
+        "rules": {
+            "subject": [{"$.name": {"condition": "Equals", "value": "Max"}},
+                        {"$.name": {"condition": "Equals", "value": "Nina"}},
+                        {"$.name": {"condition": "AnyOf",
+                                    "values": [{"condition": "Equals", "value": "Ben"},
+                                               {"condition": "Equals", "value": "Henry"}]}}],
+            "resource": {"$.name": {"condition": "AnyOf",
+                                    "values": [{"condition": "Equals", "value": "myrn:example.com:resource:123"},
+                                               {"condition": "Equals", "value": "myrn:example.com:resource:345"},
+                                               {"condition": "RegexMatch", "value": "myrn:something:foo:.*"}]}},
+            "action": [{"$.method": {"condition": "AnyOf",
+                                     "values": [{"condition": "Equals", "value": "create"},
+                                                {"condition": "Equals", "value": "delete"}]}},
+                       {"$.method": {"condition": "Equals", "value": "get"}}],
+            "context": {"$.ip": {"condition": "CIDR", "value": "127.0.0.1/32"}}
+        },
+        "targets": {},
+        "priority": 0
+    },
     Policy(
         uid='2',
         description='Allows Max to update any resource',
