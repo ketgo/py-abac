@@ -5,7 +5,8 @@
 import pytest
 
 from py_abac.context import EvaluationContext
-from py_abac.request import Request, InvalidAccessControlElementError, InvalidAttributePathError
+from py_abac.request import Request
+from py_abac.exceptions import InvalidAccessControlElementError, InvalidAttributePathError
 
 
 def test_create():
@@ -46,11 +47,6 @@ def test_create():
     context.ace = "resource"
     context.attribute_path = "$.name"
     assert context.attribute_value == "Calendar"
-
-
-def test_create_type_error():
-    with pytest.raises(TypeError):
-        EvaluationContext(None)
 
 
 def test_attribute_value_raises():

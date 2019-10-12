@@ -2,6 +2,10 @@
     PDP policy evaluation context
 """
 
+from typing import List
+
+from .provider.base import AttributeProvider
+from .provider.request import RequestAttributeProvider
 from .request import Request
 
 
@@ -10,17 +14,18 @@ class EvaluationContext(object):
         Evaluation context class
     """
 
-    def __init__(self, request: Request):
+    def __init__(self, request: Request, providers: List[AttributeProvider] = None):
         """
             Initialize evaluation context object
 
             :param request: request object
         """
-        if not isinstance(request, Request):
-            raise TypeError("Invalid type '{}' for authorization request.".format(type(request)))
-        self._request = request
-        # TODO: Other attribute value provider as part of PIP
-        self._providers = []  # pragma: no cover
+        self._subject_id = request._subject_id
+        self._resource_id = request._resource_id
+        self._action_id = request._action_id
+        self._request_provider = RequestAttributeProvider(request)
+        self._other_providers = providers or []
+
         # Access control element being evaluated
         self._ace = None
         # Path of attribute being evaluated
@@ -28,15 +33,15 @@ class EvaluationContext(object):
 
     @property
     def subject_id(self):
-        return self._request._subject_id
+        return self._subject_id
 
     @property
     def resource_id(self):
-        return self._request._resource_id
+        return self._resource_id
 
     @property
     def action_id(self):
-        return self._request._action_id
+        return self._action_id
 
     @property
     def ace(self):
@@ -66,5 +71,14 @@ class EvaluationContext(object):
             :param attribute_path: attribute path in ObjectPath format
             :return: attribute value
         """
-        # TODO: Add attribute value provider as part of PIP
-        return self._request.get_value(ace, attribute_path)
+        rvalue = self._request_provider.get_attribute_value(ace, attribute_path)
+        # If attribute value not found then check other attribute providers
+        if not rvalue:
+            # Providers are checked in order
+            for provider in self._other_providers:
+                rvalue = provider.get_attribute_value(ace, attribute_path)
+                if rvalue:
+                    # Return attribute value for the very first provider which has the value.
+                    # Other providers are not checked.
+                    return rvalue
+        return rvalue

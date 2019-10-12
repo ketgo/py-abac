@@ -1,5 +1,3 @@
 """
     Attribute providers
 """
-
-raise NotImplementedError()

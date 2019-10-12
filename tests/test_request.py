@@ -4,7 +4,7 @@
 
 import pytest
 
-from py_abac.exceptions import RequestCreateError, InvalidAccessControlElementError, InvalidAttributePathError
+from py_abac.exceptions import RequestCreateError
 from py_abac.request import Request
 
 
@@ -34,90 +34,6 @@ def test_create():
     assert request_json["subject"]["id"] == request._subject_id
     assert request_json["resource"]["id"] == request._resource_id
     assert request_json["action"]["id"] == request._action_id
-
-
-def test_get_value():
-    request_json = {
-        "subject": {
-            "id": "a",
-            "attributes": {
-                "firstName": "Carl",
-                "lastName": "Right"
-            }
-        },
-        "resource": {
-            "id": "a",
-            "attributes": {
-                "name": "Calendar"
-            }
-        },
-        "action": {
-            "id": "",
-            "attributes": {}
-        },
-        "context": {}
-    }
-    request = Request.from_json(request_json)
-
-    assert request_json["subject"]["attributes"]["firstName"] == request.get_value("subject", "$.firstName")
-    assert request_json["subject"]["attributes"]["lastName"] == request.get_value("subject", "$.lastName")
-    assert request.get_value("subject", "$.test") is None
-    assert request_json["resource"]["attributes"]["name"] == request.get_value("resource", "$.name")
-    assert request.get_value("resource", "$.test") is None
-    assert request.get_value("action", "$.test") is None
-    assert request.get_value("context", "$.test") is None
-
-
-def test_invalid_ace_error():
-    request_json = {
-        "subject": {
-            "id": "a",
-            "attributes": {
-                "firstName": "Carl",
-                "lastName": "Right"
-            }
-        },
-        "resource": {
-            "id": "a",
-            "attributes": {
-                "name": "Calendar"
-            }
-        },
-        "action": {
-            "id": "",
-            "attributes": {}
-        },
-        "context": {}
-    }
-    request = Request.from_json(request_json)
-    with pytest.raises(InvalidAccessControlElementError):
-        request.get_value("test", "$.test")
-
-
-def test_invalid_attribute_path_error():
-    request_json = {
-        "subject": {
-            "id": "a",
-            "attributes": {
-                "firstName": "Carl",
-                "lastName": "Right"
-            }
-        },
-        "resource": {
-            "id": "a",
-            "attributes": {
-                "name": "Calendar"
-            }
-        },
-        "action": {
-            "id": "",
-            "attributes": {}
-        },
-        "context": {}
-    }
-    request = Request.from_json(request_json)
-    with pytest.raises(InvalidAttributePathError):
-        request.get_value("subject", ")")
 
 
 @pytest.mark.parametrize("request_json", [
