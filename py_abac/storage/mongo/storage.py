@@ -50,7 +50,6 @@ class MongoStorage(StorageBase):
 
     def get_for_target(self, subject_id: str, resource_id: str, action_id: str):
         pipeline = PolicyModel.get_aggregate_pipeline(subject_id, resource_id, action_id)
-        print(pipeline)
         cur = self.collection.aggregate(pipeline)
         for doc in cur:
             yield PolicyModel.from_doc(doc).to_policy()
