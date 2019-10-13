@@ -41,18 +41,11 @@ class PDP(object):
         if not isinstance(algorithm, EvaluationAlgorithm):
             raise TypeError("Invalid type '{}' for evaluation algorithm.".format(type(algorithm)))
         self._storage = storage
-        self.algorithm = algorithm
+        self._algorithm = algorithm.value
         self._providers = providers or []
-
-    @property
-    def algorithm(self):
-        return self._algorithm
-
-    @algorithm.setter
-    def algorithm(self, alg):
-        if alg not in EvaluationAlgorithm:
-            raise ValueError("Invalid evaluation algorithm '{}'.".format(alg))
-        self._algorithm = alg.value
+        for provider in self._providers:
+            if not isinstance(provider, AttributeProvider):
+                raise TypeError("Invalid type '{}' for attribute provider.".format(type(provider)))
 
     def is_allowed(self, request: Request):
         """

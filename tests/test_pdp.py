@@ -154,7 +154,6 @@ class EmailsAttributeProvider(AttributeProvider):
         if ace == "subject" and attribute_path == "$.email":
             if ctx.get_attribute_value(ace, "$.name") == "Ben":
                 return "ben@gmail.com"
-            return ""
 
 
 def create_client():
@@ -892,11 +891,13 @@ def test_is_allowed_highest_priority(st, desc, request_json, should_be_allowed):
     assert should_be_allowed == pdp.is_allowed(request)
 
 
-def test_guard_create_error(st):
+def test_pdp_create_error(st):
     with pytest.raises(TypeError):
         PDP(None)
     with pytest.raises(TypeError):
         PDP(st, None)
+    with pytest.raises(TypeError):
+        PDP(st, EvaluationAlgorithm.DENY_OVERRIDES, [None])
 
 
 def test_is_allowed_error(st):
