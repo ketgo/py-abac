@@ -366,6 +366,47 @@ def st():
             },
             False,
     ),
+    (
+            'A user with employee role is not allowed to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["employee"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'A user with manager role is allowed to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            True,
+    ),
+    (
+            'A user with manager role is not allowed to view other classified documents',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:products:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Deny override algorithm blocks user with both manager and employee roles '
+            'to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["employee", "manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            False,
+    ),
 ])
 def test_is_allowed_deny_overrides(st, desc, request_json, should_be_allowed):
     pdp = PDP(st, EvaluationAlgorithm.DENY_OVERRIDES, [EmailsAttributeProvider()])
@@ -563,6 +604,47 @@ def test_is_allowed_deny_overrides(st, desc, request_json, should_be_allowed):
                 "context": {}
             },
             False,
+    ),
+    (
+            'A user with employee role is not allowed to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["employee"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'A user with manager role is allowed to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            True,
+    ),
+    (
+            'A user with manager role is not allowed to view other classified documents',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:products:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Allow override algorithm allows user with both manager and employee roles '
+            'to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["employee", "manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            True,
     ),
 ])
 def test_is_allowed_allow_overrides(st, desc, request_json, should_be_allowed):
@@ -762,12 +844,52 @@ def test_is_allowed_allow_overrides(st, desc, request_json, should_be_allowed):
             },
             False,
     ),
+    (
+            'A user with employee role is not allowed to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["employee"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'A user with manager role is allowed to view classified documents for sales',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            True,
+    ),
+    (
+            'A user with manager role is not allowed to view other classified documents',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:products:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Highest priority algorithm allows user with both manager and employee roles '
+            'to view classified documents for sales. Policy #9 applies due to higher priority.',
+            {
+                "subject": {"id": "", "attributes": {"roles": ["employee", "manager"]}},
+                "resource": {"id": "", "attributes": {"name": "doc:confidential:sales:I3462"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {}
+            },
+            True,
+    ),
 ])
 def test_is_allowed_highest_priority(st, desc, request_json, should_be_allowed):
     pdp = PDP(st, EvaluationAlgorithm.HIGHEST_PRIORITY, [EmailsAttributeProvider()])
     request = Request.from_json(request_json)
     assert should_be_allowed == pdp.is_allowed(request)
-
 
 
 def test_guard_create_error(st):
