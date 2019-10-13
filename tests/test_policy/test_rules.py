@@ -95,6 +95,18 @@ def test_create_error(rules_json):
          "action": {"$.method": {"condition": "Equals", "value": "Get"}},
          "context": {}
      }, False),
+    ({
+         "subject": {},
+         "resource": {},
+         "action": {},
+         "context": {}
+     }, True),
+    ({
+         "subject": [],
+         "resource": [],
+         "action": [],
+         "context": []
+     }, False),
 ])
 def test_is_satisfied(rules_json, result):
     request_json = {

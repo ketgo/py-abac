@@ -85,10 +85,8 @@ class PDP(object):
             :return: True if request is authorized else False
         """
         if not policies:
-            print("No policies found")
             return False
         for p in policies:
-            print("Policy UID='{}', effect='{}'".format(p.uid, p.effect))
             if p.is_allowed:
                 return True
         return False
