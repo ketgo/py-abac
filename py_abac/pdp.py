@@ -3,8 +3,10 @@
 """
 
 from enum import Enum
+from typing import List
 
 from .context import EvaluationContext
+from .provider.base import AttributeProvider
 from .request import Request
 from .storage.base import StorageBase
 
@@ -23,12 +25,16 @@ class PDP(object):
         Policy decision point
     """
 
-    def __init__(self, storage: StorageBase, algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES):
+    def __init__(self,
+                 storage: StorageBase,
+                 algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES,
+                 providers: List[AttributeProvider] = None):
         """
             Initialize PDP class object
 
             :param storage: policy storage
             :param algorithm: evaluation algorithm
+            :param providers: list of attribute providers
         """
         if not isinstance(storage, StorageBase):
             raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
@@ -36,6 +42,7 @@ class PDP(object):
             raise TypeError("Invalid type '{}' for evaluation algorithm.".format(type(algorithm)))
         self._storage = storage
         self.algorithm = algorithm
+        self._providers = providers or []
 
     @property
     def algorithm(self):
@@ -60,7 +67,7 @@ class PDP(object):
         # Get appropriate evaluation algorithm handler
         evaluate = getattr(self, "_{}".format(self._algorithm))
         # Create evaluation context
-        ctx = EvaluationContext(request)
+        ctx = EvaluationContext(request, self._providers)
 
         # Get filtered policies based on targets from storage
         policies = self._storage.get_for_target(ctx.subject_id, ctx.resource_id, ctx.action_id)
@@ -78,8 +85,10 @@ class PDP(object):
             :return: True if request is authorized else False
         """
         if not policies:
-            return True
+            print("No policies found")
+            return False
         for p in policies:
+            print("Policy UID='{}', effect='{}'".format(p.uid, p.effect))
             if p.is_allowed:
                 return True
         return False
@@ -106,6 +115,8 @@ class PDP(object):
             :param policies: list of policies to evaluate
             :return: True if request is authorized else False
         """
+        if not policies:
+            return False
         policy_groups = {}
         max_priority = -1
         for p in policies:

@@ -284,7 +284,7 @@ def st():
             True,
     ),
     (
-            'Policy #6 should match - usage of "id" in context',
+            'Policy #5 and #6 should match - usage of "id" in context. Policy #6 overrides.',
             {
                 "subject": {"id": "", "attributes": {"name": "Nina"}},
                 "resource": {"id": "", "attributes": {"name": "00678"}},
@@ -294,7 +294,7 @@ def st():
             False,
     ),
     (
-            'Policy #6 should match - usage of different context',
+            'Policy #5 should match and not #6 - usage of different context',
             {
                 "subject": {"id": "", "attributes": {"name": "Nina"}},
                 "resource": {"id": "", "attributes": {"name": "00678"}},
@@ -305,7 +305,185 @@ def st():
     ),
 ])
 def test_is_allowed_deny_overrides(st, desc, request_json, should_be_allowed):
-    pdp = PDP(st, EvaluationAlgorithm.DENY_OVERRIDES)
+    pdp = PDP(st, EvaluationAlgorithm.DENY_OVERRIDES, [EmailsAttributeProvider()])
+    request = Request.from_json(request_json)
+    assert should_be_allowed == pdp.is_allowed(request)
+
+
+@pytest.mark.parametrize('desc, request_json, should_be_allowed', [
+    (
+            'Empty inquiry carries no information, so nothing is allowed, even empty Policy #4',
+            {
+                "subject": {"id": ""},
+                "resource": {"id": ""},
+                "action": {"id": ""},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Max is allowed to update anything',
+            {
+                "subject": {"id": "", "attributes": {"name": "Max"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {}
+            },
+            True,
+    ),
+    (
+            'Max is allowed to update anything, even empty one',
+            {
+                "subject": {"id": "", "attributes": {"name": "Max"}},
+                "resource": {"id": "", "attributes": {"name": ""}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {}
+            },
+            True,
+    ),
+    (
+            'Max, but not max is allowed to update anything (case-sensitive comparison)',
+            {
+                "subject": {"id": "", "attributes": {"name": "max"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Max is not allowed to print anything',
+            {
+                "subject": {"id": "", "attributes": {"name": "Max"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "print"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Max is not allowed to print anything, even if no resource is given',
+            {
+                "subject": {"id": "", "attributes": {"name": "Max"}},
+                "resource": {"id": "", "attributes": {}},
+                "action": {"id": "", "attributes": {"method": "print"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Max is not allowed to print anything, even an empty resource',
+            {
+                "subject": {"id": "", "attributes": {"name": "Max"}},
+                "resource": {"id": "", "attributes": {"name": ""}},
+                "action": {"id": "", "attributes": {"method": "print"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Policy #1 matches and has allow-effect',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "delete"}},
+                "context": {"ip": "127.0.0.1"}
+            },
+            True,
+    ),
+    (
+            'Policy #1 matches - Henry is listed in the allowed subjects regexp',
+            {
+                "subject": {"id": "", "attributes": {"name": "Henry"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "get"}},
+                "context": {"ip": "127.0.0.1"}
+            },
+            True,
+    ),
+    (
+            'Policy #1 does not match - context was not found (misspelled)',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "delete"}},
+                "context": {"IP": "127.0.0.1"}
+            },
+            False,
+    ),
+    (
+            'Policy #1 does not match - context is missing',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "delete"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Policy #1 does not match - context says IP is not in the allowed range',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "delete"}},
+                "context": {"ip": "0.0.0.0"}
+            },
+            False,
+    ),
+    (
+            'Policy #5 does not match - action is update, but subjects does not match',
+            {
+                "subject": {"id": "", "attributes": {"name": "Sarah"}},
+                "resource": {"id": "", "attributes": {"name": "myrn:example.com:resource:123"}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Policy #5 does not match - action is update, subject is Nina, but resource-name is not digits',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "abcd"}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {}
+            },
+            False,
+    ),
+    (
+            'Policy #5 should match',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "00678"}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {}
+            },
+            True,
+    ),
+    (
+            'Policy #5 and #6 should match - usage of "id" in context. Policy #5 overrides.',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "00678"}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {"id": "3fkap-bmvci-rmvp0"}
+            },
+            True,
+    ),
+    (
+            'Policy #5 should match and not #6 - usage of different context',
+            {
+                "subject": {"id": "", "attributes": {"name": "Nina"}},
+                "resource": {"id": "", "attributes": {"name": "00678"}},
+                "action": {"id": "", "attributes": {"method": "update"}},
+                "context": {"name": "test"}
+            },
+            True,
+    ),
+])
+def test_is_allowed_allow_overrides(st, desc, request_json, should_be_allowed):
+    pdp = PDP(st, EvaluationAlgorithm.ALLOW_OVERRIDES, [EmailsAttributeProvider()])
     request = Request.from_json(request_json)
     assert should_be_allowed == pdp.is_allowed(request)
 

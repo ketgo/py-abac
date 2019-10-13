@@ -79,7 +79,7 @@ class EvaluationContext(object):
         """
         rvalue = self._request_provider.get_attribute_value(ace, attribute_path, self)
         # If attribute value not found then check other attribute providers
-        if not rvalue:
+        if rvalue is None:
             # Providers are checked in order
             for provider in self._other_providers:
                 # To prevent infinite recursion skip provider if already in call stack.
@@ -90,7 +90,7 @@ class EvaluationContext(object):
                     rvalue = provider.get_attribute_value(ace, attribute_path, self)
                     # Pop provider from call-stack
                     self._provider_call_stack.pop()
-                    if rvalue:
+                    if rvalue is not None:
                         # Return attribute value for the very first provider which has the value.
                         # Other providers are not checked.
                         return rvalue

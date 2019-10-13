@@ -30,7 +30,8 @@ def test_create():
             "id": "a",
             "attributes": {
                 "firstName": "Carl",
-                "lastName": "Right"
+                "lastName": "Right",
+                "middleName": ""
             }
         },
         "resource": {
@@ -59,6 +60,8 @@ def test_create():
     assert context.attribute_value == "Carl"
     context.attribute_path = "$.lastName"
     assert context.attribute_value == "Right"
+    context.attribute_path = "$.middleName"
+    assert context.attribute_value == ""
 
     context.ace = "resource"
     context.attribute_path = "$.name"
@@ -71,7 +74,8 @@ def test_get_attribute_value():
             "id": "a",
             "attributes": {
                 "firstName": "Carl",
-                "lastName": "Right"
+                "lastName": "Right",
+                "middleName": ""
             }
         },
         "resource": {
@@ -89,6 +93,7 @@ def test_get_attribute_value():
     request = Request.from_json(request_json)
     context = EvaluationContext(request, providers=[EmailAttributeProvider()])
     assert context.get_attribute_value("subject", "$.firstName") == "Carl"
+    assert context.get_attribute_value("subject", "$.middleName") == ""
     assert context.get_attribute_value("subject", "$.email") == "carl@gmail.com"
     assert context.get_attribute_value("resource", "$.name") == "Calendar"
     assert context.get_attribute_value("context", "$.ip") is None
