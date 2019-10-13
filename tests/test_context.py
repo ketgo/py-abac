@@ -12,9 +12,16 @@ from py_abac.request import Request
 
 class EmailAttributeProvider(AttributeProvider):
 
-    def get_attribute_value(self, ace: str, attribute_path: str):
+    def get_attribute_value(self, ace, attribute_path, ctx):
         if ace == "subject" and attribute_path == "$.email":
             return "carl@gmail.com"
+
+
+class FaultyAttributeProvider(AttributeProvider):
+
+    def get_attribute_value(self, ace, attribute_path, ctx):
+        # This will test for infinite recessive loops
+        return ctx.get_attribute_value(ace, attribute_path)
 
 
 def test_create():
@@ -85,6 +92,39 @@ def test_get_attribute_value():
     assert context.get_attribute_value("subject", "$.email") == "carl@gmail.com"
     assert context.get_attribute_value("resource", "$.name") == "Calendar"
     assert context.get_attribute_value("context", "$.ip") is None
+
+
+def test_attribute_provider_infinite_recursion():
+    request_json = {
+        "subject": {
+            "id": "a",
+            "attributes": {
+                "firstName": "Carl",
+                "lastName": "Right"
+            }
+        },
+        "resource": {
+            "id": "a",
+            "attributes": {
+                "name": "Calendar"
+            }
+        },
+        "action": {
+            "id": "",
+            "attributes": {}
+        },
+        "context": {}
+    }
+    request = Request.from_json(request_json)
+    context = EvaluationContext(request, providers=[FaultyAttributeProvider()])
+    assert context.get_attribute_value("subject", "$.email") is None
+
+    context = EvaluationContext(request, providers=[FaultyAttributeProvider(),
+                                                    EmailAttributeProvider(),
+                                                    FaultyAttributeProvider(),
+                                                    EmailAttributeProvider(),
+                                                    FaultyAttributeProvider()])
+    assert context.get_attribute_value("subject", "$.age") is None
 
 
 def test_attribute_value_raises():

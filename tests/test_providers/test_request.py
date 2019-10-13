@@ -4,6 +4,7 @@
 
 import pytest
 
+from py_abac.context import EvaluationContext
 from py_abac.exceptions import InvalidAccessControlElementError, InvalidAttributePathError
 from py_abac.provider.request import RequestAttributeProvider
 from py_abac.request import Request
@@ -30,15 +31,19 @@ def test_get_attribute_value():
         },
         "context": {}
     }
-    provider = RequestAttributeProvider(Request.from_json(request_json))
+    request = Request.from_json(request_json)
+    ctx = EvaluationContext(request)
+    provider = RequestAttributeProvider(request)
 
-    assert request_json["subject"]["attributes"]["firstName"] == provider.get_attribute_value("subject", "$.firstName")
-    assert request_json["subject"]["attributes"]["lastName"] == provider.get_attribute_value("subject", "$.lastName")
-    assert provider.get_attribute_value("subject", "$.test") is None
-    assert request_json["resource"]["attributes"]["name"] == provider.get_attribute_value("resource", "$.name")
-    assert provider.get_attribute_value("resource", "$.test") is None
-    assert provider.get_attribute_value("action", "$.test") is None
-    assert provider.get_attribute_value("context", "$.test") is None
+    assert request_json["subject"]["attributes"]["firstName"] == provider.get_attribute_value("subject", "$.firstName",
+                                                                                              ctx)
+    assert request_json["subject"]["attributes"]["lastName"] == provider.get_attribute_value("subject", "$.lastName",
+                                                                                             ctx)
+    assert provider.get_attribute_value("subject", "$.test", ctx) is None
+    assert request_json["resource"]["attributes"]["name"] == provider.get_attribute_value("resource", "$.name", ctx)
+    assert provider.get_attribute_value("resource", "$.test", ctx) is None
+    assert provider.get_attribute_value("action", "$.test", ctx) is None
+    assert provider.get_attribute_value("context", "$.test", ctx) is None
 
 
 def test_invalid_ace_error():
@@ -62,9 +67,11 @@ def test_invalid_ace_error():
         },
         "context": {}
     }
-    provider = RequestAttributeProvider(Request.from_json(request_json))
+    request = Request.from_json(request_json)
+    ctx = EvaluationContext(request)
+    provider = RequestAttributeProvider(request)
     with pytest.raises(InvalidAccessControlElementError):
-        provider.get_attribute_value("test", "$.test")
+        provider.get_attribute_value("test", "$.test", ctx)
 
 
 def test_invalid_attribute_path_error():
@@ -88,6 +95,8 @@ def test_invalid_attribute_path_error():
         },
         "context": {}
     }
-    provider = RequestAttributeProvider(Request.from_json(request_json))
+    request = Request.from_json(request_json)
+    ctx = EvaluationContext(request)
+    provider = RequestAttributeProvider(request)
     with pytest.raises(InvalidAttributePathError):
-        provider.get_attribute_value("subject", ")")
+        provider.get_attribute_value("subject", ")", ctx)

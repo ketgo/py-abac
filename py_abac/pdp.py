@@ -55,7 +55,7 @@ class PDP(object):
             :return: True if authorized else False
         """
         if not isinstance(request, Request):
-            raise ValueError("Invalid authorization request object '{}'.".format(request))
+            raise TypeError("Invalid type '{}' for authorization request.".format(request))
 
         # Get appropriate evaluation algorithm handler
         evaluate = getattr(self, "_{}".format(self._algorithm))

@@ -7,6 +7,7 @@ from pymongo import MongoClient
 
 from py_abac.pdp import PDP, EvaluationAlgorithm
 from py_abac.policy import Policy
+from py_abac.provider.base import AttributeProvider
 from py_abac.request import Request
 from py_abac.storage.mongo import MongoStorage, MongoMigrationSet
 
@@ -104,6 +105,13 @@ POLICIES = [
         "priority": 0
     }
 ]
+
+
+class EmailsAttributeProvider(AttributeProvider):
+
+    def get_attribute_value(self, ace: str, attribute_path: str, ctx):
+        if ace == "subject" and attribute_path == "$.email":
+            return "carl@gmail.com"
 
 
 def create_client():
@@ -311,5 +319,5 @@ def test_guard_create_error(st):
 
 def test_is_allowed_error(st):
     g = PDP(st)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         g.is_allowed(None)

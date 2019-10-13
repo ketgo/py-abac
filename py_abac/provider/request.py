@@ -29,14 +29,7 @@ class RequestAttributeProvider(AttributeProvider):
         # Cache of attribute location and value pairs per access element used for quick attribute value retrieval
         self._attribute_values_cache = {"subject": {}, "resource": {}, "action": {}, "context": {}}
 
-    def get_attribute_value(self, ace: str, path: str):
-        """
-            Get attribute value for given access control element and attribute path
-
-            :param ace: access control element
-            :param path: attribute path in ObjectPath format
-            :return: attribute value
-        """
+    def get_attribute_value(self, ace, path, ctx):
         # Validates given access control element and gets ObjectPath tree
         try:
             attribute_tree = getattr(self, "_{}_tree".format(ace))

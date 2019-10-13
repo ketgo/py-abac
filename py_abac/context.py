@@ -2,11 +2,14 @@
     PDP policy evaluation context
 """
 
+import logging
 from typing import List
 
 from .provider.base import AttributeProvider
 from .provider.request import RequestAttributeProvider
 from .request import Request
+
+log = logging.getLogger(__name__)
 
 
 class EvaluationContext(object):
@@ -30,6 +33,9 @@ class EvaluationContext(object):
         self._ace = None
         # Path of attribute being evaluated
         self._attribute_path = None
+        # Call stack of attribute providers as called by context. The stack
+        # is used to prevent infinite recursive loops.
+        self._provider_call_stack = [None]
 
     @property
     def subject_id(self):
@@ -71,14 +77,21 @@ class EvaluationContext(object):
             :param attribute_path: attribute path in ObjectPath format
             :return: attribute value
         """
-        rvalue = self._request_provider.get_attribute_value(ace, attribute_path)
+        rvalue = self._request_provider.get_attribute_value(ace, attribute_path, self)
         # If attribute value not found then check other attribute providers
         if not rvalue:
             # Providers are checked in order
             for provider in self._other_providers:
-                rvalue = provider.get_attribute_value(ace, attribute_path)
-                if rvalue:
-                    # Return attribute value for the very first provider which has the value.
-                    # Other providers are not checked.
-                    return rvalue
+                # To prevent infinite recursion skip provider if already in call stack.
+                if provider not in self._provider_call_stack:
+                    # Append provider to call-stack
+                    self._provider_call_stack.append(provider)
+                    # Call attribute provider
+                    rvalue = provider.get_attribute_value(ace, attribute_path, self)
+                    # Pop provider from call-stack
+                    self._provider_call_stack.pop()
+                    if rvalue:
+                        # Return attribute value for the very first provider which has the value.
+                        # Other providers are not checked.
+                        return rvalue
         return rvalue
