@@ -181,7 +181,7 @@ def test__split_id(wc_id, splits):
       '*bcd*', '*abcd*', 'abcd*', '*abcd'])
 ])
 def test__get_all_ids(target_id, wc_ids):
-    assert _get_all_ids(target_id) == wc_ids
+    assert set(wc_ids).intersection(_get_all_ids(target_id)) == set(wc_ids)
     assert all(fnmatch.fnmatch(target_id, x) for x in wc_ids)
 
 
