@@ -53,6 +53,8 @@ See [concepts](#concepts) section for more details.
 
 PyABAC runs on Python >= 3.5. PyPy implementation is supported as well.
 
+
+To install run the following:
 ```bash
 pip install py-abac
 ```
@@ -64,33 +66,64 @@ pip install py-abac
 A quick dive-in:
 
 ```python
-import uuid
+from pymongo import MongoClient
+from py_abac import PDP, Policy, Request
+from py_abac.storage import MongoStorage
 
-import vakt
-from vakt.rules import Eq, Any, StartsWith, And, Greater, Less
+# Policy definition in JSON
+policy_json = {
+    "uid": "1",
+    "description": "Max and Nina are allowed to create, delete, get any "
+                   "resources only if the client IP matches.",
+    "effect": "allow",
+    "rules": {
+        "subject": [{"$.name": {"condition": "Equals", "value": "Max"}},
+                    {"$.name": {"condition": "Equals", "value": "Nina"}}],
+        "resource": {"$.name": {"condition": "RegexMatch", "value": ".*"}},
+        "action": [{"$.method": {"condition": "Equals", "value": "create"}},
+                   {"$.method": {"condition": "Equals", "value": "delete"}},
+                   {"$.method": {"condition": "Equals", "value": "get"}}],
+        "context": {"$.ip": {"condition": "CIDR", "value": "127.0.0.1/32"}}
+    },
+    "targets": {},
+    "priority": 0
+}
+# Parse JSON and create policy object
+policy = Policy.from_json(policy_json)
 
-policy = vakt.Policy(
-    str(uuid.uuid4()),
-    actions=[Eq('fork'), Eq('clone')],
-    resources=[StartsWith('repos/Google', ci=True)],
-    subjects=[{'name': Any(), 'stars': And(Greater(50), Less(999))}],
-    effect=vakt.ALLOW_ACCESS,
-    context={'referer': Eq('https://github.com')},
-    description="""
-    Allow to fork or clone any Google repository for
-    users that have > 50 and < 999 stars and came from Github
-    """
-)
-storage = vakt.MemoryStorage()
+# Setup policy storage
+client = MongoClient()
+storage = MongoStorage(client)
+# Add policy to storage
 storage.add(policy)
-guard = vakt.Guard(storage, vakt.RulesChecker())
 
-inq = vakt.Inquiry(action='fork',
-                   resource='repos/google/tensorflow',
-                   subject={'name': 'larry', 'stars': 80},
-                   context={'referer': 'https://github.com'})
+# Create policy decision point
+pdp = PDP(storage)
 
-assert guard.is_allowed(inq)
+# Sample access request JSON
+request_json = {
+    "subject": {
+        "id": "", 
+        "attributes": {"name": "Max"}
+    },
+    "resource": {
+        "id": "", 
+        "attributes": {"name": "myrn:example.com:resource:123"}
+    },
+    "action": {
+        "id": "", 
+        "attributes": {"method": "get"}
+    },
+    "context": {
+        "ip": "127.0.0.1"
+    }
+}
+# Parse JSON and create access request object
+request = Request.from_json(request_json)
+
+# Check if access request is allowed. Evaluates to True since 
+# Max is allowed to get any resource when client IP matches.
+assert pdp.is_allowed(request)
 ```
 
 For more examples see [here](./examples).
@@ -109,7 +142,7 @@ ABAC comes with a recommended architecture which is as follows:
 
 1. The PEP or Policy Enforcement Point: it is responsible for protecting the apps & data you want to apply ABAC to. The PEP inspects the user request and generates an authorization request which it sends to the PDP.
 2. The PDP or Policy Decision Point is the brain of the architecture. This is the piece which evaluates incoming requests against policies it has been configured with. The PDP returns a Permit / Deny decision. The PDP may also use PIPs to retrieve missing metadata
-3. The PIP or Policy Information Point bridges the PDP to external sources of attributes e.g. LDAP or databases. This is yet not supported in **pyabac**.
+3. The PIP or Policy Information Point bridges the PDP to external sources of attributes e.g. LDAP or databases. 
 4. The PAP or Policy Administration Point: manages the creation, update and deletion of policies. 
 
 ### Access Control Elements
