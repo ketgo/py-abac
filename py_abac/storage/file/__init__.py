@@ -1,0 +1,5 @@
+"""
+    File storage
+"""
+
+raise NotImplementedError()

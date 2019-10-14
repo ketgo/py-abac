@@ -13,7 +13,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 if __name__ == '__main__':
     setup(
         name='py_abac',
-        description='Attribute-based access control (ABAC) python SDK',
+        description='Attribute-based access control (ABAC)',
         keywords='ACL ABAC access-control policy security authorization permission',
         version=about['__version__'],
         author='Ketan Goyal',
@@ -33,8 +33,6 @@ if __name__ == '__main__':
         extras_require={
             'dev': [
                 'pytest~=4.0',
-                'pytest-benchmark~=3.2',
-                'pytest-profiling~=1.7',
                 'pytest-cov~=2.6',
                 'pylint~=1.0',
             ]
