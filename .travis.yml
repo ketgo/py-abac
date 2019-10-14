@@ -7,7 +7,7 @@ language: python
 services:
   - mongodb
 
-cache: provider
+cache: pip
 
 python:
   - "3.5"
