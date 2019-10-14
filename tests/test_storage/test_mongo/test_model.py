@@ -4,6 +4,7 @@
 
 import fnmatch
 import json
+import unittest
 
 import pytest
 
@@ -181,7 +182,8 @@ def test__split_id(wc_id, splits):
       '*bcd*', '*abcd*', 'abcd*', '*abcd'])
 ])
 def test__get_all_ids(target_id, wc_ids):
-    assert set(wc_ids).intersection(_get_all_ids(target_id)) == set(wc_ids)
+    assertions = unittest.TestCase('__init__')
+    assertions.assertListEqual(_get_all_ids(target_id), wc_ids)
     assert all(fnmatch.fnmatch(target_id, x) for x in wc_ids)
 
 
@@ -219,4 +221,5 @@ def test__get_all_ids(target_id, wc_ids):
      ),
 ])
 def test_get_aggregate_pipeline(subject_id, resource_id, action_id, pipeline):
-    assert PolicyModel.get_aggregate_pipeline(subject_id, resource_id, action_id) == pipeline
+    assertions = unittest.TestCase('__init__')
+    assertions.assertListEqual(PolicyModel.get_aggregate_pipeline(subject_id, resource_id, action_id), pipeline)
