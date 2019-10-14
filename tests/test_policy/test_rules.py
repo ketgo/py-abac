@@ -96,6 +96,14 @@ def test_create_error(rules_json):
          "context": {}
      }, False),
     ({
+         "subject": {"$.firstName": {"condition": "Equals", "value": "Carl"},
+                     "$.lastName": {"condition": "Equals", "value": "Right"},
+                     "$.middleName": {"condition": "Equals", "value": "Marvin"}},
+         "resource": [{"$.name": {"condition": "Equals", "value": "Calendar"}}],
+         "action": {"$.method": {"condition": "Equals", "value": "Get"}},
+         "context": {}
+     }, False),
+    ({
          "subject": {},
          "resource": {},
          "action": {},

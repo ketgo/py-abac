@@ -1,9 +1,105 @@
 # py-ABAC
-Attribute Based Access Control (ABAC) SDK for python. 
+Attribute Based Access Control (ABAC) for python. 
+
+[![Build Status](https://travis-ci.com/ketgo/py-abac.svg?token=oCVxhfjJAa2zDdszGjoy&branch=master)](https://travis-ci.com/ketgo/py-abac)
+[![codecov.io](https://codecov.io/gh/ketgo/pyabac/coverage.svg?branch=master)](https://codecov.io/gh/ketgo/pyabac/coverage.svg?branch=master)
+[![Apache 2.0 licensed](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://raw.githubusercontent.com/kolotaev/vakt/master/LICENSE)
+
+---
+
+- [Introduction](#introduction)
+- [Install](#install)
+- [Usage](#usage)
+- [Concepts](#concepts)
+- [Components](#components)
+	- [Policy](#policy)
+	- [Inquiry](#inquiry)
+	- [Rules](#rules)
+	    - [Comparison-related](#comparison-related)
+	    - [Logic-related](#logic-related)
+	    - [List-related](#list-related)
+	    - [Network-related](#network-related)
+	    - [String-related](#string-related)
+	    - [Inquiry-related](#inquiry-related)
+	- [Checker](#checker)
+	- [Guard](#guard)
+	- [Storage](#storage)
+        - [Memory](#memory)
+        - [MongoDB](#mongodb)
+        - [SQL](#sql)
+    - [Migration](#migration)
+- [JSON](#json)
+- [Logging](#logging)
+- [Examples](./examples)
+- [Milestones](#milestones)
+- [Acknowledgements](#acknowledgements)
+- [Development](#development)
+- [License](#license)
+
+---
 
 ## Introduction
 
-This document describes the Policy Language (PL) implemented in **pyabac** for defining policies as part of Attribute Based Access Control (ABAC). The goal of PL is to provide a simplified JSON-based language to create Policies for access control. 
+Py-ABAC is an attribute-based access control ([ABAC](https://en.wikipedia.org/wiki/Attribute-based_access_control))
+toolkit based on policies. ABAC gives you a fine-grained control on definition of the rules that restrict an access to resources and is generally considered a
+"next generation" authorization model. The design of py-abac is stems from the [XACML](https://en.wikipedia.org/wiki/XACML) standard, and the ABAC python SDK [vakt](https://github.com/kolotaev/vakt).
+
+See [concepts](#concepts) section for more details.
+
+*[Back to top](#py-abac)*
+
+
+## Install
+
+PyABAC runs on Python >= 3.5. PyPy implementation is supported as well.
+
+```bash
+pip install py-abac
+```
+
+*[Back to top](#py-abac)*
+
+## Usage
+
+A quick dive-in:
+
+```python
+import uuid
+
+import vakt
+from vakt.rules import Eq, Any, StartsWith, And, Greater, Less
+
+policy = vakt.Policy(
+    str(uuid.uuid4()),
+    actions=[Eq('fork'), Eq('clone')],
+    resources=[StartsWith('repos/Google', ci=True)],
+    subjects=[{'name': Any(), 'stars': And(Greater(50), Less(999))}],
+    effect=vakt.ALLOW_ACCESS,
+    context={'referer': Eq('https://github.com')},
+    description="""
+    Allow to fork or clone any Google repository for
+    users that have > 50 and < 999 stars and came from Github
+    """
+)
+storage = vakt.MemoryStorage()
+storage.add(policy)
+guard = vakt.Guard(storage, vakt.RulesChecker())
+
+inq = vakt.Inquiry(action='fork',
+                   resource='repos/google/tensorflow',
+                   subject={'name': 'larry', 'stars': 80},
+                   context={'referer': 'https://github.com'})
+
+assert guard.is_allowed(inq)
+```
+
+For more examples see [here](./examples).
+
+*[Back to top](#py-abac)*
+
+## Concepts
+
+This section describes the different concepts and policy language (PL) involved in defining policies with py-ABAC. The purpose of PL is to provide a simplified JSON-based language to create policies for access control. 
 
 ## Access Control Architecture
 
@@ -16,7 +112,7 @@ ABAC comes with a recommended architecture which is as follows:
 3. The PIP or Policy Information Point bridges the PDP to external sources of attributes e.g. LDAP or databases. This is yet not supported in **pyabac**.
 4. The PAP or Policy Administration Point: manages the creation, update and deletion of policies. 
 
-## Access Control Elements
+### Access Control Elements
 
 In most if not every access control protocol, the following four elements are involved:
 
@@ -31,11 +127,11 @@ In **pyabac** one defines policies containing conditions on one or more attribut
 2. `DenyOverrides`: PDP returns *deny* if any decision evaluates to *deny*; returns *allow* if all decisions evaluate to *allow*.
 3. `HighestPriority`: PDP returns the highest priority decision that evaluates to either *allow* or *deny*. If there are multiple equally highest priority decisions that conflict, then `DenyOverrides` algorithm would be applied among those highest priority decisions.
 
-## Policy Language
+### Policy Language
 
 We now present the policy language used by **pyabac**. This section is divided into two subsections. The first subsection discusses JSON-based definition of a policy, while the latter about that authorization request. 
 
-### Policy
+#### Policy
 
 A policy object consists of id, description, conditions, targets, effect, and priority fields. The JSON schema of this object is given by
 
@@ -52,7 +148,7 @@ A policy object consists of id, description, conditions, targets, effect, and pr
 
 where <conditions_block> and `<targets_block>` are JSON blocks explained in the following sections. The `"id"` field is a string value that uniquely identifies a policy. The `"description"` stores description of the policy provided by the policy creator. The two fields `"conditions"` and `"targets"` indicate the attributes of the access control elements to which the policy apply. The `"effect"` is the returned decision of the policy and can be either *allow* or *deny*. Finally, `"priority"` provides a numeric value indicating the weight of the policy when its decision conflicts with other policy under the `HighestPriority` evaluation algorithm. By default, this field is set to `0` for all policies.
 
-#### Conditions Block
+##### Conditions Block
 
 Conditions are Boolean expressions defined on the attributes of the access control elements. This block consists of fields subject, resource, action and context, where for each field a Boolean expression is defined on their attributes. The JSON schema is given by
 
@@ -119,7 +215,7 @@ Sometimes condition on a single attribute does not suffice and constraints on mu
 
 The condition states that the subject should have an attribute `firstName` as "Carl" AND `lastName` as "Rubin". Similarly, the resource should have an attribute name as "Default" OR type as "Book".
 
-#### Targets Block
+##### Targets Block
 
 The primary purpose of targets block is to define for which elements the policy applies. The block contains an implicit logical OR operation on ‘ID’ attribute of the subject, resource, and action fields. This enables an efficient retrieval of policies from a repository by PDP. Thus in **pyabac**, it is required that these access elements have a string valued ID attribute. The JSON schema of the block is given by
 
@@ -153,7 +249,7 @@ If a target block is not explicitly specified, the policy is considered to be al
 }
 ```
 
-### Authorization Request
+#### Authorization Request
 
 An authorization request is a data object sent by PEP to PDP. This object contains all the information needed by the PDP to evaluate the policies and return access decision. The JSON schema of the object is given by
 
@@ -200,7 +296,7 @@ where `<attribute_block>` is just a JSON block containing one or more attribute-
 }
 ```
 
-## Appendix
+### Appendix
 
 There are basically six types of condition expressions supported in **pyabac**: *Logic,* *Numeric*, *String*, *Collection*, *Attribute*, and *Other*. The JSON schema for each are shown below:
 
