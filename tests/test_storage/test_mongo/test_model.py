@@ -2,7 +2,6 @@
     MongoDB policy model test
 """
 
-import unittest
 import fnmatch
 import json
 
@@ -220,7 +219,17 @@ def test__get_all_ids(target_id, wc_ids):
      ),
 ])
 def test_get_aggregate_pipeline(subject_id, resource_id, action_id, pipeline):
-    assertions = unittest.TestCase('__init__')
     returned_pipeline = PolicyModel.get_aggregate_pipeline(subject_id, resource_id, action_id)
-    for x in range(len(pipeline)):
-        assertions.assertDictEqual(returned_pipeline[x], pipeline[x])
+    assert sorted(returned_pipeline[0]['$match']['tags.action.id']['$in']) == sorted(
+        pipeline[0]['$match']['tags.action.id']['$in'])
+    assert sorted(returned_pipeline[0]['$match']['tags.resource.id']['$in']) == sorted(
+        pipeline[0]['$match']['tags.resource.id']['$in'])
+    assert sorted(returned_pipeline[0]['$match']['tags.subject.id']['$in']) == sorted(
+        pipeline[0]['$match']['tags.subject.id']['$in'])
+
+    assert sorted(returned_pipeline[1]['$match']['tags.action.id']['$not']['$elemMatch']['$nin']) == sorted(
+        pipeline[1]['$match']['tags.action.id']['$not']['$elemMatch']['$nin'])
+    assert sorted(returned_pipeline[1]['$match']['tags.resource.id']['$not']['$elemMatch']['$nin']) == sorted(
+        pipeline[1]['$match']['tags.resource.id']['$not']['$elemMatch']['$nin'])
+    assert sorted(returned_pipeline[1]['$match']['tags.subject.id']['$not']['$elemMatch']['$nin']) == sorted(
+        pipeline[1]['$match']['tags.subject.id']['$not']['$elemMatch']['$nin'])
