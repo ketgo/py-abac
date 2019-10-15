@@ -160,7 +160,7 @@ In py-ABAC one defines policies containing conditions on one or more attributes 
 
 ### Policy
 
-This is the main object containing rules for accessing resources. A policy object can be created by first defining a policy JSON using the JSON-based [Policy Language](##Policy Language), and then parsing it using the `Policy` class.  
+This is the main object containing rules for accessing resources. A policy object can be created by first defining a policy JSON using the JSON-based [Policy Language](#policylanguage), and then parsing it using the `Policy` class.  
 
 ``` python
 from py_abac import Policy
@@ -185,7 +185,7 @@ policy_json = {
 policy = Policy.from_json(policy_json)
 ```
 
-See the [Policy Language](##Policy Language) section for detailed description of JSON structure.
+See the [Policy Language](#policylanguage) section for detailed description of JSON structure.
 
 *[Back to top](#py-abac)*
 
@@ -217,7 +217,7 @@ request_json = {
 request = Request.from_json(request_json)
 ```
 
-You might have noticed the presence of empty  `"id"` fields for the `subject`, `resource` and `action` access control elements in the above example. These are mandatory fields for creating an access request object in py-ABAC. The purpose of these fields is explained in detail in the [Policy Language](##Policy Language) section. If unsure of their usage, you can safely set them to an empty string.
+You might have noticed the presence of empty  `"id"` fields for the `subject`, `resource` and `action` access control elements in the above example. These are mandatory fields for creating an access request object in py-ABAC. The purpose of these fields is explained in detail in the [Policy Language](#policylanguage) section. If unsure of their usage, you can safely set them to an empty string.
 
 ### PDP
 
@@ -247,7 +247,7 @@ else:
 
 
 
-By default, a `PDP` object uses the `DenyOverrides` algorithm for policy evaluation. To specify otherwise, pass the evaluation algorithm at time of creation. Furthermore, a list of [AttributeProvider](#attributeproviders) objects can also be specified. 
+By default, a `PDP` object uses the `DenyOverrides` algorithm for policy evaluation. To specify otherwise, pass the evaluation algorithm at creation. Optionally, a list of [AttributeProvider](#attributeproviders) objects can also be specified. 
 
 ```python
 from py_abac import PDP, EvaluationAlgorithm
