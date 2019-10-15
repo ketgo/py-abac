@@ -13,22 +13,15 @@ Attribute Based Access Control (ABAC) for python.
 - [Concepts](#concepts)
 - [Components](#components)
 	- [Policy](#policy)
-	- [Inquiry](#inquiry)
-	- [Rules](#rules)
-	    - [Comparison-related](#comparison-related)
-	    - [Logic-related](#logic-related)
-	    - [List-related](#list-related)
-	    - [Network-related](#network-related)
-	    - [String-related](#string-related)
-	    - [Inquiry-related](#inquiry-related)
-	- [Checker](#checker)
-	- [Guard](#guard)
+	- [Request](#inquiry)
+	- [PDP](#pdp)
+	- [AttributeProvider](#attributeprovider)
 	- [Storage](#storage)
-        - [Memory](#memory)
-        - [MongoDB](#mongodb)
-        - [SQL](#sql)
-    - [Migration](#migration)
-- [JSON](#json)
+	    - [Memory](#memory)
+	    - [MongoDB](#mongodb)
+	    - [SQL](#sql)
+	- [Migration](#migration)
+- [Policy Language](#policylanguage)
 - [Logging](#logging)
 - [Examples](./examples)
 - [Milestones](#milestones)
@@ -40,9 +33,7 @@ Attribute Based Access Control (ABAC) for python.
 
 ## Introduction
 
-Py-ABAC is an attribute-based access control ([ABAC](https://en.wikipedia.org/wiki/Attribute-based_access_control))
-toolkit based on policies. ABAC gives you a fine-grained control on definition of the rules that restrict an access to resources and is generally considered a
-"next generation" authorization model. The design of py-abac is stems from the [XACML](https://en.wikipedia.org/wiki/XACML) standard, and the ABAC python SDK [vakt](https://github.com/kolotaev/vakt).
+Py-ABAC is an attribute-based access control ([ABAC](https://en.wikipedia.org/wiki/Attribute-based_access_control)) toolkit based on policies. ABAC gives you a fine-grained control on definition of the rules that restrict an access to resources and is generally considered a "next generation" authorization model. The design of py-ABAC stems from the [XACML](https://en.wikipedia.org/wiki/XACML) standard, and the ABAC python SDK [vakt](https://github.com/kolotaev/vakt).
 
 See [concepts](#concepts) section for more details.
 
@@ -100,7 +91,7 @@ storage.add(policy)
 # Create policy decision point
 pdp = PDP(storage)
 
-# Sample access request JSON
+# A sample access request JSON
 request_json = {
     "subject": {
         "id": "", 
@@ -132,37 +123,163 @@ For more examples see [here](./examples).
 
 ## Concepts
 
-This section describes the different concepts and policy language (PL) involved in defining policies with py-ABAC. The purpose of PL is to provide a simplified JSON-based language to create policies for access control. 
-
-## Access Control Architecture
+### Access Control Architecture
 
 ![img](https://lh6.googleusercontent.com/z4oppCjtEITgem5UZUN28NiaV4LrYPrjqD1MjZiYDhjmj1OkFFcN9H2jj64Zd0tkRkf5O436eOA574Sur0uSDlUztRtadREn_wfRfMbh4dNiACxivd0zjM_gLcF94N-bdhl_g15N)
 
-ABAC comes with a recommended architecture which is as follows:
+The above diagram depicts the standard architecture for ABAC, which is as follows:
 
-1. The PEP or Policy Enforcement Point: it is responsible for protecting the apps & data you want to apply ABAC to. The PEP inspects the user request and generates an authorization request which it sends to the PDP.
-2. The PDP or Policy Decision Point is the brain of the architecture. This is the piece which evaluates incoming requests against policies it has been configured with. The PDP returns a Permit / Deny decision. The PDP may also use PIPs to retrieve missing metadata
-3. The PIP or Policy Information Point bridges the PDP to external sources of attributes e.g. LDAP or databases. 
-4. The PAP or Policy Administration Point: manages the creation, update and deletion of policies. 
+1. The PEP or Policy Enforcement Point: It is your piece of code that uses py-ABAC to protect  app & data. The PEP should  inspect a user request, create a corresponding access request, and send it to the PDP for evaluation.
+
+2. The PDP or Policy Decision Point is the brain of the architecture. This is the piece which evaluates incoming access requests against policies and returns a Permit / Deny decision. The PDP may also use PIPs to retrieve missing attribute values during policy evaluation.
+
+3. The PIP or Policy Information Point bridges the PDP to external sources of attribute values e.g. LDAP or databases. 
+
+4. The PAP or Policy Administration Point: manages the creation, update and deletion of policies evaluated by PDP. 
+
+*[Back to top](#py-abac)*
 
 ### Access Control Elements
 
-In most if not every access control protocol, the following four elements are involved:
+In the above architecture, following four elements are involved during an access request to PDP:
 
 1. `subject`: This is the entity which requests access, also known as the request principal. A subject can be anything that requests access, i.e. a user or an application.
 2. `resource`: The object which is requested to be accessed by the subject. 
 3. `action`: The action being performed on the resource.
 4. `context`: This element deals with time, location or dynamic aspects of the access control scenario. 
 
-In **pyabac** one defines policies containing conditions on one or more attributes of these four elements. If these conditions are satisfied, an access decision is returned by the PDP using an evaluation algorithm. Thus with ABAC you can have as many policies as you like that cater to many different scenarios and technologies. There are three different evaluation algorithms supported by **pyabac**:
+In py-ABAC one defines policies containing conditions on one or more attributes of these four elements. If these conditions are satisfied, an access decision is returned by the PDP using an evaluation algorithm. There are three different evaluation algorithms supported by py-ABAC:
 
-1. `AllowOverrides`: PDP returns *allow* if any decision evaluates to *allow*; and returns *deny* if all decisions evaluate to *deny*.
-2. `DenyOverrides`: PDP returns *deny* if any decision evaluates to *deny*; returns *allow* if all decisions evaluate to *allow*.
-3. `HighestPriority`: PDP returns the highest priority decision that evaluates to either *allow* or *deny*. If there are multiple equally highest priority decisions that conflict, then `DenyOverrides` algorithm would be applied among those highest priority decisions.
+1. `AllowOverrides`: returns `allow` if any decision evaluates to `allow`; and returns `deny` if all decisions evaluate to `deny`.
+2. `DenyOverrides`: returns `deny` if any decision evaluates to `deny`; returns `allow` if all decisions evaluate to `allow`.
+3. `HighestPriority`: returns the highest priority decision that evaluates to either `allow` or `deny`. If there are multiple equally highest priority decisions that conflict, then `DenyOverrides` algorithm would be applied among those highest priority decisions.
 
-### Policy Language
+*[Back to top](#py-abac)*
 
-We now present the policy language used by **pyabac**. This section is divided into two subsections. The first subsection discusses JSON-based definition of a policy, while the latter about that authorization request. 
+## Components
+
+### Policy
+
+This is the main object containing rules for accessing resources. A policy object can be created by first defining a policy JSON using the JSON-based [Policy Language](##Policy Language), and then parsing it using the `Policy` class.  
+
+``` python
+from py_abac import Policy
+
+# Policy definition in JSON-based policy language
+policy_json = {
+    "uid": "1",
+    "description": "Max is not allowed to create, delete, get any resource",
+    "effect": "deny",
+    "rules": {
+        "subject": {"$.name": {"condition": "Equals", "value": "Max"}},
+        "resource": {"$.name": {"condition": "RegexMatch", "value": ".*"}},
+        "action": [{"$.method": {"condition": "Equals", "value": "create"}},
+                   {"$.method": {"condition": "Equals", "value": "delete"}},
+                   {"$.method": {"condition": "Equals", "value": "get"}}],
+        "context": {}
+    },
+    "targets": {},
+    "priority": 0
+}
+# Prase policy JSON to create Policy object
+policy = Policy.from_json(policy_json)
+```
+
+See the [Policy Language](##Policy Language) section for detailed description of JSON structure.
+
+*[Back to top](#py-abac)*
+
+### Request
+
+The access request generated by PEP in the ABAC architecture is created using the `Request` object in py-ABAC. All you need to do is take any kind of incoming user request (REST request, SOAP, etc.) and build a `Request` object out of it in order to feed it to py-ABAC. 
+
+```python
+from py_abac import Request
+from flask import request, session
+
+# Create a access request JSON from flask request object
+request_json = {
+    "subject": {
+        "id": "", 
+        "attributes": {"name": request.values.get("username")}
+    },
+    "resource": {
+        "id": "", 
+        "attributes": {"name": request.path}
+    },
+    "action": {
+        "id": "", 
+        "attributes": {"method": request.method}
+    },
+    "context": {}
+}
+# Parse JSON and create access request object
+request = Request.from_json(request_json)
+```
+
+You might have noticed the presence of empty  `"id"` fields for the `subject`, `resource` and `action` access control elements in the above example. These are mandatory fields for creating an access request object in py-ABAC. The purpose of these fields is explained in detail in the [Policy Language](##Policy Language) section. If unsure of their usage, you can safely set them to an empty string.
+
+### PDP
+
+You can create a policy decision point by the instantiating the `PDP` class. It is the main entry point of py-ABAC for evaluating access requests. At a minimum a [Storage](#storage) object is needed to create a `PDP` object. It has one method `is_allowed` when passed a `Request` object gives you a boolean answer: is access allowed or not?
+
+```python
+from pymongo import MongoClient
+from py_abac import PDP
+from py_abac.storage import MongoStorage
+
+# Setup storage
+client = MongoClient()
+st = MongoStorage(client)
+# Insert all polices to storage
+for p in policies:
+    st.add(p)
+
+# Create PDP
+pdp = PDP(st)
+
+# Evaluate if access is allowed
+if pdp.is_allowed(request):
+    return "Access Allowed", 200
+else:
+    return "Unauthorized Access", 401
+```
+
+
+
+By default, a `PDP` object uses the `DenyOverrides` algorithm for policy evaluation. To specify otherwise, pass the evaluation algorithm at time of creation. Furthermore, a list of [AttributeProvider](#attributeproviders) objects can also be specified. 
+
+```python
+from py_abac import PDP, EvaluationAlgorithm
+from py_abac.storage import MongoStorage
+from py_abac.providers import AttributeProvider
+
+# A simple email attribute provider class
+class EmailAttributeProvider(AttributeProvider):
+    def get_attribute_value(self, ace, attribute_path, ctx):
+        return "example@gmail.com"
+    
+# Setup storage
+client = MongoClient()
+st = MongoStorage(client)
+# Insert all polices to storage
+for p in policies:
+    st.add(p)
+
+# Create PDP configured to use highest priority algorithm 
+# and an additional email attribute provider
+pdp = PDP(st, EvaluationAlgorithm.HIGHEST_PRIORITY, [EmailAttributeProvider()])
+```
+
+The three supported algorithms are `EvaluationAlgorithm.DENY_OVERRIDES`, `EvaluationAlgorithm.ALLOW_OVERRIDES`, and `EvaluationAlgorithm.HIGHEST_PRIORITY`.
+
+### AttributeProvider
+
+### Storage
+
+## Policy Language
+
+We now present the policy language used by **pyabac**. This section is divided into two subsections. The first subsection discusses JSON-based definition of a policy, while the latter about access request. 
 
 #### Policy
 
@@ -172,18 +289,18 @@ A policy object consists of id, description, conditions, targets, effect, and pr
 {   
     "id": <string>,  
     "description": <string>,   
-    "conditions": <conditions_block>,   
+    "rules": <rules_block>,   
     "targets": <targets_block>,   
     "effect": <string>,   
     "priority": <number> 
 }
 ```
 
-where <conditions_block> and `<targets_block>` are JSON blocks explained in the following sections. The `"id"` field is a string value that uniquely identifies a policy. The `"description"` stores description of the policy provided by the policy creator. The two fields `"conditions"` and `"targets"` indicate the attributes of the access control elements to which the policy apply. The `"effect"` is the returned decision of the policy and can be either *allow* or *deny*. Finally, `"priority"` provides a numeric value indicating the weight of the policy when its decision conflicts with other policy under the `HighestPriority` evaluation algorithm. By default, this field is set to `0` for all policies.
+where `<conditions_block>` and `<targets_block>` are JSON blocks explained in the following sections. The `"id"` field is a string value that uniquely identifies a policy. The `"description"` stores description of the policy provided by the policy creator. The two fields `"rules"` and `"targets"` indicate the attributes of the access control elements to which the policy apply. The `"effect"` is the returned decision of the policy and can be either *allow* or *deny*. Finally, `"priority"` provides a numeric value indicating the weight of the policy when its decision conflicts with other policy under the `HighestPriority` evaluation algorithm. By default, this field is set to `0` for all policies.
 
-##### Conditions Block
+##### Rules Block
 
-Conditions are Boolean expressions defined on the attributes of the access control elements. This block consists of fields subject, resource, action and context, where for each field a Boolean expression is defined on their attributes. The JSON schema is given by
+Rules are Boolean expressions defined on the attributes of the access control elements. This block consists of fields subject, resource, action and context, where for each field a Boolean expression is defined on their attributes. The JSON schema is given by
 
 ```json
 {   
@@ -272,7 +389,7 @@ where <id_string> are the required string values for the ‘ID’ attribute. Reg
 
 This target block defines that the policy is only applicable if the subject ID is either set to “a” or “b”, and the resource ID starts with string “ab”. The action can have any ID value. 
 
-If a target block is not explicitly specified, the policy is considered to be always applicable as the following default is used: 
+If a target block is not explicitly specified, the policy is considered to be always applicable with the following default used: 
 
 ```json
 {   
@@ -282,9 +399,9 @@ If a target block is not explicitly specified, the policy is considered to be al
 }
 ```
 
-#### Authorization Request
+#### Access Request
 
-An authorization request is a data object sent by PEP to PDP. This object contains all the information needed by the PDP to evaluate the policies and return access decision. The JSON schema of the object is given by
+An access request is a data object sent by PEP to PDP. This object contains all the information needed by the PDP to evaluate the policies and return access decision. The JSON schema of the object is given by
 
 ```json
 {   
