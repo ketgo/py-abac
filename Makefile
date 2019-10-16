@@ -20,7 +20,7 @@ coverage:
 
 .PHONY: lint
 lint:
-	pylint vakt
+	pylint py_abac
 
 .PHONY: release
 release: test
