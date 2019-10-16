@@ -24,4 +24,5 @@ lint:
 
 .PHONY: release
 release: test
-	${PYTHON} setup.py sdist upload -r pypi
+	${PYTHON} setup.py sdist
+	twine upload dist/*
