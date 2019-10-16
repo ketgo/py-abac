@@ -23,8 +23,13 @@ Attribute Based Access Control (ABAC) for python.
 	- [AttributeProvider](#attributeprovider)
 	- [EvaluationContext](#evaluationcontext)
 - [Policy Language](#policy-language)
+  - [Policy JSON](#policy-json)
+    - [Targets vs Rules](#targets-vs-rules)
+    - [Targets Block](#targets-block)
+    - [Rules Block](#rules-block)
+    - [Condition Blocks](#condition-blocks)
+  - [Access Request](#access-request)
 - [Logging](#logging)
-- [Examples](./examples)
 - [Milestones](#milestones)
 - [Acknowledgements](#acknowledgements)
 - [Development](#development)
@@ -218,7 +223,7 @@ request_json = {
 request = Request.from_json(request_json)
 ```
 
-You might have noticed the presence of empty  `"id"` fields for the `subject`, `resource` and `action` access control elements in the above example. These are mandatory fields for creating an access request object in py-ABAC. The purpose of these fields is explained in detail in the [Policy Language](#policylanguage) section. If unsure of their usage, you can safely set them to an empty string.
+You might have noticed the presence of empty  `"id"` fields for the `subject`, `resource` and `action` access control elements in the above example. These are called _target IDs_ and are mandatory fields for creating an access request object in py-ABAC. The purpose of these fields is explained in detail in the [Target Block](#targets-block) subsection of [Policy Language](#policylanguage). If you are unsure of their usage, you can safely set them to an empty string.
 
 *[Back to top](#py-abac)*
 
@@ -420,14 +425,14 @@ Lastly, if the `AttributeProvider` does not contain value for an attribute, the 
 An `EvaluationContext` object is created by the `PDP` during policy evaluation. This object is used by the `PDP` for retrieval of attribute values for which the policy is defined. It has following properties:
 
 ```python
-# The access control element currently being evauluated
-ctx.ace  
+# The target ID for subject access control element
+ctx.subject_id  
 
-# The attribute of the above access control element currently being evauluated
-ctx.attribute_path
+# The target ID for resource access control element
+ctx.resource_id
 
-# The value of the above attribute
-ctx.attribute_value
+# The target ID for action access control element
+ctx.action_id
 
 # Lookup a value for an attribute of an access control element
 ctx.get_attribute_value(ace: str, attribute_path: str)
@@ -438,28 +443,76 @@ During retrieval,  the `EvaluationContext` first checks for attribute value in t
 
 ## Policy Language
 
-We now present the policy language for py-ABAC. This section is divided into two subsections. The first subsection discusses JSON-based definition of a policy, while the latter about the same for access request. 
+This section presents the JSON-based policy language for py-ABAC. There are two subsections. The first subsection discusses JSON structure of a policy, while the latter about the access request. 
 
-#### Policy
+### Policy
 
-A policy object consists of id, description, conditions, targets, effect, and priority fields. The JSON schema of this object is given by
+A policy structure consists of `uid`, `description`, `conditions`, `targets`, `effect`, and `priority` fields. The JSON schema is given by
 
-```json
+```
 {   
-    "uid": "<string>",  
-    "description": "<string>",   
-    "rules": "<rules_block>",   
-    "targets": "<targets_block>",   
-    "effect": "<string>",   
-    "priority": "<number>" 
+    "uid": <string>,  
+    "description": <string>,   
+    "rules": <rules_block>,   
+    "targets": <targets_block>,   
+    "effect": <string>,   
+    "priority": <number> 
 }
 ```
 
-where `<conditions_block>` and `<targets_block>` are JSON blocks explained in the following sections. The `"uid"` field is a string value that uniquely identifies a policy. The `"description"` field, as the name suggests, stores the description of the policy. The two fields,  `"targets"` and `"rules"`, indicate the access control elements and their attributes to which the policy apply. The `"effect"` is the returned decision of the policy and can be either `"allow"` or `"deny"`. Finally, `"priority"` provides a numeric value indicating the weight of the policy when its decision conflicts with other policy under the `HighestPriority` evaluation algorithm. By default, this field is set to `0` for all policies.
+where `<rules_block>` and `<targets_block>` are JSON blocks discussed in detail in the [Rules Block](#rules-block) and [Targets Block](#targets-block) subsections. Essentially, the `"targets"` and `"rules"` fields are used to define conditions on the attributes of access control elements. When these conditions are satisfied, the policy applies and the value for the `"effect"` field is returned by the `PDP`. Thus `"effect"` is the returned decision of the policy and can be either `"allow"` or `"deny"`. The  `"uid"` field is a string value that uniquely identifies a policy. As the name suggests, the `"description"` field stores description of the policy. Finally, `"priority"` provides a numeric value indicating the weight of the policy when its decision conflicts with other policy under the `HighestPriority` evaluation algorithm. By default, this field is set to `0` for all policies.
 
-##### Rules Block
+#### Targets vs Rules
 
-Rules are Boolean expressions defined on the attributes of the access control elements. The JSON schema is given by
+The concept of `"targets"` and `"rules"` in py-ABAC is derived from the XACML standard. Both are used to define conditions on attributes during policy creation. There is however a basic distinction between the two. This distinction will become more clear in the following sections. From a conceptual standpoint, `"targets"` states for which access control elements a policy applies. In other words, targets of a policy. The `"rules"` on the other-hand define the conditions on the attributes of the targets. To illustrate this point, lets consider a system with two users, "Sam" and "John". Each user has an attribute called "age".  Suppose we want to create a policy where "Sam" can access the system only if he is above 18 years old. To achieve this, we set the target of the policy to "Sam" while the rule to the condition "age" > 18. The exact syntax to do so is shown in the following sections.
+
+#### Targets Block
+
+The targets block specifies for which access control elements a policy applies. This block contains one or more 'ID' attribute values for `subject`, `resource`, and `action` fields. Thus in py-ABAC it is mandatory that these three access control elements have a string valued ID attribute in the `Request` object. The JSON schema for the block is
+
+```
+{   
+    "subject_id": ["<id_string>", "<id_string>", ... ],   
+    "resource_id": ["<id_string>", "<id_string>", ... ],   
+    "action_id": ["<id_string>", "<id_string>", ... ] 
+} 
+```
+
+where  `<id_string>` denotes string values of the ‘ID’ attribute. The array here acts as an implicit OR operator. Furthermore wild-carded values for `<id_string>` are also supported:
+
+```json
+{   
+    "subject_id": ["a", "b"],   
+    "resource_id": ["ab*"],   
+    "action_id": ["*"] 
+}
+```
+
+This example states that the policy is only applicable when the subject ID is either set to “a” or “b”, and when the resource ID starts with “ab”. The action can have any ID value. 
+
+For convince, the array can be omitted when only a single `<id_string>` is to be set for a filed. Thus the above target block can also be defined as
+
+```json
+{   
+    "subject_id": ["a", "b"],   
+    "resource_id": "ab*",   
+    "action_id": "*" 
+}
+```
+
+Note that when no target block is explicitly specified, the policy is considered to be applicable for all targets as py-ABAC uses the following default: 
+
+```json
+{   
+    "subject_id": "*",   
+    "resource_id": "*",   
+    "action_id": "*" 
+}   
+```
+
+#### Rules Block
+
+Rules are Boolean expressions defined on the attributes of the targeted access control elements. The JSON schema is given by
 
 ```json
 {   
@@ -474,10 +527,10 @@ with `<boolean_expression>` being a JSON block for Boolean expression.
 A policy is considered applicable only when each of the Boolean expressions are satisfied. These expressions define constraints on the attribute values of the access control elements. The constraints can be as simple as those involving only a single attribute, or can be complex involving multiple attributes. A simple Boolean expression consists of a key-value pair as shown below:
 
 ```json
-{"<attribute_path>": "<conditional_expression>"}
+{"<attribute_path>": "<condition_expression>"}
 ```
 
-The key specifies the attribute in [ObjectPath](http://objectpath.org/) format while the value is a conditional expression. The conditional expression is again a JSON block specifying specifically the requirements that the attribute value needs to meet. The different supported conditional expressions are shown in Appendix. As an example, the conditional block for the requirement that "name" attribute of subject field should be "Max" is shown below:
+The key specifies the attribute in [ObjectPath](http://objectpath.org/) notation while the value is a conditional expression. The `<condition_expression>` is again a JSON block specifying the requirements that the attribute value needs to meet. The different supported condition expressions are shown in [Condition Blocks](#condition-blocks) subsection. As an example, the conditional block for the requirement that "name" attribute of subject field should be "Max" is shown below:
 
 ```json
 {
@@ -490,7 +543,7 @@ The key specifies the attribute in [ObjectPath](http://objectpath.org/) format w
 }
 ```
 
-Sometimes condition on a single attribute does not suffice and constraints on multiple attributes connected by logical relations like AND or OR are required. In py-ABAC this is achieved by using in-built JSON data structures *object* and *array* as implicit logical operators. An *object* is implicitly an AND operator which would be evaluated to true only if all the included key-value pairs are evaluated to true. Similarly, an *array* is implicitly an OR operator which would be evaluated to true as long as at least one of its members is evaluated to true. This is illustrated in the following conditional blocks:
+Sometimes conditions on a single attribute does not suffice and constraints on multiple attributes connected by logical relations like AND or OR are required. In py-ABAC, this is achieved by using in-built JSON data structures *object* and *array* as implicit logical operators. An *object* is implicitly an AND operator which would be evaluated to true only if all the included key-value pairs are evaluated to true. Similarly, an *array* is implicitly an OR operator which would be evaluated to true as long as at least one of its members is evaluated to true. For an example see the following conditional blocks:
 
 ```json
 {   
@@ -523,59 +576,60 @@ Sometimes condition on a single attribute does not suffice and constraints on mu
 
 The overall rule states that the subject should have an attribute "firstName" valued "Carl" AND "lastName" valued "Rubin". Similarly, the resource should have an attribute "name" valued "Default" OR "type" valued "Book".
 
-##### Targets Block
+#### Condition Blocks
 
-The primary purpose of targets block is to define for which elements the policy applies. The block contains an implicit logical OR operation on ‘ID’ attribute of the subject, resource, and action fields. This enables an efficient retrieval of policies from a repository by PDP. Thus in **pyabac**, it is required that these access elements have a string valued ID attribute. The JSON schema of the block is given by
+There are basically six types of `<condition_expression>` blocks supported in py-ABAC: *Logic,* *Numeric*, *String*, *Collection*, Object, and *Other*. The JSON schema and examples for each are shown below:
 
-```json
-{   
-    "subject_id": [<id_string>, <id_string>, … ],   
-    "resource_id": [<id_string>, <id_string>, … ],   
-    "action_id": [<id_string>, <id_string>, … ] 
-} 
-```
+##### Logic Condition Block
 
-where <id_string> are the required string values for the ‘ID’ attribute. Regex values for <id_string> are also allowed. An example target block is shown below:
+| **JSON Schema**                                              | **Description**                                              | **Example**                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ```{   "condition": "<string>",   "values": "<list<ConditionJson>> "}<br />``` | *condition*: specifies the type of logic condition. The different possible values are: "AllOf": perform logical AND operation on items in *values*"AnyOf": perform logical OR operation on items in *values* *values*: contains a list of ConditionJSON objects | {   "condition": "AllOf",   "values": [   {     "condition": "Lt",     "value": 1.5   },   {     "condition": "Gt",     "value": 0.5   }] } |
+| {   "condition": "Not",   "value": <ConditionJson> }         | *condition*: specifies logic "Not" condition.  *value*: contains a ConditionJSON object | {   "condition": "Not",   "value": {     "condition": "Eq",     "value": 1.5   } } |
 
-```json
-{   
-    "subject_id": ["a", "b"],   
-    "resource_id": ["ab.*"],   
-    "action_id": [".*"] 
-}
-```
+##### Numeric Condition Block
 
-This target block defines that the policy is only applicable if the subject ID is either set to “a” or “b”, and the resource ID starts with string “ab”. The action can have any ID value. 
+| **JSON Schema**                                  | **Description**                                              | **Example**                                  |
+| ------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------- |
+| {   "condition": <string>,   "value": <number> } | *condition*: specifies the type of numeric condition. The different possible values are: "Eq": attribute value is equal to that in *value*"Gt": attribute value is greater than that in *value*"Lt": attribute value is less than that in *value*"Gte": attribute value is greater than equal to that in *value*"Lte": attribute value is less than equal to that in *value* *value*: contains a number. This can be a float or an int. | {     "condition": "Lte",     "value": 1.5 } |
 
-If a target block is not explicitly specified, the policy is considered to be always applicable with the following default used: 
+##### Collection Condition Block
 
-```json
-{   
-    "subject_id": [".*"],   
-    "resource_id": [".*"],   
-    "action_id": [".*"] 
-}
-```
+| **JSON Schema**                                | **Description**                                              | **Example**                                                  |
+| ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| {   "condition": <string>,  "values": <list> } | *condition*: specifies the type of collection condition. The different possible values are: "AnyIn": one or more of the values for attribute are in *values*"AllIn": all the values for attribute are in *values* *values*: collection of primitive type values like string, int ,float, etc | {     "condition": "AnyIn",     "values": [      "Example1",       "Example2"    ] } |
 
-#### Access Request
+##### Object Condition Block
+
+##### Other Condition Block
+
+| **JSON Schema**                                | **Description**                                              | **Example**                                                |
+| ---------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| {   "condition": "CIDR",   "value": <string> } | *condition*: specifies "CIDR" network block condition. The attribute value should be an IP address within the CIDR block to satisfy this condition. *values*: CIDR block as string type | {     "condition": "CIDR",     "value": "192.168.0.0/16" } |
+| {   "condition": "Any" }                       | *condition*: specifies "Any" condition. The attribute can have any value. This condition only fails when the attribute for which this condition is defined does not exist. | {   "condition": "Any" }                                   |
+| {   "condition": "Exists" }                    | *condition*: specifies "Exists" condition. This condition is satisfied when the attribute for which this condition is defined exists. | {   "condition": "Exists" }                                |
+
+*[Back to top](#py-abac)*
+
+### Access Request
 
 An access request is a data object sent by PEP to PDP. This object contains all the information needed by the PDP to evaluate the policies and return access decision. The JSON schema of the object is given by
 
 ```json
 {   
     "subject": {     
-        "id": <string>,     
-        "attributes": <attribute_block>   
+        "id": "<string>",     
+        "attributes": "<attribute_block>"   
     },   
     "resource": {     
-        "id": <string>,     
-        "attributes": <attribute_block>   
+        "id": "<string>",     
+        "attributes": "<attribute_block>"   
     },   
     "action": {     
-        "id": <string>,     
-        "attributes": <attribute_block>   
+        "id": "<string>",     
+        "attributes": "<attribute_block>"   
     },   
-    "context": <attribute_block> 
+    "context": "<attribute_block>" 
 }
 ```
 
@@ -604,30 +658,63 @@ where `<attribute_block>` is just a JSON block containing one or more attribute-
 }
 ```
 
-### Appendix
+*[Back to top](#py-abac)*
 
-There are basically six types of condition expressions supported in **pyabac**: *Logic,* *Numeric*, *String*, *Collection*, *Attribute*, and *Other*. The JSON schema for each are shown below:
+## Logging
 
-| **Logic**                                                    |                                                              |                                                              |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| **JSON Schema**                                              | **Description**                                              | **Example**                                                  |
-| {   "condition": <string>,   "values": <list<ConditionJson>> } | *condition*: specifies the type of logic condition. The different possible values are: "AllOf": perform logical AND operation on items in *values*"AnyOf": perform logical OR operation on items in *values* *values*: contains a list of ConditionJSON objects | {   "condition": "AllOf",   "values": [   {     "condition": "Lt",     "value": 1.5   },   {     "condition": "Gt",     "value": 0.5   }] } |
-| {   "condition": "Not",   "value": <ConditionJson> }         | *condition*: specifies logic "Not" condition.  *value*: contains a ConditionJSON object | {   "condition": "Not",   "value": {     "condition": "Eq",     "value": 1.5   } } |
+py-ABAC follows a common logging pattern for libraries:
 
-| **Numeric**                                      |                                                              |                                              |
-| ------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------- |
-| **JSON Schema**                                  | **Description**                                              | **Example**                                  |
-| {   "condition": <string>,   "value": <number> } | *condition*: specifies the type of numeric condition. The different possible values are: "Eq": attribute value is equal to that in *value*"Gt": attribute value is greater than that in *value*"Lt": attribute value is less than that in *value*"Gte": attribute value is greater than equal to that in *value*"Lte": attribute value is less than equal to that in *value* *value*: contains a number. This can be a float or an int. | {     "condition": "Lte",     "value": 1.5 } |
+Its corresponding modules log all the events that happen but the log messages by default are handled by `NullHandler`. It's up to the outer code/application to provide desired log handlers, filters, levels, etc.
 
-| **Collection**                                 |                                                              |                                                              |
-| ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| **JSON Schema**                                | **Description**                                              | **Example**                                                  |
-| {   "condition": <string>,  "values": <list> } | *condition*: specifies the type of collection condition. The different possible values are: "AnyIn": one or more of the values for attribute are in *values*"AllIn": all the values for attribute are in *values* *values*: collection of primitive type values like string, int ,float, etc | {     "condition": "AnyIn",     "values": [      "Example1",       "Example2"    ] } |
+For example:
 
-| **Other**                                      |                                                              |                                                            |
-| ---------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
-| **JSON Schema**                                | **Description**                                              | **Example**                                                |
-| {   "condition": "CIDR",   "value": <string> } | *condition*: specifies "CIDR" network block condition. The attribute value should be an IP address within the CIDR block to satisfy this condition. *values*: CIDR block as string type | {     "condition": "CIDR",     "value": "192.168.0.0/16" } |
-| {   "condition": "Any" }                       | *condition*: specifies "Any" condition. The attribute can have any value. This condition only fails when the attribute for which this condition is defined does not exist. | {   "condition": "Any" }                                   |
-| {   "condition": "Exists" }                    | *condition*: specifies "Exists" condition. This condition is satisfied when the attribute for which this condition is defined exists. | {   "condition": "Exists" }                                |
+```python
+import logging
 
+root = logging.getLogger()
+root.setLevel(logging.INFO)
+root.addHandler(logging.StreamHandler())
+
+... # here go all the py_abac calls.
+```
+
+*[Back to top](#py-abac)*
+
+## Milestones
+
+Most valuable features to be implemented in the order of importance:
+
+-  In-Memory Storage
+-  SQL Storage
+-  Caching mechanism for Storage
+-  YAML-based language for declarative policy definitions
+-  File Storage
+
+*[Back to top](#py-abac)*
+
+## Acknowledgements
+
+The conceptual and implementation design of py-ABAC stems from the [XACML](https://en.wikipedia.org/wiki/XACML) standard and the ABAC python SDK [Vakt](https://github.com/kolotaev/vakt).
+
+*[Back to top](#py-abac)*
+
+## Development
+
+To hack py-ABAC locally run:
+
+```
+$ pip install -e .[dev]  		   				# to install all dependencies
+$ docker run --rm -d -p 27017:27017 mongo		# Run mongodb server on docker
+$ pytest --cov=py_abac tests/      				# to get coverage report
+$ pylint py_abac                   				# to check code quality with PyLint
+```
+
+Optionally you can use `make` to perform development tasks.
+
+*[Back to top](#py-abac)*
+
+## License
+
+The source code is licensed under Apache License Version 2.0
+
+*[Back to top](#py-abac)*
