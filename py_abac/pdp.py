@@ -23,19 +23,40 @@ class EvaluationAlgorithm(Enum):
 class PDP(object):
     """
         Policy decision point
+
+        Example usage:
+
+        .. code-block:: python
+
+            from py_abac import PDP, EvaluationAlgorithm
+            from py_abac.storage import MongoStorage
+            from py_abac.providers import AttributeProvider
+
+            # A simple email attribute provider class
+            class EmailAttributeProvider(AttributeProvider):
+                def get_attribute_value(self, ace, attribute_path, ctx):
+                    return "example@gmail.com"
+
+            # Setup storage
+            client = MongoClient()
+            st = MongoStorage(client)
+            # Insert all polices to storage
+            for p in policies:
+                st.add(p)
+
+            # Create PDP configured to use highest priority algorithm
+            # and an additional email attribute provider
+            pdp = PDP(st, EvaluationAlgorithm.HIGHEST_PRIORITY, [EmailAttributeProvider()])
+
+        :param storage: policy storage
+        :param algorithm: policy evaluation algorithm
+        :param providers: list of attribute providers
     """
 
     def __init__(self,
                  storage: StorageBase,
                  algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES,
                  providers: List[AttributeProvider] = None):
-        """
-            Initialize PDP class object
-
-            :param storage: policy storage
-            :param algorithm: evaluation algorithm
-            :param providers: list of attribute providers
-        """
         if not isinstance(storage, StorageBase):
             raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
         if not isinstance(algorithm, EvaluationAlgorithm):

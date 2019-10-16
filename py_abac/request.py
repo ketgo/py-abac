@@ -10,10 +10,32 @@ from .exceptions import RequestCreateError
 class Request(object):
     """
         Authorization request sent by PEP
+
+        Example usage:
+
+        .. code-block:: python
+
+            # Create a access request JSON from flask request object
+            request_json = {
+                "subject": {
+                    "id": "",
+                    "attributes": {"name": request.values.get("username")}
+                },
+                "resource": {
+                    "id": "",
+                    "attributes": {"name": request.path}
+                },
+                "action": {
+                    "id": "",
+                    "attributes": {"method": request.method}
+                },
+                "context": {}
+            }
+            # Parse JSON and create access request object
+            request = Request.from_json(request_json)
     """
 
     def __init__(self, subject: dict, resource: dict, action: dict, context: dict):
-
         self._subject_id = subject.get("id", "")
         self._subject = subject.get("attributes", {})
 
