@@ -15,12 +15,13 @@ Attribute Based Access Control (ABAC) for python.
 	- [Policy](#policy)
 	- [Request](#inquiry)
 	- [PDP](#pdp)
-	- [AttributeProvider](#attributeprovider)
 	- [Storage](#storage)
 	    - [Memory](#memory)
 	    - [MongoDB](#mongodb)
 	    - [SQL](#sql)
 	- [Migration](#migration)
+	- [AttributeProvider](#attributeprovider)
+	- [EvaluationContext](#evaluationcontext)
 - [Policy Language](#policy-language)
 - [Logging](#logging)
 - [Examples](./examples)
@@ -418,7 +419,7 @@ Lastly, if the `AttributeProvider` does not contain value for an attribute, the 
 
 An `EvaluationContext` object is created by the `PDP` during policy evaluation. This object is used by the `PDP` for retrieval of attribute values for which the policy is defined. It has following properties:
 
-​```python
+```python
 # The access control element currently being evauluated
 ctx.ace  
 
@@ -431,8 +432,7 @@ ctx.attribute_value
 # Lookup a value for an attribute of an access control element
 ctx.get_attribute_value(ace: str, attribute_path: str)
 ```
-
- During retrieval,  the `EvaluationContext` first checks for attribute value in the `Request` object. If the value is not found, it then checks all the `AttributeProvider` objects sequentially.
+During retrieval,  the `EvaluationContext` first checks for attribute value in the `Request` object. If the value is not found, it then checks all the `AttributeProvider` objects sequentially.
 
 *[Back to top](#py-abac)*
 
@@ -469,7 +469,6 @@ Rules are Boolean expressions defined on the attributes of the access control el
     "context": "<boolean_expression>" 
 } 
 ```
-
 with `<boolean_expression>` being a JSON block for Boolean expression.
 
 A policy is considered applicable only when each of the Boolean expressions are satisfied. These expressions define constraints on the attribute values of the access control elements. The constraints can be as simple as those involving only a single attribute, or can be complex involving multiple attributes. A simple Boolean expression consists of a key-value pair as shown below:
