@@ -28,7 +28,7 @@ Attribute Based Access Control (ABAC) for python.
     - [Targets Block](#targets-block)
     - [Rules Block](#rules-block)
     - [Condition Blocks](#condition-blocks)
-  - [Access Request](#access-request)
+  - [Access Request JSON](#access-request)
 - [Logging](#logging)
 - [Milestones](#milestones)
 - [Acknowledgements](#acknowledgements)
@@ -445,7 +445,7 @@ During retrieval,  the `EvaluationContext` first checks for attribute value in t
 
 This section presents the JSON-based policy language for py-ABAC. There are two subsections. The first subsection discusses JSON structure of a policy, while the latter about the access request. 
 
-### Policy
+### Policy JSON
 
 A policy structure consists of `uid`, `description`, `conditions`, `targets`, `effect`, and `priority` fields. The JSON schema is given by
 
@@ -582,16 +582,63 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
 ##### Logic Condition Block
 
-| **JSON Schema**                                              | **Description**                                              | **Example**                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ```{   "condition": "<string>",   "values": "<list<ConditionJson>> "}<br />``` | *condition*: specifies the type of logic condition. The different possible values are: "AllOf": perform logical AND operation on items in *values*"AnyOf": perform logical OR operation on items in *values* *values*: contains a list of ConditionJSON objects | {   "condition": "AllOf",   "values": [   {     "condition": "Lt",     "value": 1.5   },   {     "condition": "Gt",     "value": 0.5   }] } |
-| {   "condition": "Not",   "value": <ConditionJson> }         | *condition*: specifies logic "Not" condition.  *value*: contains a ConditionJSON object | {   "condition": "Not",   "value": {     "condition": "Eq",     "value": 1.5   } } |
+- `AnyOf` and `AllOf` Conditions
+  
+  - JSON Schema:
+  ```
+  {
+  	"condition": <string>,   
+  	"values": <list<condition_expression>> 
+  }
+  ```
+  | **Field** | **Description** |
+  | --------- | --------------- |
+  | `"condition"` | Specifies the type of logic condition. The different possible values are: `“AllOf”` and `“AnyOf”`. |
+  | `"values"` | Contains a list of `<condition_expression>` blocks. |
+  - Example:
+  ```json
+  {
+  	"condition": "AllOf",   
+  	"values": [   
+  		{"condition": "Lt", "value": 1.5},   
+  		{"condition": "Gt", "value": 0.5}
+      ] 
+  } 
+  ```
+
+- `Not` Condition
+
+  - JSON Schema:
+
+  ```
+  {
+  	"condition": "Not",   
+  	"value": <condition_expression> 
+  }
+  ```
+
+  | **Field**     | **Description**                            |
+  | ------------- | ------------------------------------------ |
+  | `"condition"` | Specifies the `“Not”` logic condition.     |
+  | `"value"`     | Contains a `<condition_expression>` block. |
+
+  - Example:
+
+  ```json
+  {
+      "condition": "Not",   
+      "value": {"condition": "Eq", "value": 1.5} 
+  }
+  ```
+  
 
 ##### Numeric Condition Block
 
 | **JSON Schema**                                  | **Description**                                              | **Example**                                  |
 | ------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------- |
 | {   "condition": <string>,   "value": <number> } | *condition*: specifies the type of numeric condition. The different possible values are: "Eq": attribute value is equal to that in *value*"Gt": attribute value is greater than that in *value*"Lt": attribute value is less than that in *value*"Gte": attribute value is greater than equal to that in *value*"Lte": attribute value is less than equal to that in *value* *value*: contains a number. This can be a float or an int. | {     "condition": "Lte",     "value": 1.5 } |
+
+##### String Condition Block
 
 ##### Collection Condition Block
 
@@ -611,7 +658,7 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
 *[Back to top](#py-abac)*
 
-### Access Request
+### Access Request JSON
 
 An access request is a data object sent by PEP to PDP. This object contains all the information needed by the PDP to evaluate the policies and return access decision. The JSON schema of the object is given by
 
@@ -684,11 +731,15 @@ root.addHandler(logging.StreamHandler())
 
 Most valuable features to be implemented in the order of importance:
 
--  In-Memory Storage
--  SQL Storage
--  Caching mechanism for Storage
--  YAML-based language for declarative policy definitions
--  File Storage
+- [ ] In-Memory Storage
+
+- [ ] SQL Storage
+
+- [ ] Caching mechanism for Storage
+
+- [ ] YAML-based language for declarative policy definitions
+
+-  [ ] File Storage
 
 *[Back to top](#py-abac)*
 
