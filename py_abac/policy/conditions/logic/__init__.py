@@ -1,3 +1,3 @@
-from ._and import AllOf
 from ._not import Not
-from ._or import AnyOf
+from .all_of import AllOf
+from .any_of import AnyOf

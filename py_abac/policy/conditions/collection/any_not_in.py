@@ -10,7 +10,7 @@ from .base import CollectionCondition, CollectionConditionSchema
 class AnyNotIn(CollectionCondition):
 
     def _is_satisfied(self, what):
-        return not bool(set(what).intersection(self.value))
+        return not bool(set(what).intersection(self.values))
 
 
 class AnyNotInSchema(CollectionConditionSchema):

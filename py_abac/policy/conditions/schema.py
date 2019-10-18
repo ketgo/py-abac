@@ -13,10 +13,10 @@ from .collection.is_empty import IsEmpty, IsEmptySchema
 from .collection.is_in import IsIn, IsInSchema
 from .collection.is_not_empty import IsNotEmpty, IsNotEmptySchema
 from .collection.is_not_in import IsNotIn, IsNotInSchema
-# --- Logic Conditions ---
-from .logic._and import AllOf, AllOfSchema
 from .logic._not import Not, NotSchema
-from .logic._or import AnyOf, AnyOfSchema
+# --- Logic Conditions ---
+from .logic.all_of import AllOf, AllOfSchema
+from .logic.any_of import AnyOf, AnyOfSchema
 # --- Numeric Conditions ---
 from .numeric.eq import Eq, EqSchema
 from .numeric.gt import Gt, GtSchema

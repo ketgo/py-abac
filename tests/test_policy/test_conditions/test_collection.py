@@ -21,12 +21,12 @@ from py_abac.request import Request
 class TestCollectionCondition(object):
 
     @pytest.mark.parametrize("condition, condition_json", [
-        (AllIn([2]), {"condition": "AllIn", "value": [2]}),
-        (AllNotIn([{"test": 2}]), {"condition": "AllNotIn", "value": [{"test": 2}]}),
-        (AnyIn([2, {"test": 2}]), {"condition": "AnyIn", "value": [2, {"test": 2}]}),
-        (AnyNotIn([2, {"test": 2}, []]), {"condition": "AnyNotIn", "value": [2, {"test": 2}, []]}),
-        (IsIn([2]), {"condition": "IsIn", "value": [2]}),
-        (IsNotIn([2]), {"condition": "IsNotIn", "value": [2]}),
+        (AllIn([2]), {"condition": "AllIn", "values": [2]}),
+        (AllNotIn([{"test": 2}]), {"condition": "AllNotIn", "values": [{"test": 2}]}),
+        (AnyIn([2, {"test": 2}]), {"condition": "AnyIn", "values": [2, {"test": 2}]}),
+        (AnyNotIn([2, {"test": 2}, []]), {"condition": "AnyNotIn", "values": [2, {"test": 2}, []]}),
+        (IsIn([2]), {"condition": "IsIn", "values": [2]}),
+        (IsNotIn([2]), {"condition": "IsNotIn", "values": [2]}),
         (IsEmpty(), {"condition": "IsEmpty"}),
         (IsNotEmpty(), {"condition": "IsNotEmpty"}),
     ])
@@ -34,12 +34,12 @@ class TestCollectionCondition(object):
         assert ConditionSchema().dump(condition) == condition_json
 
     @pytest.mark.parametrize("condition, condition_json", [
-        (AllIn([2]), {"condition": "AllIn", "value": [2]}),
-        (AllNotIn([{"test": 2}]), {"condition": "AllNotIn", "value": [{"test": 2}]}),
-        (AnyIn([2, {"test": 2}]), {"condition": "AnyIn", "value": [2, {"test": 2}]}),
-        (AnyNotIn([2, {"test": 2}, []]), {"condition": "AnyNotIn", "value": [2, {"test": 2}, []]}),
-        (IsIn([2]), {"condition": "IsIn", "value": [2]}),
-        (IsNotIn([2]), {"condition": "IsNotIn", "value": [2]}),
+        (AllIn([2]), {"condition": "AllIn", "values": [2]}),
+        (AllNotIn([{"test": 2}]), {"condition": "AllNotIn", "values": [{"test": 2}]}),
+        (AnyIn([2, {"test": 2}]), {"condition": "AnyIn", "values": [2, {"test": 2}]}),
+        (AnyNotIn([2, {"test": 2}, []]), {"condition": "AnyNotIn", "values": [2, {"test": 2}, []]}),
+        (IsIn([2]), {"condition": "IsIn", "values": [2]}),
+        (IsNotIn([2]), {"condition": "IsNotIn", "values": [2]}),
         (IsEmpty(), {"condition": "IsEmpty"}),
         (IsNotEmpty(), {"condition": "IsNotEmpty"}),
     ])
@@ -50,14 +50,14 @@ class TestCollectionCondition(object):
             assert getattr(new_condition, attr) == getattr(condition, attr)
 
     @pytest.mark.parametrize("condition_type, data", [
-        (AllIn, {"condition": "AllIn", "value": "test"}),
-        (AllNotIn, {"condition": "AllNotIn", "value": 1}),
-        (AnyIn, {"condition": "AnyIn", "value": {}}),
-        (AnyNotIn, {"condition": "AnyNotIn", "value": None}),
-        (IsIn, {"condition": "IsIn", "value": 1.0}),
-        (IsNotIn, {"condition": "IsNotIn", "value": object}),
-        (IsEmpty, {"condition": "IsEmpty", "value": []}),
-        (IsNotEmpty, {"condition": "IsNotEmpty", "value": 1}),
+        (AllIn, {"condition": "AllIn", "values": "test"}),
+        (AllNotIn, {"condition": "AllNotIn", "values": 1}),
+        (AnyIn, {"condition": "AnyIn", "values": {}}),
+        (AnyNotIn, {"condition": "AnyNotIn", "values": None}),
+        (IsIn, {"condition": "IsIn", "values": 1.0}),
+        (IsNotIn, {"condition": "IsNotIn", "values": object}),
+        (IsEmpty, {"condition": "IsEmpty", "values": []}),
+        (IsNotEmpty, {"condition": "IsNotEmpty", "values": 1}),
     ])
     def test_create_error(self, condition_type, data):
         with pytest.raises(ValidationError):

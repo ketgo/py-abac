@@ -28,6 +28,12 @@ Attribute Based Access Control (ABAC) for python.
     - [Targets Block](#targets-block)
     - [Rules Block](#rules-block)
     - [Condition Blocks](#condition-blocks)
+      1. [Logic Condition Block](#logic-condition-block)
+      2. [Numeric Condition Block](#numeric-condition-block)
+      3. [String Condition Block](#string-condition-block)
+      4. [Collection Condition Block](#collection-condition-block)
+      5. [Object Condition Block](#object-condition-block)
+      6. [Other Condition Blocks](#other-condition-blocks)
   - [Access Request JSON](#access-request)
 - [Logging](#logging)
 - [Milestones](#milestones)
@@ -580,11 +586,11 @@ The overall rule states that the subject should have an attribute "firstName" va
 
 There are basically six types of `<condition_expression>` blocks supported in py-ABAC: *Logic,* *Numeric*, *String*, *Collection*, Object, and *Other*. The JSON schema and examples for each are shown below:
 
-##### Logic Condition Block
+##### <u>Logic Condition Block</u>
 
-- `AnyOf` and `AllOf` Conditions
+- **Conditions:** `AnyOf` and `AllOf` 
   
-  - JSON Schema:
+  - **JSON Schema:**
   ```
   {
   	"condition": <string>,   
@@ -593,9 +599,9 @@ There are basically six types of `<condition_expression>` blocks supported in py
   ```
   | **Field** | **Description** |
   | --------- | --------------- |
-  | `"condition"` | Specifies the type of logic condition. The different possible values are: `“AllOf”` and `“AnyOf”`. |
+  | `"condition"` | Specifies the type of logic condition. |
   | `"values"` | Contains a list of `<condition_expression>` blocks. |
-  - Example:
+  - **Example:**
   ```json
   {
   	"condition": "AllOf",   
@@ -606,9 +612,9 @@ There are basically six types of `<condition_expression>` blocks supported in py
   } 
   ```
 
-- `Not` Condition
+- **Condition:** `Not`
 
-  - JSON Schema:
+  - **JSON Schema:**
 
   ```
   {
@@ -619,10 +625,10 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
   | **Field**     | **Description**                            |
   | ------------- | ------------------------------------------ |
-  | `"condition"` | Specifies the `“Not”` logic condition.     |
+  | `"condition"` | Specifies the `"Not"` logic condition.     |
   | `"value"`     | Contains a `<condition_expression>` block. |
 
-  - Example:
+  - **Example:**
 
   ```json
   {
@@ -632,23 +638,115 @@ There are basically six types of `<condition_expression>` blocks supported in py
   ```
   
 
-##### Numeric Condition Block
+##### <u>Numeric Condition Block</u>
 
-| **JSON Schema**                                  | **Description**                                              | **Example**                                  |
-| ------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------- |
-| {   "condition": <string>,   "value": <number> } | *condition*: specifies the type of numeric condition. The different possible values are: "Eq": attribute value is equal to that in *value*"Gt": attribute value is greater than that in *value*"Lt": attribute value is less than that in *value*"Gte": attribute value is greater than equal to that in *value*"Lte": attribute value is less than equal to that in *value* *value*: contains a number. This can be a float or an int. | {     "condition": "Lte",     "value": 1.5 } |
+- **Conditions:** `Eq` (Equal), `Neq` (Not Equal), `Gt` (Greater Than), `Gte` (Greater Than Equal), `Lt` (Less Than) and `Lte` (Less Than Equal)
 
-##### String Condition Block
+  - **JSON Schema:**
 
-##### Collection Condition Block
+  ```
+  {
+  	"condition": <string>,   
+  	"value": <number> 
+  }
+  ```
 
-| **JSON Schema**                                | **Description**                                              | **Example**                                                  |
-| ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| {   "condition": <string>,  "values": <list> } | *condition*: specifies the type of collection condition. The different possible values are: "AnyIn": one or more of the values for attribute are in *values*"AllIn": all the values for attribute are in *values* *values*: collection of primitive type values like string, int ,float, etc | {     "condition": "AnyIn",     "values": [      "Example1",       "Example2"    ] } |
+  | **Field**     | **Description**                                       |
+  | ------------- | ----------------------------------------------------- |
+  | `"condition"` | Specifies the type of numeric condition.              |
+  | `"value"`     | Contains a number. This can be a float or an integer. |
 
-##### Object Condition Block
+  - **Example:**
 
-##### Other Condition Block
+  ```json
+  {
+  	"condition": "Lte",   
+  	"value": 1.5 
+  } 
+  ```
+
+
+##### <u>String Condition Block</u>
+
+- **Conditions:** `Equals` (String Equals), `NotEquals` (String Not Equals), `Contains` (String Contains), `NotContains` (String Not Contains), `StartsWith` (String Starts With), `EndsWith` (String Ends With) and `RegexMatch` (String Regex Match)
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": <string>,   
+  	"value": <string>,
+      "case_insensitive": <bool>
+  }
+  ```
+
+  | **Field**            | **Description**                                              |
+  | -------------------- | ------------------------------------------------------------ |
+  | `"condition"`        | Specifies the type of string condition.                      |
+  | `"value"`            | Contains a basic string or regex pattern.                    |
+  | `"case_insensitive"` | String case insensitive condition flag. This is an optional field and by default is set to `False`. |
+
+  - **Example:**
+
+  ```json
+  {
+  	"condition": "StartsWith",   
+  	"value": "Cal" 
+  } 
+  ```
+
+##### <u>Collection Condition Block</u>
+
+- **Conditions:** `AllIn` (), `AllNotIn` (), `AnyIn` (), `AnyNotIn` (), `IsIn` () and `IsNotIn` ()
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": <string>,   
+  	"values": <list>
+  }
+  ```
+
+  | **Field**     | **Description**                                              |
+  | ------------- | ------------------------------------------------------------ |
+  | `"condition"` | Specifies the type of collection condition.                  |
+  | `"values"`    | Collection of primitive type values like string, int ,float, etc. |
+
+  - **Example:**
+
+  ```json
+  {
+  	"condition": "AnyIn",   
+  	"values": ["Example1", "Example2"] 
+  } 
+  ```
+
+- **Conditions:** `IsEmpty` () and `IsNotEmpty` ()
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": <string>
+  }
+  ```
+
+  | **Field**     | **Description**                             |
+  | ------------- | ------------------------------------------- |
+  | `"condition"` | Specifies the type of collection condition. |
+
+  - **Example:**
+
+  ```json
+  {
+  	"condition": "IsEmpty"
+  } 
+  ```
+
+##### <u>Object Condition Block</u>
+
+##### <u>Other Condition Block</u>
 
 | **JSON Schema**                                | **Description**                                              | **Example**                                                |
 | ---------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
@@ -731,14 +829,11 @@ root.addHandler(logging.StreamHandler())
 
 Most valuable features to be implemented in the order of importance:
 
+- [ ] Policy Obligations
 - [ ] In-Memory Storage
-
 - [ ] SQL Storage
-
 - [ ] Caching mechanism for Storage
-
 - [ ] YAML-based language for declarative policy definitions
-
 -  [ ] File Storage
 
 *[Back to top](#py-abac)*

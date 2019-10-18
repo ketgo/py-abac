@@ -17,8 +17,8 @@ def is_collection(value):
 
 class CollectionCondition(ConditionBase, metaclass=ABCMeta):
 
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, values):
+        self.values = values
 
     def is_satisfied(self, ctx):
         if not is_collection(ctx.attribute_value):
@@ -39,4 +39,4 @@ class CollectionCondition(ConditionBase, metaclass=ABCMeta):
 
 
 class CollectionConditionSchema(Schema):
-    value = fields.List(fields.Raw(required=True, allow_none=False), required=True, allow_none=False)
+    values = fields.List(fields.Raw(required=True, allow_none=False), required=True, allow_none=False)

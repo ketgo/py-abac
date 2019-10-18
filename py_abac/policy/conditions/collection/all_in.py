@@ -10,7 +10,7 @@ from .base import CollectionCondition, CollectionConditionSchema
 class AllIn(CollectionCondition):
 
     def _is_satisfied(self, what):
-        return set(what).issubset(self.value)
+        return set(what).issubset(self.values)
 
 
 class AllInSchema(CollectionConditionSchema):

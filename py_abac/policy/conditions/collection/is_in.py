@@ -2,25 +2,21 @@
     Value is in collection conditions
 """
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import post_load
 
-from .base import ConditionBase
+from .base import CollectionCondition, CollectionConditionSchema
 
 
-class IsIn(ConditionBase):
-
-    def __init__(self, value):
-        self.value = value
+class IsIn(CollectionCondition):
 
     def is_satisfied(self, ctx):
         return self._is_satisfied(ctx.attribute_value)
 
     def _is_satisfied(self, what):
-        return what in self.value
+        return what in self.values
 
 
-class IsInSchema(Schema):
-    value = fields.List(fields.Raw(required=True, allow_none=False), required=True, allow_none=False)
+class IsInSchema(CollectionConditionSchema):
 
     @post_load
     def post_load(self, data, **_):
