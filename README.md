@@ -536,12 +536,12 @@ A policy is considered applicable only when each of the Boolean expressions are 
 {"<attribute_path>": "<condition_expression>"}
 ```
 
-The key specifies the attribute in [ObjectPath](http://objectpath.org/) notation while the value is a conditional expression. The `<condition_expression>` is again a JSON block specifying the requirements that the attribute value needs to meet. The different supported condition expressions are shown in [Condition Blocks](#condition-blocks) subsection. As an example, the conditional block for the requirement that "name" attribute of subject field should be "Max" is shown below:
+The key specifies the attribute in [ObjectPath](http://objectpath.org/) notation while the value is a conditional expression. Use of the [ObjectPath](http://objectpath.org/) notation gives py-ABAC the powerful ability to define conditions on nested attributes. The `<condition_expression>` is again a JSON block specifying the requirements that the attribute value needs to meet. Different supported condition expressions are shown in [Condition Blocks](#condition-blocks) subsection. As an example, the condition block for the requirement that “firstName” sub-attribute of “name” attribute of the subject field should be "Max" is shown below:
 
 ```json
 {
     "subject": {     
-        "$.name": {       
+        "$.name.firstName": {       
             "condition": "Eq",       
             "value": "Max"     
         }   
@@ -553,16 +553,16 @@ Sometimes conditions on a single attribute does not suffice and constraints on m
 
 ```json
 {   
-    "subject": {     
-        "$.firstName": {       
+    "subject": {
+        "$.name.firstName": {
             "condition": "Eq",
             "value": "Carl"
-        }
-    },   
-    "$.lastName": {     
-        "condition": "Eq",     
-        "value": "Rubin"   
-    },   
+        },
+        "$.name.lastName": {
+            "condition": "Eq",
+            "value": "Rubin"
+        },
+    },
     "resource": [     
         {       
             "$.name": {         
@@ -580,28 +580,196 @@ Sometimes conditions on a single attribute does not suffice and constraints on m
 }
 ```
 
-The overall rule states that the subject should have an attribute "firstName" valued "Carl" AND "lastName" valued "Rubin". Similarly, the resource should have an attribute "name" valued "Default" OR "type" valued "Book".
+The overall rule states that the subject should have the “firstName” sub-attribute valued “Carl”, AND “lastName” sub-attribute valued “Rubin”. Similarly, the resource should have a “name” attribute valued “Default” OR “type” valued “Book”.
 
 #### Condition Blocks
 
-There are basically six types of `<condition_expression>` blocks supported in py-ABAC: *Logic,* *Numeric*, *String*, *Collection*, Object, and *Other*. The JSON schema and examples for each are shown below:
+There are basically six types of `<condition_expression>` blocks supported in py-ABAC: *Numeric*, *String*, *Collection*, *Object*, *Logic*, and *Other*. The JSON schema and examples for each are shown below:
+
+##### <u>Numeric Condition Block</u>
+
+- **Conditions:** `Eq`, `Neq`, `Gt`, `Gte`, `Lt` and `Lte`
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": <string>,   
+  	"value": <number> 
+  }
+  ```
+
+  | **Field**     | **Description**                                       |
+  | ------------- | ----------------------------------------------------- |
+  | `"condition"` | Specifies the type of numeric condition.              |
+  | `"value"`     | Contains a number. This can be a float or an integer. |
+
+  - **Description:**
+    - `Eq`: attribute value equals that in `"value"`
+    - `Neq`: attribute value not equals that in `"value"`
+    - `Gt`: attribute value is greater than that in `"value"`
+    - `Gte`: attribute value is greater than equal to that in `"value"`
+    - `Lt`: attribute value is less than that in `"value"`
+    - `Lte`: attribute value is less than equal to that in `"value"`
+  - **Example:**
+
+  ```json
+  {
+  	"condition": "Lte",   
+  	"value": 1.5 
+  } 
+  ```
+
+##### <u>String Condition Block</u>
+
+- **Conditions:** `Equals`, `NotEquals`, `Contains`, `NotContains`, `StartsWith`, `EndsWith` and `RegexMatch`
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": <string>,   
+  	"value": <string>,
+      "case_insensitive": <bool>
+  }
+  ```
+
+  | **Field**            | **Description**                                              |
+  | -------------------- | ------------------------------------------------------------ |
+  | `"condition"`        | Specifies the type of string condition.                      |
+  | `"value"`            | Contains a basic string or regex pattern.                    |
+  | `"case_insensitive"` | String case insensitive condition flag. This is an optional field and by default is set to `False`. |
+
+  - **Description:**
+    - `Equals`: attribute value string equals that in `"value"`
+    - `NotEquals`: attribute value string not equals that in `"value"`
+    - `Contains`: attribute value contains the string in `"value"`
+    - `NotContains`: attribute value does not contain the string in `"value"`
+    - `StartsWith`: attribute value starts with string in `"value"`
+    - `EndsWith`: attribute value ends with string in `"value"`
+    - `RegexMatch`: attribute value string matches regex pattern in `"value"`
+  - **Example:**
+
+  ```json
+  {
+  	"condition": "StartsWith",   
+  	"value": "Cal" 
+  } 
+  ```
+
+##### <u>Collection Condition Block</u>
+
+- **Conditions:** `AllIn`, `AllNotIn`, `AnyIn`, `AnyNotIn`, `IsIn` and `IsNotIn`
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": <string>,   
+  	"values": <list>
+  }
+  ```
+
+  | **Field**     | **Description**                                              |
+  | ------------- | ------------------------------------------------------------ |
+  | `"condition"` | Specifies the type of collection condition.                  |
+  | `"values"`    | Collection of primitive type values like string, int ,float, etc. |
+
+  - **Description:**
+    - `AllIn`: all members of attribute value collection are members of `"values"`
+    - `AllNotIn`: none of the members of attribute value collection are members of `"values"`
+    - `AnyIn`: one or more members of the attribute value collection are members of `"values"`
+    - `AnyNotIn`: one or more members of the attribute value collection are not members of `"values"`
+    - `IsIn`: attribute value (treated as a single value) is member of `"values"`
+    - `IsNotIn`: attribute value (treated as a single value) is not member of `"values"`
+  - **Example:**
+
+  ```json
+  {
+  	"condition": "AnyIn",   
+  	"values": ["Example1", "Example2"] 
+  } 
+  ```
+
+- **Conditions:** `IsEmpty` and `IsNotEmpty`
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": <string>
+  }
+  ```
+
+  | **Field**     | **Description**                             |
+  | ------------- | ------------------------------------------- |
+  | `"condition"` | Specifies the type of collection condition. |
+
+  - **Description:**
+    - `IsEmpty`: attribute value collection is empty
+    - `IsNotEmpty`: attribute value collection is not empty
+  - **Example:**
+
+  ```json
+  {
+  	"condition": "IsEmpty"
+  } 
+  ```
+
+##### <u>Object Condition Block</u>
+
+**Condition:** `EqualsObject`
+
+- **JSON Schema:**
+
+```
+{
+	"condition": "EqualsObject",
+	"value": <object>
+}
+```
+
+| **Field**     | **Description**                         |
+| ------------- | --------------------------------------- |
+| `"condition"` | Specifies the type of object condition. |
+| `"value"`     | contains a JSON object                  |
+
+- **Description:**
+
+  - `EqualsObject`: attribute value JSON object equals that in `"value"`
+
+- **Example:**
+
+  ```json
+  {
+      "condition": "EqualsObject",
+      "value": {"name": "Sam"}
+  }
+  ```
 
 ##### <u>Logic Condition Block</u>
 
 - **Conditions:** `AnyOf` and `AllOf` 
-  
+
   - **JSON Schema:**
+
   ```
   {
   	"condition": <string>,   
   	"values": <list<condition_expression>> 
   }
   ```
-  | **Field** | **Description** |
-  | --------- | --------------- |
-  | `"condition"` | Specifies the type of logic condition. |
-  | `"values"` | Contains a list of `<condition_expression>` blocks. |
+
+  | **Field**     | **Description**                                     |
+  | ------------- | --------------------------------------------------- |
+  | `"condition"` | Specifies the type of logic condition.              |
+  | `"values"`    | Contains a list of `<condition_expression>` blocks. |
+
+  - **Description:**
+    - `AnyOf`: attribute value satisfies any of the conditions in `"values"`
+    - `AllOf`: attribute value satisfies all of the conditions in `"values"`
   - **Example:**
+
   ```json
   {
   	"condition": "AllOf",   
@@ -628,6 +796,8 @@ There are basically six types of `<condition_expression>` blocks supported in py
   | `"condition"` | Specifies the `"Not"` logic condition.     |
   | `"value"`     | Contains a `<condition_expression>` block. |
 
+  - **Description:**
+    - `Not`: attribute value does not satisfy the condition in `"value"`
   - **Example:**
 
   ```json
@@ -636,93 +806,70 @@ There are basically six types of `<condition_expression>` blocks supported in py
       "value": {"condition": "Eq", "value": 1.5} 
   }
   ```
+
+##### <u>Other Condition Block</u>
+
+- **Condition:** `CIDR`
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": "CIDR",   
+  	"value": <string> 
+  }
+  ```
+
+  | **Field**     | **Description**                           |
+  | ------------- | ----------------------------------------- |
+  | `"condition"` | Specifies the `"CIDR"` network condition. |
+  | `"value"`     | Contains a CIDR block as string.          |
+
+  - **Description:**
+
+    - `CIDR`: IP address in attribute value is within the CIDR block in `"value"`
+
+  - **Example:**
+
+    ```json
+    {
+        "condition": "CIDR",
+        "value": "10.0.0.0/16"
+    }
+    ```
+
+- **Condition:** `EqualsAttribute`
+
+  - **JSON Schema:**
+
+  ```
+  {
+  	"condition": "EqualsAttribute",   
+  	"ace": <string>,
+      "path": <string>
+  }
+```
   
-
-##### <u>Numeric Condition Block</u>
-
-- **Conditions:** `Eq` (Equal), `Neq` (Not Equal), `Gt` (Greater Than), `Gte` (Greater Than Equal), `Lt` (Less Than) and `Lte` (Less Than Equal)
-
-  - **JSON Schema:**
-
-  ```
-  {
-  	"condition": <string>,   
-  	"value": <number> 
-  }
-  ```
-
-  | **Field**     | **Description**                                       |
-  | ------------- | ----------------------------------------------------- |
-  | `"condition"` | Specifies the type of numeric condition.              |
-  | `"value"`     | Contains a number. This can be a float or an integer. |
-
-  - **Example:**
-
-  ```json
-  {
-  	"condition": "Lte",   
-  	"value": 1.5 
-  } 
-  ```
-
-
-##### <u>String Condition Block</u>
-
-- **Conditions:** `Equals` (String Equals), `NotEquals` (String Not Equals), `Contains` (String Contains), `NotContains` (String Not Contains), `StartsWith` (String Starts With), `EndsWith` (String Ends With) and `RegexMatch` (String Regex Match)
-
-  - **JSON Schema:**
-
-  ```
-  {
-  	"condition": <string>,   
-  	"value": <string>,
-      "case_insensitive": <bool>
-  }
-  ```
-
-  | **Field**            | **Description**                                              |
-  | -------------------- | ------------------------------------------------------------ |
-  | `"condition"`        | Specifies the type of string condition.                      |
-  | `"value"`            | Contains a basic string or regex pattern.                    |
-  | `"case_insensitive"` | String case insensitive condition flag. This is an optional field and by default is set to `False`. |
-
-  - **Example:**
-
-  ```json
-  {
-  	"condition": "StartsWith",   
-  	"value": "Cal" 
-  } 
-  ```
-
-##### <u>Collection Condition Block</u>
-
-- **Conditions:** `AllIn` (), `AllNotIn` (), `AnyIn` (), `AnyNotIn` (), `IsIn` () and `IsNotIn` ()
-
-  - **JSON Schema:**
-
-  ```
-  {
-  	"condition": <string>,   
-  	"values": <list>
-  }
-  ```
-
   | **Field**     | **Description**                                              |
   | ------------- | ------------------------------------------------------------ |
-  | `"condition"` | Specifies the type of collection condition.                  |
-  | `"values"`    | Collection of primitive type values like string, int ,float, etc. |
-
+  | `"condition"` | Specifies the `"EqualsAttribute"` condition.                 |
+| `"ace"`       | Specifies access control element. The value for this field should be either `"subject"`, `"resource"`, `"action"`, or `"context"`. |
+  | `"path"`      | Specified the attribute path in ObjectPath notation of the access control element in `"ace"`. |
+  
+  - **Description:**
+    
+    - `EqualsAttribute`: attribute value equals the value of attribute at location `"path"` of `"ace"` access control element 
   - **Example:**
-
-  ```json
-  {
-  	"condition": "AnyIn",   
-  	"values": ["Example1", "Example2"] 
-  } 
-  ```
-
-- **Conditions:** `IsEmpty` () and `IsNotEmpty` ()
+  
+    ```json
+    {
+        "condtion": "EqualsAttribute",
+        "ace": "context",
+        "path": "$.network.name"
+    }
+    ```
+  
+- **Conditions:** `Any`, `Exists` and `NotExists`
 
   - **JSON Schema:**
 
@@ -732,27 +879,23 @@ There are basically six types of `<condition_expression>` blocks supported in py
   }
   ```
 
-  | **Field**     | **Description**                             |
-  | ------------- | ------------------------------------------- |
-  | `"condition"` | Specifies the type of collection condition. |
+  | **Field**     | **Description**                  |
+  | ------------- | -------------------------------- |
+  | `"condition"` | Specifies the type of condition. |
+
+  - **Description:**
+
+    - `Any`: attribute contains any value, null value included
+    - `Exists`: attribute exists  – null value is checked
+    - `NotExists`: attribute does not exits – null value is checked
 
   - **Example:**
 
-  ```json
-  {
-  	"condition": "IsEmpty"
-  } 
-  ```
-
-##### <u>Object Condition Block</u>
-
-##### <u>Other Condition Block</u>
-
-| **JSON Schema**                                | **Description**                                              | **Example**                                                |
-| ---------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
-| {   "condition": "CIDR",   "value": <string> } | *condition*: specifies "CIDR" network block condition. The attribute value should be an IP address within the CIDR block to satisfy this condition. *values*: CIDR block as string type | {     "condition": "CIDR",     "value": "192.168.0.0/16" } |
-| {   "condition": "Any" }                       | *condition*: specifies "Any" condition. The attribute can have any value. This condition only fails when the attribute for which this condition is defined does not exist. | {   "condition": "Any" }                                   |
-| {   "condition": "Exists" }                    | *condition*: specifies "Exists" condition. This condition is satisfied when the attribute for which this condition is defined exists. | {   "condition": "Exists" }                                |
+    ```json
+    {
+        "condition": "Any"
+    }
+    ```
 
 *[Back to top](#py-abac)*
 
@@ -829,6 +972,7 @@ root.addHandler(logging.StreamHandler())
 
 Most valuable features to be implemented in the order of importance:
 
+- [ ] Sphinx Documentation
 - [ ] Policy Obligations
 - [ ] In-Memory Storage
 - [ ] SQL Storage
@@ -848,11 +992,11 @@ The conceptual and implementation design of py-ABAC stems from the [XACML](https
 
 To hack py-ABAC locally run:
 
-```
-$ pip install -e .[dev]  		   				# to install all dependencies
-$ docker run --rm -d -p 27017:27017 mongo		# Run mongodb server on docker
-$ pytest --cov=py_abac tests/      				# to get coverage report
-$ pylint py_abac                   				# to check code quality with PyLint
+```bash
+$ pip install -e .[dev]			# to install all dependencies
+$ docker run --rm -d -p 27017:27017 mongo			# Run mongodb server on docker
+$ pytest --cov=py_abac tests/			# to get coverage report
+$ pylint py_abac			# to check code quality with PyLint
 ```
 
 Optionally you can use `make` to perform development tasks.
