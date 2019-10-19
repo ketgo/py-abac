@@ -592,17 +592,17 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": <string>,   
-  	"value": <number> 
-  }
-  ```
+    ```
+    {
+  	  "condition": <string>,   
+  	  "value": <number> 
+    }
+    ```
 
-  | **Field**     | **Description**                                       |
+    | **Field**     | **Description**                                       |
   | ------------- | ----------------------------------------------------- |
-  | `"condition"` | Specifies the type of numeric condition.              |
-  | `"value"`     | Contains a number. This can be a float or an integer. |
+    | `"condition"` | Specifies the type of numeric condition.              |
+    | `"value"`     | Contains a number. This can be a float or an integer. |
 
   - **Description:**
     - `Eq`: attribute value equals that in `"value"`
@@ -613,12 +613,12 @@ There are basically six types of `<condition_expression>` blocks supported in py
     - `Lte`: attribute value is less than equal to that in `"value"`
   - **Example:**
 
-  ```json
-  {
-  	"condition": "Lte",   
-  	"value": 1.5 
-  } 
-  ```
+    ```json
+    {
+  	  "condition": "Lte",   
+  	  "value": 1.5 
+    } 
+    ```
 
 ##### <u>String Condition Block</u>
 
@@ -626,19 +626,19 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": <string>,   
-  	"value": <string>,
+    ```
+    {
+  	  "condition": <string>,   
+  	  "value": <string>,
       "case_insensitive": <bool>
-  }
-  ```
+    }
+    ```
 
-  | **Field**            | **Description**                                              |
-  | -------------------- | ------------------------------------------------------------ |
-  | `"condition"`        | Specifies the type of string condition.                      |
-  | `"value"`            | Contains a basic string or regex pattern.                    |
-  | `"case_insensitive"` | String case insensitive condition flag. This is an optional field and by default is set to `False`. |
+    | **Field**            | **Description**                                              |
+    | -------------------- | ------------------------------------------------------------ |
+    | `"condition"`        | Specifies the type of string condition.                      |
+    | `"value"`            | Contains a basic string or regex pattern.                    |
+    | `"case_insensitive"` | String case insensitive condition flag. This is an optional field and by default is set to `False`. |
 
   - **Description:**
     - `Equals`: attribute value string equals that in `"value"`
@@ -650,12 +650,12 @@ There are basically six types of `<condition_expression>` blocks supported in py
     - `RegexMatch`: attribute value string matches regex pattern in `"value"`
   - **Example:**
 
-  ```json
-  {
-  	"condition": "StartsWith",   
-  	"value": "Cal" 
-  } 
-  ```
+    ```json
+    {
+  	  "condition": "StartsWith",   
+  	  "value": "Cal" 
+    } 
+    ```
 
 ##### <u>Collection Condition Block</u>
 
@@ -663,17 +663,17 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": <string>,   
-  	"values": <list>
-  }
-  ```
+    ```
+    {
+  	  "condition": <string>,   
+  	  "values": <list>
+    }
+    ```
 
-  | **Field**     | **Description**                                              |
-  | ------------- | ------------------------------------------------------------ |
-  | `"condition"` | Specifies the type of collection condition.                  |
-  | `"values"`    | Collection of primitive type values like string, int ,float, etc. |
+    | **Field**     | **Description**                                              |
+    | ------------- | ------------------------------------------------------------ |
+    | `"condition"` | Specifies the type of collection condition.                  |
+    | `"values"`    | Collection of primitive type values like string, int ,float, etc. |
 
   - **Description:**
     - `AllIn`: all members of attribute value collection are members of `"values"`
@@ -684,68 +684,68 @@ There are basically six types of `<condition_expression>` blocks supported in py
     - `IsNotIn`: attribute value (treated as a single value) is not member of `"values"`
   - **Example:**
 
-  ```json
-  {
-  	"condition": "AnyIn",   
-  	"values": ["Example1", "Example2"] 
-  } 
-  ```
+    ```json
+    {
+  	  "condition": "AnyIn",   
+  	  "values": ["Example1", "Example2"] 
+    } 
+    ```
 
 - **Conditions:** `IsEmpty` and `IsNotEmpty`
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": <string>
-  }
-  ```
+    ```
+    {
+  	  "condition": <string>
+    }
+    ```
 
-  | **Field**     | **Description**                             |
-  | ------------- | ------------------------------------------- |
-  | `"condition"` | Specifies the type of collection condition. |
+    | **Field**     | **Description**                             |
+    | ------------- | ------------------------------------------- |
+    | `"condition"` | Specifies the type of collection condition. |
 
   - **Description:**
     - `IsEmpty`: attribute value collection is empty
     - `IsNotEmpty`: attribute value collection is not empty
   - **Example:**
 
-  ```json
-  {
-  	"condition": "IsEmpty"
-  } 
-  ```
+    ```json
+    {
+  	  "condition": "IsEmpty"
+    } 
+    ```
 
 ##### <u>Object Condition Block</u>
 
-**Condition:** `EqualsObject`
+- **Condition:** `EqualsObject`
 
-- **JSON Schema:**
+  - **JSON Schema:**
 
-```
-{
-	"condition": "EqualsObject",
-	"value": <object>
-}
-```
+    ```
+    {
+  	  "condition": "EqualsObject",
+  	  "value": <object>
+    }
+    ```
 
-| **Field**     | **Description**                         |
-| ------------- | --------------------------------------- |
-| `"condition"` | Specifies the type of object condition. |
-| `"value"`     | contains a JSON object                  |
+    | **Field**     | **Description**                         |
+    | ------------- | --------------------------------------- |
+    | `"condition"` | Specifies the type of object condition. |
+    | `"value"`     | contains a JSON object                  |
 
-- **Description:**
+  - **Description:**
 
-  - `EqualsObject`: attribute value JSON object equals that in `"value"`
+    - `EqualsObject`: attribute value JSON object equals that in `"value"`
 
-- **Example:**
+  - **Example:**
 
-  ```json
-  {
+    ```json
+    {
       "condition": "EqualsObject",
       "value": {"name": "Sam"}
-  }
-  ```
+    }
+    ```
 
 ##### <u>Logic Condition Block</u>
 
@@ -753,59 +753,59 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": <string>,   
-  	"values": <list<condition_expression>> 
-  }
-  ```
+    ```
+    {
+  	  "condition": <string>,   
+  	  "values": <list<condition_expression>> 
+    }
+    ```
 
-  | **Field**     | **Description**                                     |
-  | ------------- | --------------------------------------------------- |
-  | `"condition"` | Specifies the type of logic condition.              |
-  | `"values"`    | Contains a list of `<condition_expression>` blocks. |
+    | **Field**     | **Description**                                     |
+    | ------------- | --------------------------------------------------- |
+    | `"condition"` | Specifies the type of logic condition.              |
+    | `"values"`    | Contains a list of `<condition_expression>` blocks. |
 
   - **Description:**
     - `AnyOf`: attribute value satisfies any of the conditions in `"values"`
     - `AllOf`: attribute value satisfies all of the conditions in `"values"`
   - **Example:**
 
-  ```json
-  {
-  	"condition": "AllOf",   
-  	"values": [   
-  		{"condition": "Lt", "value": 1.5},   
-  		{"condition": "Gt", "value": 0.5}
-      ] 
-  } 
-  ```
+    ```json
+    {
+  	  "condition": "AllOf",   
+  	  "values": [   
+  		  {"condition": "Lt", "value": 1.5},   
+  		  {"condition": "Gt", "value": 0.5}
+        ] 
+    } 
+    ```
 
 - **Condition:** `Not`
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": "Not",   
-  	"value": <condition_expression> 
-  }
-  ```
+    ```
+    {
+  	  "condition": "Not",   
+  	  "value": <condition_expression> 
+    }
+    ```
 
-  | **Field**     | **Description**                            |
-  | ------------- | ------------------------------------------ |
-  | `"condition"` | Specifies the `"Not"` logic condition.     |
-  | `"value"`     | Contains a `<condition_expression>` block. |
+    | **Field**     | **Description**                            |
+    | ------------- | ------------------------------------------ |
+    | `"condition"` | Specifies the `"Not"` logic condition.     |
+    | `"value"`     | Contains a `<condition_expression>` block. |
 
   - **Description:**
     - `Not`: attribute value does not satisfy the condition in `"value"`
   - **Example:**
 
-  ```json
-  {
-      "condition": "Not",   
-      "value": {"condition": "Eq", "value": 1.5} 
-  }
-  ```
+    ```json
+    {
+        "condition": "Not",   
+        "value": {"condition": "Eq", "value": 1.5} 
+    }
+    ```
 
 ##### <u>Other Condition Block</u>
 
@@ -813,17 +813,17 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": "CIDR",   
-  	"value": <string> 
-  }
-  ```
+    ```
+    {
+  	  "condition": "CIDR",   
+  	  "value": <string> 
+    }
+    ```
 
-  | **Field**     | **Description**                           |
-  | ------------- | ----------------------------------------- |
-  | `"condition"` | Specifies the `"CIDR"` network condition. |
-  | `"value"`     | Contains a CIDR block as string.          |
+    | **Field**     | **Description**                           |
+    | ------------- | ----------------------------------------- |
+    | `"condition"` | Specifies the `"CIDR"` network condition. |
+    | `"value"`     | Contains a CIDR block as string.          |
 
   - **Description:**
 
@@ -842,19 +842,19 @@ There are basically six types of `<condition_expression>` blocks supported in py
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": "EqualsAttribute",   
-  	"ace": <string>,
+    ```
+    {
+  	  "condition": "EqualsAttribute",   
+  	  "ace": <string>,
       "path": <string>
-  }
-```
+    }
+    ```
   
-  | **Field**     | **Description**                                              |
-  | ------------- | ------------------------------------------------------------ |
-  | `"condition"` | Specifies the `"EqualsAttribute"` condition.                 |
-| `"ace"`       | Specifies access control element. The value for this field should be either `"subject"`, `"resource"`, `"action"`, or `"context"`. |
-  | `"path"`      | Specified the attribute path in ObjectPath notation of the access control element in `"ace"`. |
+    | **Field**     | **Description**                                              |
+    | ------------- | ------------------------------------------------------------ |
+    | `"condition"` | Specifies the `"EqualsAttribute"` condition.                 |
+    | `"ace"`       | Specifies access control element. The value for this field should be either `"subject"`, `"resource"`, `"action"`, or `"context"`. |
+    | `"path"`      | Specified the attribute path in ObjectPath notation of the access control element in `"ace"`. |
   
   - **Description:**
     
@@ -868,20 +868,20 @@ There are basically six types of `<condition_expression>` blocks supported in py
         "path": "$.network.name"
     }
     ```
-  
+
 - **Conditions:** `Any`, `Exists` and `NotExists`
 
   - **JSON Schema:**
 
-  ```
-  {
-  	"condition": <string>
-  }
-  ```
+    ```
+      {
+        "condition": <string>
+      }
+    ```
 
-  | **Field**     | **Description**                  |
-  | ------------- | -------------------------------- |
-  | `"condition"` | Specifies the type of condition. |
+    | **Field**     | **Description**                  |
+    | ------------- | -------------------------------- |
+    | `"condition"` | Specifies the type of condition. |
 
   - **Description:**
 
