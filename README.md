@@ -28,11 +28,11 @@ Attribute Based Access Control (ABAC) for python.
     - [Targets Block](#targets-block)
     - [Rules Block](#rules-block)
     - [Condition Blocks](#condition-blocks)
-      1. [Logic Condition Block](#logic-condition-block)
-      2. [Numeric Condition Block](#numeric-condition-block)
-      3. [String Condition Block](#string-condition-block)
-      4. [Collection Condition Block](#collection-condition-block)
-      5. [Object Condition Block](#object-condition-block)
+      1. [Numeric Condition Block](#numeric-condition-block)
+      2. [String Condition Block](#string-condition-block)
+      3. [Collection Condition Block](#collection-condition-block)
+      4. [Object Condition Block](#object-condition-block)
+      5. [Logic Condition Block](#logic-condition-block)
       6. [Other Condition Blocks](#other-condition-blocks)
   - [Access Request JSON](#access-request)
 - [Logging](#logging)
@@ -600,7 +600,7 @@ There are basically six types of `<condition_expression>` blocks supported in py
     ```
 
     | **Field**     | **Description**                                       |
-  | ------------- | ----------------------------------------------------- |
+    | ------------- | ----------------------------------------------------- |
     | `"condition"` | Specifies the type of numeric condition.              |
     | `"value"`     | Contains a number. This can be a float or an integer. |
 
