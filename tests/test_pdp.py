@@ -124,7 +124,7 @@ POLICIES = [
         "description": "All users with employee role are blocked to access confidential documents.",
         "effect": "deny",
         "rules": {
-            "subject": {"$.roles": {"condition": "AnyIn", "value": ["employee"]}},
+            "subject": {"$.roles": {"condition": "AnyIn", "values": ["employee"]}},
             "resource": {"$.name": {"condition": "RegexMatch", "value": "doc:confidential:.*"}},
             "action": {"$.method": {"condition": "RegexMatch", "value": ".*"}},
             "context": {}
@@ -137,7 +137,7 @@ POLICIES = [
         "description": "All users with manager role are allowed view access to sales confidential documents.",
         "effect": "allow",
         "rules": {
-            "subject": {"$.roles": {"condition": "AnyIn", "value": ["manager"]}},
+            "subject": {"$.roles": {"condition": "AnyIn", "values": ["manager"]}},
             "resource": {"$.name": {"condition": "RegexMatch", "value": "doc:confidential:sales:.*"}},
             "action": {"$.method": {"condition": "Equals", "value": "get"}},
             "context": {}
