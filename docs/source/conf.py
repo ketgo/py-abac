@@ -14,6 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../..'))
+print(sys.path)
 
 # -- Project information -----------------------------------------------------
 
@@ -39,7 +40,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.githubpages',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -48,7 +49,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['**tests**', 'setup.py']
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -70,3 +71,6 @@ latex_elements = {
     'preamble': '',
     'figure_align': 'htbp',
 }
+
+# Sort members by type
+autodoc_member_order = 'groupwise'

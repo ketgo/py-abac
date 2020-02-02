@@ -10,29 +10,6 @@ Welcome to py-ABAC's documentation!
    :glob:
    :maxdepth: 2
 
-py-ABAC Policy Decision Point
-=============================
-.. automodule:: py_abac.pdp
-   :members:
+   modules
 
-py-ABAC Access Request
-======================
-.. automodule:: py_abac.request
-   :members:
-
-py-ABAC Policy
-==============
-.. automodule:: py_abac.policy.policy
-   :members: Policy
-.. automodule:: py_abac.policy.targets
-   :members: Targets
-.. automodule:: py_abac.policy.rules
-   :members: Rules
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   Indices and tables
