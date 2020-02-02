@@ -14,7 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../..'))
-print(sys.path)
+sys.path.insert(0, os.path.abspath('_ext'))
 
 # -- Project information -----------------------------------------------------
 
@@ -32,15 +32,8 @@ release = '0.2.0'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
+    'sphinx.ext.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -49,7 +42,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['**tests**', 'setup.py']
+exclude_patterns = ['**tests**', '**build**']
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -71,6 +64,8 @@ latex_elements = {
     'preamble': '',
     'figure_align': 'htbp',
 }
+
+# -- Other options ----------------------------------------------------------
 
 # Sort members by type
 autodoc_member_order = 'groupwise'
