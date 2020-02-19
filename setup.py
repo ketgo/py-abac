@@ -35,7 +35,8 @@ if __name__ == '__main__':
                 'pytest~=4.0',
                 'pytest-cov~=2.6',
                 'pylint~=1.0',
-            ]
+                'sphinx==2.4.1',
+            ],
         },
         packages=find_packages(exclude=('tests', 'benchmarks')),
         classifiers=[
