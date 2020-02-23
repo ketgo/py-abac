@@ -100,8 +100,8 @@ class RuleField(fields.Field):
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, list):
-            return self._implicit_or_field._deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
-        return self._implicit_and_field._deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
+            return self._implicit_or_field.deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
+        return self._implicit_and_field.deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
 
 
 class RulesSchema(Schema):

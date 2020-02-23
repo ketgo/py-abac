@@ -60,8 +60,8 @@ class TargetField(fields.Field):
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, list):
-            return self._many._deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
-        return self._single._deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
+            return self._many.deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
+        return self._single.deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
 
 
 class TargetsSchema(Schema):

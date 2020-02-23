@@ -33,7 +33,7 @@ class CollectionCondition(ConditionBase, metaclass=ABCMeta):
             LOG.debug(
                 "Invalid type '%s' for attribute value at path '%s' for element '%s'."
                 " Condition not satisfied.",
-                ctx.attribute_value,
+                type(ctx.attribute_value),
                 ctx.attribute_path,
                 ctx.ace
             )
