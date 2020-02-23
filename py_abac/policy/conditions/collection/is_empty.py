@@ -4,14 +4,14 @@
 
 from marshmallow import Schema, post_load
 
-from .base import ConditionBase, is_collection, log
+from .base import ConditionBase, is_collection, LOG
 
 
 class IsEmpty(ConditionBase):
 
     def is_satisfied(self, ctx):
         if not is_collection(ctx.attribute_value):
-            log.debug("Invalid type '{}' for attribute value at path '{}' for element '{}'. "
+            LOG.debug("Invalid type '{}' for attribute value at path '{}' for element '{}'. "
                       "Condition not satisfied.".format(ctx.attribute_value, ctx.attribute_path, ctx.ace))
             return False
         return self._is_satisfied(ctx.attribute_value)

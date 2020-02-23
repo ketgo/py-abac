@@ -36,6 +36,7 @@ if __name__ == '__main__':
                 'pytest-cov~=2.6',
                 'pylint~=1.0',
                 'sphinx==2.4.1',
+                'bandit~=1.6',
             ],
         },
         packages=find_packages(exclude=('tests', 'benchmarks')),

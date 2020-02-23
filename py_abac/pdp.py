@@ -86,7 +86,7 @@ class PDP(object):
         # Get filtered policies based on targets from storage
         policies = self._storage.get_for_target(ctx.subject_id, ctx.resource_id, ctx.action_id)
         # Filter policies based on fit with authorization request
-        policies = [p for p in policies if p.fits(ctx)]
+        policies = [policy for policy in policies if policy.fits(ctx)]
 
         return evaluate(policies)
 
@@ -100,8 +100,8 @@ class PDP(object):
         """
         if not policies:
             return False
-        for p in policies:
-            if p.is_allowed:
+        for policy in policies:
+            if policy.is_allowed:
                 return True
         return False
 
@@ -115,8 +115,8 @@ class PDP(object):
         """
         if not policies:
             return False
-        for p in policies:
-            if not p.is_allowed:
+        for policy in policies:
+            if not policy.is_allowed:
                 return False
         return True
 
@@ -131,12 +131,12 @@ class PDP(object):
             return False
         policy_groups = {}
         max_priority = -1
-        for p in policies:
-            if p.priority > max_priority:
-                max_priority = p.priority
-            if p.priority in policy_groups:
-                policy_groups[p.priority].append(p)
+        for policy in policies:
+            if policy.priority > max_priority:
+                max_priority = policy.priority
+            if policy.priority in policy_groups:
+                policy_groups[policy.priority].append(policy)
             else:
-                policy_groups[p.priority] = [p]
+                policy_groups[policy.priority] = [policy]
         print(policy_groups)
         return self._deny_overrides(policy_groups[max_priority])

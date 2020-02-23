@@ -1,3 +1,7 @@
+"""
+    Exposed classes and methods
+"""
+
 import logging
 
 from .pdp import PDP, EvaluationAlgorithm

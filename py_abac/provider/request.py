@@ -21,15 +21,24 @@ class RequestAttributeProvider(AttributeProvider):
             :param request: authorization request object
         """
 
-        self._subject_tree = Tree(request._subject)
-        self._resource_tree = Tree(request._resource)
-        self._action_tree = Tree(request._action)
-        self._context_tree = Tree(request._context)
+        self._subject_tree = Tree(request.subject)
+        self._resource_tree = Tree(request.resource)
+        self._action_tree = Tree(request.action)
+        self._context_tree = Tree(request.context)
 
-        # Cache of attribute location and value pairs per access element used for quick attribute value retrieval
+        # Cache of attribute location and value pairs per access element used for quick attribute
+        # value retrieval
         self._attribute_values_cache = {"subject": {}, "resource": {}, "action": {}, "context": {}}
 
     def get_attribute_value(self, ace, path, ctx):
+        """
+            Get value for given access control element and attribute path.
+
+            :param ace: access control element
+            :param path: path to attribute in ObjectPath notation
+            :param ctx: evaluation context instance
+            :return: attribute value
+        """
         # Validates given access control element and gets ObjectPath tree
         try:
             attribute_tree = getattr(self, "_{}_tree".format(ace))

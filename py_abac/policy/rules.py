@@ -2,6 +2,8 @@
     Policy rules class
 """
 
+from typing import Union, List, Dict
+
 from marshmallow import Schema, fields, post_load
 
 from .conditions.others.equals_attribute import validate_path
@@ -10,8 +12,17 @@ from ..context import EvaluationContext
 
 
 class Rules(object):
+    """
+        Policy rules
+    """
 
-    def __init__(self, subject, resource, action, context):
+    def __init__(
+            self,
+            subject: Union[List, Dict],
+            resource: Union[List, Dict],
+            action: Union[List, Dict],
+            context: Union[List, Dict]
+    ):
         self.subject = subject
         self.resource = resource
         self.action = action
@@ -43,7 +54,8 @@ class Rules(object):
         if isinstance(ace_conditions, dict):
             return self._implicit_and(ace_name, ace_conditions, ctx)
 
-        # If ace is not in correct format, return False. This condition is just for best practice and will never happen
+        # If ace is not in correct format, return False. This condition is just for best
+        # practice and will never happen
         return False  # pragma: no cover
 
     def _implicit_or(self, ace_name: str, ace_conditions: list, ctx: EvaluationContext):
@@ -70,28 +82,37 @@ class RuleField(fields.Field):
     """
         Marshmallow field class for rules
     """
-    _implicit_and_field = fields.Dict(keys=fields.String(validate=validate_path),
-                                      values=fields.Nested(ConditionSchema))
-    _implicit_or_field = fields.List(fields.Dict(keys=fields.String(validate=validate_path),
-                                                 values=fields.Nested(ConditionSchema)))
+    _implicit_and_field = fields.Dict(
+        keys=fields.String(validate=validate_path),
+        values=fields.Nested(ConditionSchema)
+    )
+    _implicit_or_field = fields.List(
+        fields.Dict(
+            keys=fields.String(validate=validate_path),
+            values=fields.Nested(ConditionSchema)
+        )
+    )
 
     def _serialize(self, value, attr, obj, **kwargs):
         if isinstance(value, list):
-            return self._implicit_or_field._serialize(value, attr, obj, **kwargs)
-        return self._implicit_and_field._serialize(value, attr, obj, **kwargs)
+            return self._implicit_or_field._serialize(value, attr, obj, **kwargs)  # pylint: disable=protected-access
+        return self._implicit_and_field._serialize(value, attr, obj, **kwargs)  # pylint: disable=protected-access
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, list):
-            return self._implicit_or_field._deserialize(value, attr, data, **kwargs)
-        return self._implicit_and_field._deserialize(value, attr, data, **kwargs)
+            return self._implicit_or_field._deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
+        return self._implicit_and_field._deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
 
 
 class RulesSchema(Schema):
+    """
+        JSON schema for rules
+    """
     subject = RuleField(default={}, missing={})
     resource = RuleField(default={}, missing={})
     action = RuleField(default={}, missing={})
     context = RuleField(default={}, missing={})
 
     @post_load
-    def post_load(self, data, **_):
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
         return Rules(**data)
