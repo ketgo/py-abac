@@ -57,7 +57,8 @@ def _get_all_ids(target_id: str) -> list:
         This method computes all possible wildcard-ed IDs for a given target ID.
 
             Examples:
-
+                "a" -> ['a', '*', '*a*', 'a*', '*a']
+                "ab" -> ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']
 
         See unit tests for more examples.
     """

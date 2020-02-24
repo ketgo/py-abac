@@ -3,7 +3,7 @@
 """
 
 from abc import ABCMeta, abstractmethod
-from types import GeneratorType
+from typing import Generator
 
 from ..policy import Policy
 
@@ -28,14 +28,19 @@ class StorageBase(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_all(self, limit: int, offset: int) -> GeneratorType:
+    def get_all(self, limit: int, offset: int) -> Generator[Policy, None, None]:
         """
             Retrieve all the policies within a window
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def get_for_target(self, subject_id: str, resource_id: str, action_id: str) -> GeneratorType:
+    def get_for_target(
+            self,
+            subject_id: str,
+            resource_id: str,
+            action_id: str
+    ) -> Generator[Policy, None, None]:
         """
             Get all policies for given target IDs.
         """

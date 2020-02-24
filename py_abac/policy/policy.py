@@ -4,9 +4,9 @@
 
 from marshmallow import Schema, fields, post_load, ValidationError, validate
 
-from py_abac.context import EvaluationContext
 from .rules import Rules, RulesSchema
 from .targets import Targets, TargetsSchema
+from ..context import EvaluationContext
 from ..exceptions import PolicyCreateError
 
 # Access decisions
