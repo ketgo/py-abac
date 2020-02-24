@@ -15,7 +15,7 @@ from ...policy import Policy
 DEFAULT_DB = 'py_abac'
 DEFAULT_COLLECTION = 'py_abac_policies'
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class MongoStorage(StorageBase):
@@ -23,7 +23,12 @@ class MongoStorage(StorageBase):
         Stores and retrieves policies from MongoDB
     """
 
-    def __init__(self, client: MongoClient, db_name: str = DEFAULT_DB, collection: str = DEFAULT_COLLECTION):
+    def __init__(
+            self,
+            client: MongoClient,
+            db_name: str = DEFAULT_DB,
+            collection: str = DEFAULT_COLLECTION
+    ):
         self.client = client
         self.database = self.client[db_name]
         self.collection = self.database[collection]
@@ -32,9 +37,9 @@ class MongoStorage(StorageBase):
         try:
             self.collection.insert_one(PolicyModel.from_policy(policy).to_doc())
         except DuplicateKeyError:
-            log.error('Error trying to create already existing policy with UID=%s.', policy.uid)
+            LOG.error('Error trying to create already existing policy with UID=%s.', policy.uid)
             raise PolicyExistsError(policy.uid)
-        log.info('Added Policy: %s', policy)
+        LOG.info('Added Policy: %s', policy)
 
     def get(self, uid: str):
         doc = self.collection.find_one(uid)
@@ -56,9 +61,13 @@ class MongoStorage(StorageBase):
 
     def update(self, policy: Policy):
         uid = policy.uid
-        self.collection.update_one({'_id': uid}, {"$set": PolicyModel.from_policy(policy).to_doc()}, upsert=False)
-        log.info('Updated Policy with UID=%s. New value is: %s', uid, policy)
+        self.collection.update_one(
+            {'_id': uid},
+            {"$set": PolicyModel.from_policy(policy).to_doc()},
+            upsert=False
+        )
+        LOG.info('Updated Policy with UID=%s. New value is: %s', uid, policy)
 
     def delete(self, uid: str):
         self.collection.delete_one({'_id': uid})
-        log.info('Deleted Policy with UID=%s.', uid)
+        LOG.info('Deleted Policy with UID=%s.', uid)

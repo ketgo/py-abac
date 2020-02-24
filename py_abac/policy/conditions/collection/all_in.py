@@ -12,7 +12,7 @@ class AllIn(CollectionCondition):
         Condition for all values of `what` in `values`
     """
 
-    def _is_satisfied(self, what):
+    def _is_satisfied(self, what) -> bool:
         return set(what).issubset(self.values)
 
 

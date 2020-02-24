@@ -12,7 +12,7 @@ class AllNotIn(CollectionCondition):
         Condition for all values of `what` not in `values`
     """
 
-    def _is_satisfied(self, what):
+    def _is_satisfied(self, what) -> bool:
         return not set(what).issubset(self.values)
 
 

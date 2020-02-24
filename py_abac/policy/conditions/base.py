@@ -13,7 +13,7 @@ class ConditionBase(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def is_satisfied(self, ctx: EvaluationContext):
+    def is_satisfied(self, ctx: EvaluationContext) -> bool:
         """
             Is conditions satisfied?
 

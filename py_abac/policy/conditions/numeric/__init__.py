@@ -1,3 +1,7 @@
+"""
+    Numeric conditions
+"""
+
 from .eq import Eq
 from .gt import Gt
 from .gte import Gte

@@ -12,7 +12,7 @@ class AnyIn(CollectionCondition):
         Condition for any value of `what` in `values`
     """
 
-    def _is_satisfied(self, what):
+    def _is_satisfied(self, what) -> bool:
         return bool(set(what).intersection(self.values))
 
 

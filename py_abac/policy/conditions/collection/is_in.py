@@ -15,7 +15,7 @@ class IsIn(CollectionCondition):
     def is_satisfied(self, ctx):
         return self._is_satisfied(ctx.attribute_value)
 
-    def _is_satisfied(self, what):
+    def _is_satisfied(self, what) -> bool:
         return what in self.values
 
 

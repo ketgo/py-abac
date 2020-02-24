@@ -1,3 +1,7 @@
+"""
+    String conditions
+"""
+
 from .contains import Contains
 from .ends_with import EndsWith
 from .equals import Equals

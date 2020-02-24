@@ -12,7 +12,7 @@ class IsNotEmpty(ConditionBase):
         Condition for `what` not being an empty collection
     """
 
-    def is_satisfied(self, ctx):
+    def is_satisfied(self, ctx) -> bool:
         if not is_collection(ctx.attribute_value):
             LOG.debug(
                 "Invalid type '%s' for attribute value at path '%s' for element '%s'."
@@ -25,7 +25,7 @@ class IsNotEmpty(ConditionBase):
         return self._is_satisfied(ctx.attribute_value)
 
     @staticmethod
-    def _is_satisfied(what):
+    def _is_satisfied(what) -> bool:
         """
             Is collection conditions satisfied
 
@@ -41,5 +41,5 @@ class IsNotEmptySchema(Schema):
     """
 
     @post_load
-    def post_load(self, **_):  # pylint: disable=missing-docstring,no-self-use,unused-argument
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use,unused-argument
         return IsNotEmpty()

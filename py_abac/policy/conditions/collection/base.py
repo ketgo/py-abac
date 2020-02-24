@@ -11,7 +11,7 @@ from ..base import ConditionBase, ABCMeta, abstractmethod
 LOG = logging.getLogger(__name__)
 
 
-def is_collection(value):
+def is_collection(value) -> bool:
     """
         Check if value is a collection
     """
@@ -28,7 +28,7 @@ class CollectionCondition(ConditionBase, metaclass=ABCMeta):
     def __init__(self, values):
         self.values = values
 
-    def is_satisfied(self, ctx):
+    def is_satisfied(self, ctx) -> bool:
         if not is_collection(ctx.attribute_value):
             LOG.debug(
                 "Invalid type '%s' for attribute value at path '%s' for element '%s'."
@@ -41,7 +41,7 @@ class CollectionCondition(ConditionBase, metaclass=ABCMeta):
         return self._is_satisfied(ctx.attribute_value)
 
     @abstractmethod
-    def _is_satisfied(self, what):
+    def _is_satisfied(self, what) -> bool:
         """
             Is collection conditions satisfied
 

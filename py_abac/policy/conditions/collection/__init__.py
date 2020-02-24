@@ -1,5 +1,5 @@
 """
-    Exposed collection conditions
+    Collection conditions
 """
 
 from .all_in import AllIn

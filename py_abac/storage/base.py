@@ -9,6 +9,9 @@ from ..policy import Policy
 
 
 class StorageBase(metaclass=ABCMeta):
+    """
+        Base class for policy storage
+    """
 
     @abstractmethod
     def add(self, policy: Policy):

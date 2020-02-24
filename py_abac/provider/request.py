@@ -30,12 +30,12 @@ class RequestAttributeProvider(AttributeProvider):
         # value retrieval
         self._attribute_values_cache = {"subject": {}, "resource": {}, "action": {}, "context": {}}
 
-    def get_attribute_value(self, ace, path, ctx):
+    def get_attribute_value(self, ace, attribute_path, ctx):
         """
             Get value for given access control element and attribute path.
 
             :param ace: access control element
-            :param path: path to attribute in ObjectPath notation
+            :param attribute_path: path to attribute in ObjectPath notation
             :param ctx: evaluation context instance
             :return: attribute value
         """
@@ -46,15 +46,15 @@ class RequestAttributeProvider(AttributeProvider):
             raise InvalidAccessControlElementError(ace)
 
         # Check if attribute value stored in cache
-        if path in self._attribute_values_cache[ace]:
-            rvalue = self._attribute_values_cache[ace][path]
+        if attribute_path in self._attribute_values_cache[ace]:
+            rvalue = self._attribute_values_cache[ace][attribute_path]
         else:
             # Attribute value not found in cache so get it from ObjectPath tree
             try:
-                rvalue = attribute_tree.execute(path)
+                rvalue = attribute_tree.execute(attribute_path)
             # Broad exception needed for ObjectPath package
             except Exception:
-                raise InvalidAttributePathError(path)
+                raise InvalidAttributePathError(attribute_path)
             # Store the obtained value in cache
-            self._attribute_values_cache[ace][path] = rvalue
+            self._attribute_values_cache[ace][attribute_path] = rvalue
         return rvalue
