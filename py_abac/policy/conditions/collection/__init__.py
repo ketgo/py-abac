@@ -1,3 +1,7 @@
+"""
+    Collection conditions
+"""
+
 from .all_in import AllIn
 from .all_not_in import AllNotIn
 from .any_in import AnyIn

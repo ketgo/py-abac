@@ -39,11 +39,11 @@ def _split_id(wc_id: str) -> list:
         splits = _string[start:end].split("*")
         # Compensate the starting member of the split due to adjusted string
         splits[0] = _string[:start] + splits[0]
-        for x in range(len(splits) - 1):
+        for idx in range(len(splits) - 1):
             # Add wildcard as suffix
-            splits[x] = splits[x] + "*"
+            splits[idx] = splits[idx] + "*"
             # Add wildcard as prefix of the next member
-            splits[x + 1] = "*" + splits[x + 1]
+            splits[idx + 1] = "*" + splits[idx + 1]
         # Compensate the last member of the split due to adjusted string
         splits[-1] = splits[-1] + _string[end:]
 
@@ -63,11 +63,11 @@ def _get_all_ids(target_id: str) -> list:
     """
     rvalue = {target_id: True, "*": True}
     length = len(target_id)
-    # Compute all N-grams
-    for N in range(length):
+    # Compute all n-grams
+    for n_gram in range(length):
         # Compute N-grams
-        size = length - N
-        span = N + 1
+        size = length - n_gram
+        span = n_gram + 1
         rvalue["*" + target_id[:span] + "*"] = True
         rvalue[target_id[:span] + "*"] = True
         for i in range(1, size - 1):
@@ -97,19 +97,31 @@ class PolicyModel(object):
 
     @classmethod
     def from_policy(cls, policy: Policy):
+        """
+            Create model instance from policy object
+        """
         policy_str = json.dumps(policy.to_json())
         tags = cls._targets_to_tags(policy.targets)
         return cls(policy.uid, policy_str, tags)
 
     def to_policy(self):
+        """
+            Get policy object
+        """
         policy_json = json.loads(self.policy_str)
         return Policy.from_json(policy_json)
 
     @classmethod
     def from_doc(cls, data):
+        """
+            Create policy model from MongoDB document
+        """
         return cls(**data)
 
     def to_doc(self):
+        """
+            Get MongoDB document
+        """
         return self.__dict__
 
     @staticmethod
@@ -143,9 +155,12 @@ class PolicyModel(object):
 
     @staticmethod
     def _targets_to_tags(targets: Targets):
-        wc_subject_ids = targets.subject_id if isinstance(targets.subject_id, list) else [targets.subject_id]
-        wc_resource_ids = targets.resource_id if isinstance(targets.resource_id, list) else [targets.resource_id]
-        wc_action_ids = targets.action_id if isinstance(targets.action_id, list) else [targets.action_id]
+        wc_subject_ids = targets.subject_id \
+            if isinstance(targets.subject_id, list) else [targets.subject_id]
+        wc_resource_ids = targets.resource_id \
+            if isinstance(targets.resource_id, list) else [targets.resource_id]
+        wc_action_ids = targets.action_id \
+            if isinstance(targets.action_id, list) else [targets.action_id]
         return {"subject": [{"id": _split_id(x)} for x in wc_subject_ids],
                 "resource": [{"id": _split_id(x)} for x in wc_resource_ids],
                 "action": [{"id": _split_id(x)} for x in wc_action_ids]}

@@ -1,5 +1,3 @@
 """
     SQL storage
 """
-
-raise NotImplementedError()

@@ -3,13 +3,13 @@
 """
 
 import logging
-from typing import List
+from typing import List, Any
 
 from .provider.base import AttributeProvider
 from .provider.request import RequestAttributeProvider
 from .request import Request
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class EvaluationContext(object):
@@ -23,9 +23,9 @@ class EvaluationContext(object):
 
             :param request: request object
         """
-        self._subject_id = request._subject_id
-        self._resource_id = request._resource_id
-        self._action_id = request._action_id
+        self._subject_id = request.subject_id
+        self._resource_id = request.resource_id
+        self._action_id = request.action_id
         self._request_provider = RequestAttributeProvider(request)
         self._other_providers = providers or []
 
@@ -38,35 +38,59 @@ class EvaluationContext(object):
         self._provider_call_stack = [None]
 
     @property
-    def subject_id(self):
+    def subject_id(self) -> str:
+        """
+            Subject identifier being evaluated
+        """
         return self._subject_id
 
     @property
-    def resource_id(self):
+    def resource_id(self) -> str:
+        """
+            Resource identifier being evaluated
+        """
         return self._resource_id
 
     @property
     def action_id(self):
+        """
+            Action identifier being evaluated
+        """
         return self._action_id
 
     @property
-    def ace(self):
+    def ace(self) -> str:
+        """
+            Access control element being evaluated
+        """
         return self._ace
 
     @ace.setter
     def ace(self, value: str):
+        """
+            Set access control element to evaluate
+        """
         self._ace = value
 
     @property
-    def attribute_path(self):
+    def attribute_path(self) -> str:
+        """
+            Attribute path being evaluated in ObjectPath notation
+        """
         return self._attribute_path
 
     @attribute_path.setter
     def attribute_path(self, path: str):
+        """
+            Set attribute path to evaluate
+        """
         self._attribute_path = path
 
     @property
-    def attribute_value(self):
+    def attribute_value(self) -> Any:
+        """
+            Attribute value to evaluate
+        """
         return self.get_attribute_value(self.ace, self.attribute_path)
 
     def get_attribute_value(self, ace: str, attribute_path: str):

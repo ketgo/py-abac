@@ -8,16 +8,22 @@ from .base import CollectionCondition, CollectionConditionSchema
 
 
 class IsNotIn(CollectionCondition):
+    """
+        Condition for `what` is not a member of `values`
+    """
 
-    def is_satisfied(self, ctx):
+    def is_satisfied(self, ctx) -> bool:
         return self._is_satisfied(ctx.attribute_value)
 
-    def _is_satisfied(self, what):
+    def _is_satisfied(self, what) -> bool:
         return what not in self.values
 
 
 class IsNotInSchema(CollectionConditionSchema):
+    """
+        JSON schema for is not in collection condition
+    """
 
     @post_load
-    def post_load(self, data, **_):
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
         return IsNotIn(**data)

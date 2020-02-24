@@ -43,6 +43,9 @@ from .string.starts_with import StartsWith, StartsWithSchema
 
 
 class ConditionSchema(OneOfSchema):
+    """
+        Polymorphic JSON schema for conditions
+    """
     type_field = "condition"
     type_schemas = {
         # --- Numeric Conditions ---
