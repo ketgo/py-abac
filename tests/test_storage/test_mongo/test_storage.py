@@ -12,8 +12,7 @@ from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.request import Request
-from py_abac.storage.mongo import MongoMigrationSet
-from py_abac.storage.mongo import MongoStorage
+from py_abac.storage.mongo import MongoStorage, MongoMigrationSet
 
 MONGO_HOST = '127.0.0.1'
 MONGO_PORT = 27017

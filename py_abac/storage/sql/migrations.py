@@ -12,7 +12,6 @@ class MigrationModel(MigrationBase):
     """
         Migration version storage
     """
-
     __tablename__ = 'py_abac_migrations'
 
     id = Column(Integer, primary_key=True)

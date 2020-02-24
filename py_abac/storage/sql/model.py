@@ -4,7 +4,7 @@
 
 from typing import Union, List, Type
 
-from sqlalchemy import Column, String, JSON, ForeignKey
+from sqlalchemy import Column, String, Integer, JSON, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -13,33 +13,41 @@ from ...policy import Policy
 Base = declarative_base()
 
 
-class TargetModel(Base):
+class TargetModel:
     """
         Base policy target model
     """
-    id = Column(String(248), comment="Target ID used for filtering policies")
-    uid = Column(String(248), ForeignKey("py_abac_policies.uid", ondelete="CASCADE"))
+    target_id = Column(String(248), comment="Target ID used for filtering policies")
 
 
-class SubjectTargetModel(TargetModel):
+class SubjectTargetModel(TargetModel, Base):
     """
         Subject target data model
     """
     __tablename__ = "py_abac_subject_targets"
 
+    id = Column(Integer, primary_key=True)
+    uid = Column(String(248), ForeignKey("py_abac_policies.uid", ondelete="CASCADE"))
 
-class ResourceTargetModel(TargetModel):
+
+class ResourceTargetModel(TargetModel, Base):
     """
         Resource target data model
     """
     __tablename__ = "py_abac_resource_targets"
 
+    id = Column(Integer, primary_key=True)
+    uid = Column(String(248), ForeignKey("py_abac_policies.uid", ondelete="CASCADE"))
 
-class ActionTargetModel(TargetModel):
+
+class ActionTargetModel(TargetModel, Base):
     """
         Action target data model
     """
     __tablename__ = "py_abac_action_targets"
+
+    id = Column(Integer, primary_key=True)
+    uid = Column(String(248), ForeignKey("py_abac_policies.uid", ondelete="CASCADE"))
 
 
 class PolicyModel(Base):
@@ -120,5 +128,5 @@ class PolicyModel(Base):
         for tid in target_ids:
             target_model = target_model_cls()
             # Replace with SQL wildcard '%'
-            target_model.id = tid.replace('%', '"%"').replace('*', '%')
+            target_model.target_id = tid.replace('%', '"%"').replace('*', '%')
             model_attr.append(target_model)
