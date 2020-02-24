@@ -53,7 +53,7 @@ class SQLStorage(StorageBase):
             resource_id: str,
             action_id: str
     ) -> Generator[Policy, None, None]:
-        policy_filter = PolicyModel.get_filtered_cursor(subject_id, resource_id, action_id)
+        policy_filter = PolicyModel.get_filter(subject_id, resource_id, action_id)
         cur = self.session.query(PolicyModel).filter(*policy_filter)
         for policy_model in cur:
             yield policy_model.to_policy()

@@ -1,3 +1,7 @@
+"""
+    SQL storage migrations
+"""
+
 from sqlalchemy import Column, Integer
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base

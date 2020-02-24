@@ -68,7 +68,7 @@ class PolicyModel(Base):
             Create `PolicyModel` from `Policy` object
         """
         rvalue = cls()
-        rvalue._setup(policy)
+        rvalue._setup(policy)   # pylint: disable=protected-access
 
         return rvalue
 
@@ -85,7 +85,10 @@ class PolicyModel(Base):
         self._setup(policy)
 
     @classmethod
-    def get_filtered_cursor(cls, subject_id: str, resource_id: str, action_id: str):
+    def get_filter(cls, subject_id: str, resource_id: str, action_id: str):
+        """
+            Get query filter for policies matching target IDs
+        """
         pass
 
     def _setup(self, policy: Policy):
