@@ -972,13 +972,12 @@ root.addHandler(logging.StreamHandler())
 
 Most valuable features to be implemented in the order of importance:
 
-- [ ] Sphinx Documentation
+- [x] Sphinx Documentation
 - [ ] Policy Obligations
 - [ ] In-Memory Storage
-- [ ] SQL Storage
+- [x] SQL Storage
 - [ ] Caching mechanism for Storage
-- [ ] YAML-based language for declarative policy definitions
--  [ ] File Storage
+- [ ] File Storage
 
 *[Back to top](#py-abac)*
 
@@ -997,6 +996,7 @@ $ pip install -e .[dev]			# to install all dependencies
 $ docker run --rm -d -p 27017:27017 mongo			# Run mongodb server on docker
 $ pytest --cov=py_abac tests/			# to get coverage report
 $ pylint py_abac			# to check code quality with PyLint
+$ bandit py_abac			# to check code security with Bandit
 ```
 
 Optionally you can use `make` to perform development tasks.

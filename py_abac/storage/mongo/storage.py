@@ -21,6 +21,10 @@ LOG = logging.getLogger(__name__)
 class MongoStorage(StorageBase):
     """
         Stores and retrieves policies from MongoDB
+
+        :param client: mongodb client
+        :param db_name: database to use for storing policies
+        :param collection: collection to use for storing policies
     """
 
     def __init__(
