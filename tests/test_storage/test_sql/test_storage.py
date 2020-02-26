@@ -1,30 +1,36 @@
 """
-    MongoDB storage test
+    SQL storage tests
 """
 
 import uuid
 
 import pytest
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from py_abac.exceptions import PolicyExistsError
 from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.request import Request
-from py_abac.storage.mongo import MongoStorage
-from . import create_client
-
-DB_NAME = 'db_test'
-COLLECTION = 'policies_test'
+from py_abac.storage.sql import SQLStorage
+from py_abac.storage.sql.model import Base
+from . import create_test_sql_engine
 
 
 @pytest.fixture
-def st():
-    client = create_client()
-    storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
+def session():
+    engine = create_test_sql_engine()
+    Base.metadata.create_all(engine)
+    session = scoped_session(sessionmaker(bind=engine))
+    yield session
+    Base.metadata.drop_all(engine)
+
+
+@pytest.fixture
+def st(session):
+    storage = SQLStorage(scoped_session=session)
     yield storage
-    client[DB_NAME][COLLECTION].delete_many({})
-    client.close()
+    session.remove()
 
 
 def test_add(st):
@@ -103,8 +109,7 @@ def test_get(st):
     (200, 1, 199),
     (199, 0, 199),
     (200, 50, 150),
-    # TODO: Fix - result should be 0
-    (0, 0, 200),
+    (0, 0, 0),
     (1, 0, 1),
     (5, 4, 5),
     (200, 300, 0),
@@ -134,6 +139,7 @@ def test_get_all_with_incorrect_args(st):
     assert "Offset can't be negative" == str(e.value)
 
 
+# TODO: Implementation not done
 @pytest.mark.parametrize("request_json, num", [
     ({
          "subject": {"id": "a"},

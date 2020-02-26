@@ -2,7 +2,7 @@
 Version for py_abac package
 """
 
-__version__ = '0.2.0'  # pragma: no cover
+__version__ = '0.2.1'  # pragma: no cover
 
 
 def version_info():  # pragma: no cover

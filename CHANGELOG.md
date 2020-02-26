@@ -16,4 +16,5 @@
 
 - Added Sphinx documentation.
 - Code quality checks performed.
+- Security checks added.
 - Added SQL storage.

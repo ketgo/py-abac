@@ -6,6 +6,8 @@ language: python
 
 services:
   - mongodb
+  - mysql
+  - postgresql
 
 cache: pip
 
@@ -13,19 +15,27 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
-#  - "3.8-dev"  # 3.8 development branch
+  - "3.8"
   - "nightly"  # nightly build
   - "pypy3.5"  # Pypy3 3.5.3
 
 before_script:
-  - sleep 15
+  - sleep 5
+  # Create databases
   - mongo db --eval 'db.createUser({user:"test_user",pwd:"test_password",roles:["readWrite"]});'
+  - mysql -e 'CREATE DATABASE py_abac CHARACTER SET utf8 COLLATE utf8_bin;'
+  - psql -c "CREATE DATABASE py_abac ENCODING='UTF8';" -U postgres
 
 install:
   - make deps
 
 script:
-  - make coverage
+  # All tests with MongoDB and SQLite storage
+  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="sqlite:///:memory:" make coverage
+  # All tests with MongoDB and MySQL storage
+  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="mysql+pymysql://root@127.0.0.1/py_abac" make coverage
+  # All tests with MongoDB and Postgres storage
+  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="postgresql+psycopg2cffi://postgres:@localhost/py_abac" make coverage
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

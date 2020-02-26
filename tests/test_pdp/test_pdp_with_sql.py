@@ -1,20 +1,18 @@
 """
-    PDP tests
+    PDP tests with SQL storage
 """
 
 import pytest
-from pymongo import MongoClient
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from py_abac.pdp import PDP, EvaluationAlgorithm
 from py_abac.policy import Policy
 from py_abac.provider.base import AttributeProvider
 from py_abac.request import Request
-from py_abac.storage.mongo import MongoStorage, MongoMigrationSet
+from py_abac.storage.sql import SQLStorage
+from py_abac.storage.sql.model import Base
+from ..test_storage.test_sql import create_test_sql_engine
 
-MONGO_HOST = '127.0.0.1'
-MONGO_PORT = 27017
-DB_NAME = 'db_test'
-COLLECTION = 'policies_test'
 SUBJECT_IDS = {"Max": "user:1", "Nina": "user:2", "Ben": "user:3", "Henry": "user:4"}
 POLICIES = [
     {
@@ -156,22 +154,22 @@ class EmailsAttributeProvider(AttributeProvider):
                 return "ben@gmail.com"
 
 
-def create_client():
-    return MongoClient(MONGO_HOST, MONGO_PORT)
+@pytest.fixture
+def session():
+    engine = create_test_sql_engine()
+    Base.metadata.create_all(engine)
+    session = scoped_session(sessionmaker(bind=engine))
+    yield session
+    Base.metadata.drop_all(engine)
 
 
 @pytest.fixture
-def st():
-    client = create_client()
-    storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
-    migration_set = MongoMigrationSet(storage)
-    migration_set.up()
+def st(session):
+    storage = SQLStorage(scoped_session=session)
     for policy_json in POLICIES:
         storage.add(Policy.from_json(policy_json))
     yield storage
-    migration_set.down()
-    client[DB_NAME][COLLECTION].drop()
-    client.close()
+    session.remove()
 
 
 @pytest.mark.parametrize('desc, request_json, should_be_allowed', [

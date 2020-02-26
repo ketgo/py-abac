@@ -3,27 +3,25 @@
 """
 
 import pytest
-from pymongo import MongoClient
 
 from py_abac.storage.mongo import MongoStorage
 from py_abac.storage.mongo.migrations import MongoMigrationSet, MongoMigration0To0x2x0
+from . import create_client
 
-MONGO_HOST = '127.0.0.1'
-MONGO_PORT = 27017
 DB_NAME = 'db_test'
 COLLECTION = 'policies_migration_test'
 MIGRATION_COLLECTION = 'policies_migration_ver_test'
 
 
-def create_client():
-    return MongoClient(MONGO_HOST, MONGO_PORT)
+@pytest.fixture
+def client():
+    return create_client()
 
 
 class TestMongoMigrationSet:
 
     @pytest.fixture
-    def migration_set(self):
-        client = create_client()
+    def migration_set(self, client):
         storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
         yield MongoMigrationSet(storage, MIGRATION_COLLECTION)
         client[DB_NAME][COLLECTION].drop()
@@ -52,8 +50,7 @@ class TestMongoMigrationSet:
 class TestMongoMigration0To0x2x0:
 
     @pytest.yield_fixture
-    def storage(self):
-        client = create_client()
+    def storage(self, client):
         yield MongoStorage(client, DB_NAME, collection=COLLECTION)
         client[DB_NAME][COLLECTION].drop()
         client.close()
