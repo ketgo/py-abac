@@ -19,7 +19,7 @@ def run_on_connect(dbapi_con, connection_record):
 
 
 def create_test_sql_engine():
-    url = os.getenv('SQL_DATABASE_HOST', DEFAULT_SQL_HOST)
+    url = os.getenv('SQL_HOST', DEFAULT_SQL_HOST)
     engine = create_engine(url, encoding='utf-8')
     try:
         engine.execute(text('select 1'))

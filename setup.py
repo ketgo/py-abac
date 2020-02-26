@@ -44,7 +44,7 @@ if __name__ == '__main__':
         long_description=long_description,
         long_description_content_type='text/markdown',
         py_modules=['py_abac'],
-        python_requires='>=3.4',
+        python_requires='>3.4',
         install_requires=[
             'marshmallow~=3.2',
             'marshmallow-oneofschema~=2.0',
