@@ -6,6 +6,7 @@ import logging
 from typing import Union, Generator
 
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import FlushError
 
 from .model import PolicyModel
 from ..base import StorageBase
@@ -32,7 +33,7 @@ class SQLStorage(StorageBase):
             self.session.add(policy_model)
             self.session.commit()
             LOG.info("Added Policy: %s", policy)
-        except IntegrityError:
+        except (IntegrityError, FlushError):
             self.session.rollback()
             LOG.error("Error trying to create already existing policy with UID=%s.", policy.uid)
             raise PolicyExistsError(policy.uid)
