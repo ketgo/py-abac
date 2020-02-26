@@ -33,7 +33,7 @@ script:
   # All tests with MongoDB and SQLite storage
   - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="sqlite:///:memory:" make coverage
   # All tests with MongoDB and MySQL storage
-  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="mysql://root@127.0.0.1/py_abac" make coverage
+  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="mysql+pymysql://root@127.0.0.1/py_abac" make coverage
   # All tests with MongoDB and Postgres storage
   - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="postgresql+psycopg2cffi://postgres:@localhost/py_abac" make coverage
 

@@ -24,7 +24,8 @@ extra_requires_utils = [
     'pytest-cov~=2.6',
     'pylint~=1.0',
     'bandit~=1.6',
-    'mongomock~=3.0',
+    'PyMySQL~=0.9',
+    'psycopg2cffi~=2.7'
 ]
 extra_requires_dev = extra_requires_utils + \
                      extra_requires_mongo + \
