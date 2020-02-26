@@ -136,7 +136,7 @@ class PolicyModel(Base):
             Setup policy target ID(s) into model attribute.
         """
         # Create list of target ID(s) present in policy
-        target_ids: List[str] = target_id if isinstance(target_id, list) else [target_id]
+        target_ids = target_id if isinstance(target_id, list) else [target_id]
         # Remove all previous ID(s) associated with policy in model
         model_attr.clear()
         for tid in target_ids:
