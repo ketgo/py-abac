@@ -24,6 +24,7 @@ class SQLStorage(StorageBase):
 
     def __init__(self, scoped_session):
         self.session = scoped_session
+        self.dialect = scoped_session.bind.engine.dialect.name
 
     def add(self, policy: Policy):
         try:

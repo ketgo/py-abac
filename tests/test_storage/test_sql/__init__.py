@@ -6,6 +6,8 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.pool import Pool
 
+DEFAULT_SQL_HOST = "sqlite:///:memory:"
+
 
 # Needed for switching on case sensitive LIKE statements on Sqlite
 @listens_for(Pool, 'connect')
@@ -17,7 +19,7 @@ def run_on_connect(dbapi_con, connection_record):
 
 
 def create_test_sql_engine():
-    url = os.getenv('SQL_DATABASE_URL', 'sqlite:///:memory:')
+    url = os.getenv('SQL_DATABASE_HOST', DEFAULT_SQL_HOST)
     engine = create_engine(url, encoding='utf-8')
     try:
         engine.execute(text('select 1'))

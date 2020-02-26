@@ -5,6 +5,7 @@
 from typing import Union, List, Type
 
 from sqlalchemy import Column, String, Integer, JSON, ForeignKey
+from sqlalchemy import literal
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -68,7 +69,7 @@ class PolicyModel(Base):
             Create `PolicyModel` from `Policy` object
         """
         rvalue = cls()
-        rvalue._setup(policy)   # pylint: disable=protected-access
+        rvalue._setup(policy)  # pylint: disable=protected-access
 
         return rvalue
 
@@ -89,7 +90,17 @@ class PolicyModel(Base):
         """
             Get query filter for policies matching target IDs
         """
-        pass
+        return [
+            cls.subjects.any(
+                literal(subject_id).op("LIKE", is_comparison=True)(SubjectTargetModel.target_id)
+            ),
+            cls.resources.any(
+                literal(resource_id).op("LIKE", is_comparison=True)(ResourceTargetModel.target_id)
+            ),
+            cls.actions.any(
+                literal(action_id).op("LIKE", is_comparison=True)(ActionTargetModel.target_id)
+            )
+        ]
 
     def _setup(self, policy: Policy):
         """
@@ -131,5 +142,5 @@ class PolicyModel(Base):
         for tid in target_ids:
             target_model = target_model_cls()
             # Replace with SQL wildcard '%'
-            target_model.target_id = tid.replace('%', '"%"').replace('*', '%')
+            target_model.target_id = tid.replace('*', '%')
             model_attr.append(target_model)
