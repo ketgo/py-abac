@@ -12,7 +12,7 @@ from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.request import Request
-from py_abac.storage.sql import SQLStorage, SQLMigrationSet
+from py_abac.storage.sql import SQLStorage
 from py_abac.storage.sql.model import Base
 from . import create_test_sql_engine
 
@@ -29,10 +29,7 @@ def session():
 @pytest.fixture
 def st(session):
     storage = SQLStorage(scoped_session=session)
-    migration_set = SQLMigrationSet(storage)
-    migration_set.up()
     yield storage
-    migration_set.down()
     session.remove()
 
 

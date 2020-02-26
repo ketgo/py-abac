@@ -11,7 +11,7 @@ from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.request import Request
-from py_abac.storage.mongo import MongoStorage, MongoMigrationSet
+from py_abac.storage.mongo import MongoStorage
 from . import create_client
 
 DB_NAME = 'db_test'
@@ -22,10 +22,7 @@ COLLECTION = 'policies_test'
 def st():
     client = create_client()
     storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
-    migration_set = MongoMigrationSet(storage)
-    migration_set.up()
     yield storage
-    migration_set.down()
     client[DB_NAME][COLLECTION].delete_many({})
     client.close()
 

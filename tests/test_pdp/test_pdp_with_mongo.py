@@ -8,7 +8,7 @@ from py_abac.pdp import PDP, EvaluationAlgorithm
 from py_abac.policy import Policy
 from py_abac.provider.base import AttributeProvider
 from py_abac.request import Request
-from py_abac.storage.mongo import MongoStorage, MongoMigrationSet
+from py_abac.storage.mongo import MongoStorage
 from ..test_storage.test_mongo import create_client
 
 DB_NAME = 'db_test'
@@ -158,12 +158,9 @@ class EmailsAttributeProvider(AttributeProvider):
 def st():
     client = create_client()
     storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
-    migration_set = MongoMigrationSet(storage)
-    migration_set.up()
     for policy_json in POLICIES:
         storage.add(Policy.from_json(policy_json))
     yield storage
-    migration_set.down()
     client[DB_NAME][COLLECTION].drop()
     client.close()
 

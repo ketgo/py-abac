@@ -9,7 +9,7 @@ from py_abac.pdp import PDP, EvaluationAlgorithm
 from py_abac.policy import Policy
 from py_abac.provider.base import AttributeProvider
 from py_abac.request import Request
-from py_abac.storage.sql import SQLMigrationSet, SQLStorage
+from py_abac.storage.sql import SQLStorage
 from py_abac.storage.sql.model import Base
 from ..test_storage.test_sql import create_test_sql_engine
 
@@ -166,12 +166,9 @@ def session():
 @pytest.fixture
 def st(session):
     storage = SQLStorage(scoped_session=session)
-    migration_set = SQLMigrationSet(storage)
-    migration_set.up()
     for policy_json in POLICIES:
         storage.add(Policy.from_json(policy_json))
     yield storage
-    migration_set.down()
     session.remove()
 
 
