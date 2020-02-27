@@ -110,24 +110,21 @@ User Guide
 ==========
 
 .. toctree::
-   :maxdepth: 1
-
-   concepts.rst
-
-.. toctree::
-   :maxdepth: 2
-
-   components.rst
-
-.. toctree::
    :maxdepth: 3
 
-   policy_language.rst
+   concepts
+   components
+   policy_language
 
 .. toctree::
    :maxdepth: 1
 
-   license.rst
+   modules/modules
+
+.. toctree::
+   :maxdepth: 1
+
+   license
 
 Logging
 -------

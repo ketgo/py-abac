@@ -1,5 +1,5 @@
-py_abac
-=======
+API
+===========
 
 .. toctree::
    :maxdepth: 4
