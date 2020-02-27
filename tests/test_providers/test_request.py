@@ -7,7 +7,7 @@ import pytest
 from py_abac.context import EvaluationContext
 from py_abac.exceptions import InvalidAccessControlElementError, InvalidAttributePathError
 from py_abac.provider.request import RequestAttributeProvider
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 def test_get_attribute_value():
@@ -31,7 +31,7 @@ def test_get_attribute_value():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     ctx = EvaluationContext(request)
     provider = RequestAttributeProvider(request)
 
@@ -67,7 +67,7 @@ def test_invalid_ace_error():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     ctx = EvaluationContext(request)
     provider = RequestAttributeProvider(request)
     with pytest.raises(InvalidAccessControlElementError):
@@ -95,7 +95,7 @@ def test_invalid_attribute_path_error():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     ctx = EvaluationContext(request)
     provider = RequestAttributeProvider(request)
     with pytest.raises(InvalidAttributePathError):

@@ -7,6 +7,8 @@ Concepts
 of the rules that restrict access to resources and is generally considered a "next generation" authorization model. In
 the following section we describe the different components of ABAC.
 
+.. _abac_arch:
+
 Access Control Architecture
 ---------------------------
 
@@ -18,17 +20,24 @@ Access Control Architecture
 
 The above diagram depicts the standard architecture for ABAC, which is as follows:
 
+.. _abac_pep:
 
 - **The PEP or Policy Enforcement Point**:
   It is your piece of code that uses py-ABAC to protect  app & data. The PEP should  inspect a user request, create a
   corresponding access request, and send it to the PDP for evaluation.
 
+.. _abac_pdp:
+
 - **The PDP or Policy Decision Point**:
   It is the brain of the architecture. This is the piece which evaluates incoming access requests against policies and
   returns a Permit / Deny decision. The PDP may also use PIPs to retrieve missing attribute values during policy evaluation.
 
+.. _abac_pip:
+
 - **The PIP or Policy Information Point**:
   This bridges the PDP to external sources of attribute values e.g. LDAP or databases.
+
+.. _abac_pap:
 
 - **The PAP or Policy Administration Point**:
   This manages the creation, update and deletion of policies evaluated by PDP.
@@ -47,7 +56,14 @@ In the above architecture, following four elements are involved during an access
 
 In py-ABAC one defines policies containing conditions on one or more attributes of these four elements. If these conditions are satisfied, an access decision is returned by the PDP using an evaluation algorithm. There are three different evaluation algorithms supported by py-ABAC:
 
+.. _allow_overrides:
 
-#. :class:`AllowOverrides`: returns ``allow`` if any decision evaluates to ``allow``\ ; and returns ``deny`` if all decisions evaluate to ``deny``.
-#. :class:`DenyOverrides`: returns ``deny`` if any decision evaluates to ``deny``\ ; returns ``allow`` if all decisions evaluate to ``allow``.
-#. :class:`HighestPriority`: returns the highest priority decision that evaluates to either ``allow`` or ``deny``. If there are multiple equally highest priority decisions that conflict, then ``DenyOverrides`` algorithm would be applied among those highest priority decisions.
+#. :class:`AllowOverrides`: returns :code:`allow` if any decision evaluates to :code:`allow`; and returns :code:`deny` if all decisions evaluate to :code:`deny`.
+
+.. _deny_overrides:
+
+#. :class:`DenyOverrides`: returns :code:`deny` if any decision evaluates to :code:`deny`; returns :code:`allow` if all decisions evaluate to :code:`allow`.
+
+.. _highest_priority:
+
+#. :class:`HighestPriority`: returns the highest priority decision that evaluates to either :code:`allow` or :code:`deny`. If there are multiple equally highest priority decisions that conflict, then :class:`DenyOverrides` algorithm would be applied among those highest priority decisions.

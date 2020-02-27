@@ -1,3 +1,5 @@
+.. _policy_language:
+
 Policy Language
 ===============
 
@@ -25,6 +27,8 @@ Targets vs Rules
 ~~~~~~~~~~~~~~~~
 
 The concept of ``"targets"`` and ``"rules"`` in py-ABAC is derived from the XACML standard. Both are used to define conditions on attributes during policy creation. There is however a basic distinction between the two. This distinction will become more clear in the following sections. From a conceptual standpoint, ``"targets"`` states for which access control elements a policy applies. In other words, targets of a policy. The ``"rules"`` on the other-hand define the conditions on the attributes of the targets. To illustrate this point, lets consider a system with two users, "Sam" and "John". Each user has an attribute called "age".  Suppose we want to create a policy where "Sam" can access the system only if he is above 18 years old. To achieve this, we set the target of the policy to "Sam" while the rule to the condition "age" > 18. The exact syntax to do so is shown in the following sections.
+
+.. _targets_block:
 
 Targets Block
 ~~~~~~~~~~~~~
@@ -70,6 +74,8 @@ Note that when no target block is explicitly specified, the policy is considered
        "resource_id": "*",
        "action_id": "*"
    }
+
+.. _rules_block:
 
 Rules Block
 ~~~~~~~~~~~
@@ -138,6 +144,8 @@ Sometimes conditions on a single attribute does not suffice and constraints on m
    }
 
 The overall rule states that the subject should have the “firstName” sub-attribute valued “Carl”, AND “lastName” sub-attribute valued “Rubin”. Similarly, the resource should have a “name” attribute valued “Default” OR “type” valued “Book”.
+
+.. _conditions_block:
 
 Condition Blocks
 ~~~~~~~~~~~~~~~~

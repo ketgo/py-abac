@@ -113,8 +113,8 @@ User Guide
    :maxdepth: 3
 
    concepts
-   components
-   policy_language
+   components/components
+   policy_language/policy_language
 
 .. toctree::
    :maxdepth: 1

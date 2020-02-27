@@ -13,7 +13,10 @@ def get_sub_wildcard_queries(query: str, wildcard: str = '*') -> List[str]:
         that string. This is achieved by splitting the query by the wildcard and
         then adding it back as prefix and suffix to the splits.
 
-            Examples:
+            :Example:
+
+            .. code-block:: python
+
                 "ab*c" -> ["ab*", "*c"]
                 "*a*b" -> ["*a*", "*b"]
                 "ab**" -> ["ab*"]
@@ -60,7 +63,10 @@ def get_all_wildcard_queries(string: str, wildcard: str = '*') -> List[str]:
         This method computes all possible wildcard queries matching given
         string.
 
-            Examples:
+            :Example:
+
+            .. code-block:: python
+
                 "a" -> ['a', '*', '*a*', 'a*', '*a']
                 "ab" -> ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']
 

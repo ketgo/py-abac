@@ -7,7 +7,7 @@ from typing import List
 
 from .context import EvaluationContext
 from .provider.base import AttributeProvider
-from .request import Request
+from .request import AccessRequest
 from .storage.base import StorageBase
 
 
@@ -24,7 +24,7 @@ class PDP(object):
     """
         Policy decision point
 
-        Example usage:
+        :Example:
 
         .. code-block:: python
 
@@ -68,14 +68,14 @@ class PDP(object):
             if not isinstance(provider, AttributeProvider):
                 raise TypeError("Invalid type '{}' for attribute provider.".format(type(provider)))
 
-    def is_allowed(self, request: Request):
+    def is_allowed(self, request: AccessRequest):
         """
             Check if authorization request is allowed
 
             :param request: request object
             :return: True if authorized else False
         """
-        if not isinstance(request, Request):
+        if not isinstance(request, AccessRequest):
             raise TypeError("Invalid type '{}' for authorization request.".format(request))
 
         # Get appropriate evaluation algorithm handler

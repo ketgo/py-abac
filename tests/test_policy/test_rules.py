@@ -9,7 +9,7 @@ from py_abac.context import EvaluationContext
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.policy.rules import Rules, RulesSchema
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 def test_create():
@@ -137,7 +137,7 @@ def test_is_satisfied(rules_json, result):
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     ctx = EvaluationContext(request)
     rules = RulesSchema().load(rules_json)
     assert rules.is_satisfied(ctx) == result
