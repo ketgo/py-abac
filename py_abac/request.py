@@ -9,11 +9,11 @@ from marshmallow import Schema, fields, validate, ValidationError, post_load
 from .exceptions import RequestCreateError
 
 
-class Request(object):
+class AccessRequest(object):
     """
         Authorization request sent by PEP
 
-        Example usage:
+        :Example:
 
         .. code-block:: python
 
@@ -34,7 +34,7 @@ class Request(object):
                 "context": {}
             }
             # Parse JSON and create access request object
-            request = Request.from_json(request_json)
+            request = AccessRequest.from_json(request_json)
     """
 
     def __init__(self, subject: dict, resource: dict, action: dict, context: dict):
@@ -106,7 +106,7 @@ class Request(object):
         return self._context
 
     @staticmethod
-    def from_json(data: dict) -> "Request":
+    def from_json(data: dict) -> "AccessRequest":
         """
             Create access request object from JSON
         """
@@ -114,6 +114,10 @@ class Request(object):
             return _RequestSchema().load(data)
         except ValidationError as err:
             raise RequestCreateError(*err.args)
+
+
+# backward compatible with v0.2.0
+Request = AccessRequest
 
 
 class _AccessElementSchema(Schema):
@@ -135,4 +139,4 @@ class _RequestSchema(Schema):
 
     @post_load
     def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
-        return Request(**data)
+        return AccessRequest(**data)

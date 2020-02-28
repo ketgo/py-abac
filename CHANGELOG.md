@@ -18,3 +18,4 @@
 - Code quality checks performed.
 - Security checks added.
 - Added SQL storage.
+- Refactored `Request` class name to `AccessRequest`. The name `Request` still supported for backward compatibility. 

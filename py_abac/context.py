@@ -7,7 +7,7 @@ from typing import List, Any
 
 from .provider.base import AttributeProvider
 from .provider.request import RequestAttributeProvider
-from .request import Request
+from .request import AccessRequest
 
 LOG = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class EvaluationContext(object):
         Evaluation context class
     """
 
-    def __init__(self, request: Request, providers: List[AttributeProvider] = None):
+    def __init__(self, request: AccessRequest, providers: List[AttributeProvider] = None):
         """
             Initialize evaluation context object
 

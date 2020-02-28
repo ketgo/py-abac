@@ -7,7 +7,7 @@ import pytest
 from py_abac.pdp import PDP, EvaluationAlgorithm
 from py_abac.policy import Policy
 from py_abac.provider.base import AttributeProvider
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 from py_abac.storage.mongo import MongoStorage
 from ..test_storage.test_mongo import create_client
 
@@ -400,7 +400,7 @@ def st():
 ])
 def test_is_allowed_deny_overrides(st, desc, request_json, should_be_allowed):
     pdp = PDP(st, EvaluationAlgorithm.DENY_OVERRIDES, [EmailsAttributeProvider()])
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     assert should_be_allowed == pdp.is_allowed(request)
 
 
@@ -639,7 +639,7 @@ def test_is_allowed_deny_overrides(st, desc, request_json, should_be_allowed):
 ])
 def test_is_allowed_allow_overrides(st, desc, request_json, should_be_allowed):
     pdp = PDP(st, EvaluationAlgorithm.ALLOW_OVERRIDES, [EmailsAttributeProvider()])
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     assert should_be_allowed == pdp.is_allowed(request)
 
 
@@ -878,7 +878,7 @@ def test_is_allowed_allow_overrides(st, desc, request_json, should_be_allowed):
 ])
 def test_is_allowed_highest_priority(st, desc, request_json, should_be_allowed):
     pdp = PDP(st, EvaluationAlgorithm.HIGHEST_PRIORITY, [EmailsAttributeProvider()])
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     assert should_be_allowed == pdp.is_allowed(request)
 
 

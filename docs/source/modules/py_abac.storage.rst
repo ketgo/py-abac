@@ -30,6 +30,14 @@ py\_abac.storage.migration module
    :undoc-members:
    :show-inheritance:
 
+py\_abac.storage.utils module
+-----------------------------
+
+.. automodule:: py_abac.storage.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

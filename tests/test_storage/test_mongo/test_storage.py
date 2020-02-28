@@ -10,7 +10,7 @@ from py_abac.exceptions import PolicyExistsError
 from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 from py_abac.storage.mongo import MongoStorage
 from . import create_client
 
@@ -179,7 +179,7 @@ def test_find_for_target(st, request_json, num):
                              "targets": {"subject_id": "ab*c"},
                              "effect": "deny"}))
 
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     found = st.get_for_target(request._subject_id, request._resource_id, request._action_id)
     found = list(found)
     assert num == len(found)

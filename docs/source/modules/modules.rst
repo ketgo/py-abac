@@ -1,4 +1,4 @@
-py_abac
+API
 =======
 
 .. toctree::

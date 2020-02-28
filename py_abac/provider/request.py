@@ -6,7 +6,7 @@ from objectpath import Tree
 
 from .base import AttributeProvider
 from ..exceptions import InvalidAccessControlElementError, InvalidAttributePathError
-from ..request import Request
+from ..request import AccessRequest
 
 
 class RequestAttributeProvider(AttributeProvider):
@@ -14,7 +14,7 @@ class RequestAttributeProvider(AttributeProvider):
         Request attribute provider
     """
 
-    def __init__(self, request: Request):
+    def __init__(self, request: AccessRequest):
         """
             Initialize attribute provider
 

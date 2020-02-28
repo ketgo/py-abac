@@ -13,7 +13,7 @@ from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.policy.rules import Rules
 from py_abac.policy.targets import Targets
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 class TestPolicy(object):
@@ -341,6 +341,6 @@ class TestPolicy(object):
         ),
     ])
     def test_fits(self, desc, policy_json, request_json, result):
-        ctx = EvaluationContext(Request.from_json(request_json))
+        ctx = EvaluationContext(AccessRequest.from_json(request_json))
         policy = Policy.from_json(policy_json)
         assert policy.fits(ctx) == result

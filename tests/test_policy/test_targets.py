@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 
 from py_abac.context import EvaluationContext
 from py_abac.policy.targets import Targets, TargetsSchema
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 def test_create():
@@ -64,7 +64,7 @@ def test_match(targets_json, result):
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     ctx = EvaluationContext(request)
     targets = TargetsSchema().load(targets_json)
     assert targets.match(ctx) == result

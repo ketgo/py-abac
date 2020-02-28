@@ -139,6 +139,7 @@ class PolicyModel(Base):
         target_ids = target_id if isinstance(target_id, list) else [target_id]
         # Remove all previous ID(s) associated with policy in model
         model_attr.clear()
+        # Add targets in policy model
         for tid in target_ids:
             target_model = target_model_cls()
             # Replace with SQL wildcard '%'
