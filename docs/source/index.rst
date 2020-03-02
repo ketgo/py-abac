@@ -115,7 +115,7 @@ Documentation
 
    concepts
    components/components
-   policy_language/policy_language
+   policy_language
 
 .. toctree::
    :maxdepth: 1
