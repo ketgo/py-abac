@@ -11,7 +11,7 @@ Attribute Based Access Control (ABAC) for python.
 
 Py-ABAC is an attribute-based access control ([ABAC](https://en.wikipedia.org/wiki/Attribute-based_access_control)) toolkit based on policies. ABAC gives you a fine-grained control on definition of the rules that restrict an access to resources and is generally considered a "next generation" authorization model. The design of py-ABAC stems from the [XACML](https://en.wikipedia.org/wiki/XACML) standard, and the ABAC python SDK [Vakt](https://github.com/kolotaev/vakt).
 
-See [documentation]() for more details.
+See [documentation](https://py-abac.readthedocs.io) for more details.
 
 ## Install
 
@@ -90,7 +90,7 @@ assert pdp.is_allowed(request)
 
 ## Documentation
 
-Py-ABAC documentation can be found at []()
+Py-ABAC documentation can be found at [https://py-abac.readthedocs.io](https://py-abac.readthedocs.io)
 
 You can also build the documentation by running `make html` inside the `docs` folder.
 
