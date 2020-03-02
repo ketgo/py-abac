@@ -59,17 +59,17 @@ You can create your own policy storage by implementing :class:`Storage`. It expo
 
 The first 5 methods are used for creating a :ref:`PAP <abac_pap>` while the last method is used by :class:`PDP`.
 
-.. note::
+.. important::
 
-   Care must be taken in implementing :code:`get_for_target` as incorrect filtering strategies may lead to wrong access
-   decisions by :class:`PDP`.
+   Care must be taken when implementing :code:`get_for_target`. Incorrect filtering strategies in the method may lead
+   to wrong access decisions by :class:`PDP`.
 
 Migrations
 ----------
 
 Migrations are a set of components that are useful for :class:`Storage` backends. The design and implementation is taken
 from the `Vakt <https://github.com/kolotaev/vakt>`_ SDK. It's recommended in favor over manual actions on DB schema/data
-since it's aware of py-abac requirements. But it's not mandatory. It is up to a particular storage to decide whether it
+since it's aware of Py-ABAC requirements. But it's not mandatory. It is up to a particular storage to decide whether it
 needs migrations. It consists of 3 components:
 
 

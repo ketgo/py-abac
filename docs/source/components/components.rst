@@ -3,7 +3,7 @@
 Components
 ##########
 
-The different py-abac components corresponding to those in the access control architecture are described in this section.
+The different Py-ABAC components corresponding to those in the access control architecture are described in this section.
 Using these components you can implement fine-grained access control for your protected resources.
 
 .. _components_policy:

@@ -25,5 +25,5 @@ Example for MySQL:
 
 .. note::
 
-   Currently py-abac focuses on testing functionality only for two most popular open-source databases: MySQL and Postgres.
+   Currently Py-ABAC focuses on testing functionality only for two most popular open-source databases: MySQL and Postgres.
    Other databases support may have worse performance characteristics and/or bugs. Feel free to report any issues.

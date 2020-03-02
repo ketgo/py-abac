@@ -48,7 +48,7 @@ to return values conditioned upon other attributes:
            # Else return default email
            return "default@gmail.com"
 
-.. important::
+.. note::
 
    If the :class:`AttributeProvider` does not contain value for an attribute, the :code:`get_attribute_value` must
    return :code:`None`.

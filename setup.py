@@ -17,7 +17,8 @@ extra_requires_sql = [
     'SQLAlchemy~=1.3'
 ]
 extra_requires_doc = [
-    'sphinx==2.4.1'
+    'sphinx==2.4.1',
+    'sphinx-rtd-theme~=0.4'
 ]
 extra_requires_utils = [
     'pytest~=4.0',

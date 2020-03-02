@@ -2,7 +2,7 @@ PDP
 ===
 
 This component is the :ref:`policy decision point <abac_pdp>`, instantiated through the :class:`PDP` class. It is the
-main entry point of py-abac for evaluating policies. At a minimum, a :ref:`Storage <components_storage>` object is required to
+main entry point of Py-ABAC for evaluating policies. At a minimum, a :ref:`Storage <components_storage>` object is required to
 create a :class:`PDP` object. It has one method, :code:`is_allowed`, which when passed a :class:`AccessRequest`
 object, gives you a boolean answer: is access allowed or not?
 
