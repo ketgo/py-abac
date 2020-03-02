@@ -12,7 +12,7 @@
 - Supports creation of custom PIP.
 - JSON based policy language.
 
-# v0.2.1
+# v0.3.0
 
 - Added Sphinx documentation.
 - Code quality checks performed.
