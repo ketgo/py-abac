@@ -149,4 +149,4 @@ The source code is licensed under Apache License Version 2.0
 
 ## Contributions
 
-Pull requests always welcomed! :)
+Pull requests and bug reports always welcomed! :)
