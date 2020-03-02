@@ -14,8 +14,8 @@ DEFAULT_SQL_HOST = "sqlite:///:memory:"
 def run_on_connect(dbapi_con, connection_record):
     try:
         dbapi_con.execute('pragma case_sensitive_like=ON')
-    except:
-        pass
+    except:  # pragma: no cover
+        pass  # pragma: no cover
 
 
 def create_test_sql_engine():
@@ -23,6 +23,6 @@ def create_test_sql_engine():
     engine = create_engine(url, encoding='utf-8')
     try:
         engine.execute(text('select 1'))
-    except OperationalError as e:
-        pytest.exit('SQL_DATABASE_URL is not correct. Error: %s' % e)
-    return engine
+    except OperationalError as e:  # pragma: no cover
+        pytest.exit('SQL_DATABASE_URL is not correct. Error: %s' % e)  # pragma: no cover
+    return engine  # pragma: no cover

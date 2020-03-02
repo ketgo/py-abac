@@ -74,7 +74,8 @@ class TestOtherCondition(object):
         (EqualsAttribute("resource", "$.name.what"), {"test": True}, True),
     ])
     def test_is_satisfied(self, condition, what, result):
-        request = AccessRequest(subject={"attributes": {"what": what}}, resource={"attributes": {"name": {"what": what}}},
+        request = AccessRequest(subject={"attributes": {"what": what}},
+                                resource={"attributes": {"name": {"what": what}}},
                                 action={}, context={})
         ctx = EvaluationContext(request)
         ctx.ace = "subject"

@@ -193,6 +193,9 @@ def test_find_for_target(st, request_json, num):
 
 def test_update(st):
     policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
+    # Test update before insert
+    st.update(policy)
+    assert st.get(policy.uid) is None
     st.add(policy)
     assert '1' == st.get('1').uid
     assert '' is st.get('1').description
@@ -219,6 +222,9 @@ def test_update(st):
 
 def test_delete(st):
     policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
+    # Test non-existing
+    st.delete('1')
+    assert None is st.get('1')
     st.add(policy)
     assert '1' == st.get('1').uid
     st.delete('1')

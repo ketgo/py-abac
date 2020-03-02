@@ -67,9 +67,9 @@ class SQLStorage(StorageBase):
                 return
             policy_model.update(policy)
             self.session.commit()
-        except IntegrityError:
-            self.session.rollback()
-            raise
+        except IntegrityError:  # pragma: no cover
+            self.session.rollback()  # pragma: no cover
+            raise  # pragma: no cover
         LOG.info('Updated Policy with UID=%s. New value is: %s', policy.uid, policy)
 
     def delete(self, uid: str):

@@ -47,9 +47,9 @@ class SQLMigrationSet(MigrationSet):
             else:
                 data.version = number
             self.session.commit()
-        except SQLAlchemyError as err:
-            self.session.rollback()
-            raise err
+        except SQLAlchemyError as err:  # pragma: no cover
+            self.session.rollback()  # pragma: no cover
+            raise err  # pragma: no cover
 
     def last_applied(self):
         data = self.session.query(MigrationModel).get(self._index)
