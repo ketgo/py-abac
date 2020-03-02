@@ -5,34 +5,24 @@
 import uuid
 
 import pytest
-from pymongo import MongoClient
 
 from py_abac.exceptions import PolicyExistsError
 from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
-from py_abac.request import Request
-from py_abac.storage.mongo import MongoMigrationSet
+from py_abac.request import AccessRequest
 from py_abac.storage.mongo import MongoStorage
+from . import create_client
 
-MONGO_HOST = '127.0.0.1'
-MONGO_PORT = 27017
 DB_NAME = 'db_test'
 COLLECTION = 'policies_test'
-
-
-def create_client():
-    return MongoClient(MONGO_HOST, MONGO_PORT)
 
 
 @pytest.fixture
 def st():
     client = create_client()
     storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
-    migration_set = MongoMigrationSet(storage)
-    migration_set.up()
     yield storage
-    migration_set.down()
     client[DB_NAME][COLLECTION].delete_many({})
     client.close()
 
@@ -113,6 +103,7 @@ def test_get(st):
     (200, 1, 199),
     (199, 0, 199),
     (200, 50, 150),
+    # TODO: Fix - result should be 0
     (0, 0, 200),
     (1, 0, 1),
     (5, 4, 5),
@@ -188,7 +179,7 @@ def test_find_for_target(st, request_json, num):
                              "targets": {"subject_id": "ab*c"},
                              "effect": "deny"}))
 
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     found = st.get_for_target(request._subject_id, request._resource_id, request._action_id)
     found = list(found)
     assert num == len(found)

@@ -5,7 +5,7 @@
 import pytest
 
 from py_abac.exceptions import RequestCreateError
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 def test_create():
@@ -29,7 +29,7 @@ def test_create():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
 
     assert request_json["subject"]["id"] == request._subject_id
     assert request_json["resource"]["id"] == request._resource_id
@@ -138,4 +138,4 @@ def test_create():
 ])
 def test_create_error(request_json):
     with pytest.raises(RequestCreateError):
-        Request.from_json(request_json)
+        AccessRequest.from_json(request_json)

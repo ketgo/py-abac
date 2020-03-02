@@ -8,27 +8,40 @@ from marshmallow import Schema, fields
 
 from ..base import ConditionBase, ABCMeta, abstractmethod
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
-def is_collection(value):
+def is_collection(value) -> bool:
+    """
+        Check if value is a collection
+    """
     return any([isinstance(value, list), isinstance(value, set), isinstance(value, tuple)])
 
 
 class CollectionCondition(ConditionBase, metaclass=ABCMeta):
+    """
+        Base class for collection conditions
+
+        :param values: collection of values to compare during policy evaluation
+    """
 
     def __init__(self, values):
         self.values = values
 
-    def is_satisfied(self, ctx):
+    def is_satisfied(self, ctx) -> bool:
         if not is_collection(ctx.attribute_value):
-            log.debug("Invalid type '{}' for attribute value at path '{}' for element '{}'. "
-                      "Condition not satisfied.".format(ctx.attribute_value, ctx.attribute_path, ctx.ace))
+            LOG.debug(
+                "Invalid type '%s' for attribute value at path '%s' for element '%s'."
+                " Condition not satisfied.",
+                type(ctx.attribute_value),
+                ctx.attribute_path,
+                ctx.ace
+            )
             return False
         return self._is_satisfied(ctx.attribute_value)
 
     @abstractmethod
-    def _is_satisfied(self, what):
+    def _is_satisfied(self, what) -> bool:
         """
             Is collection conditions satisfied
 
@@ -39,4 +52,11 @@ class CollectionCondition(ConditionBase, metaclass=ABCMeta):
 
 
 class CollectionConditionSchema(Schema):
-    values = fields.List(fields.Raw(required=True, allow_none=False), required=True, allow_none=False)
+    """
+        Base JSON schema class for collection conditions
+    """
+    values = fields.List(
+        fields.Raw(required=True, allow_none=False),
+        required=True,
+        allow_none=False
+    )

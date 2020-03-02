@@ -22,6 +22,10 @@ coverage:
 lint:
 	pylint py_abac
 
+.PHONY: security
+security:
+	bandit -r py_abac
+
 .PHONY: release
 release: test
 	${PYTHON} setup.py sdist

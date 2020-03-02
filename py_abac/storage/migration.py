@@ -5,7 +5,7 @@
 import logging
 from abc import ABCMeta, abstractmethod
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Migration(metaclass=ABCMeta):
@@ -16,17 +16,23 @@ class Migration(metaclass=ABCMeta):
     @property
     @abstractmethod
     def order(self):
-        """ Number of this migration in the row of migrations """
+        """
+            Number of this migration in the row of migrations
+        """
         raise NotImplementedError()
 
     @abstractmethod
     def up(self):
-        """ Migrate DB schema up """
+        """
+            Migrate DB schema up
+        """
         raise NotImplementedError()
 
     @abstractmethod
     def down(self):
-        """ Migrate DB schema down """
+        """
+            Migrate DB schema down
+        """
         raise NotImplementedError()
 
 
@@ -62,30 +68,32 @@ class MigrationSet(metaclass=ABCMeta):
         """
         if number is None:
             return sorted(self.migrations(), key=lambda x: x.order, reverse=reverse)
-        return [m for m in self.migrations() if m.order == number]
+        return [mig for mig in self.migrations() if mig.order == number]
 
     def up(self, number: int = None):
         """
             Runs migrations up. If number was specified, runs particular migration from the set
         """
-        for m in self._get_migrations(number, reverse=False):
-            if m.order > self.last_applied():
-                log.info('Running migration #%i up', m.order)
-                m.up()
-                self.save_applied_number(m.order)
-                log.info('Completed migration #%i up. Last applied is now %i', m.order, m.order)
+        for mig in self._get_migrations(number, reverse=False):
+            if mig.order > self.last_applied():
+                LOG.info('Running migration #%i up', mig.order)
+                mig.up()
+                self.save_applied_number(mig.order)
+                LOG.info('Completed migration #%i up. Last applied is now %i', mig.order, mig.order)
 
     def down(self, number: int = None):
         """
             Runs migrations down. If number was specified, runs particular migration from the set
         """
-        for m in self._get_migrations(number, reverse=True):
-            if m.order <= self.last_applied():
-                log.info('Running migration #%i down', m.order)
-                m.down()
-                last_applied = m.order - 1
+        for mig in self._get_migrations(number, reverse=True):
+            if mig.order <= self.last_applied():
+                LOG.info('Running migration #%i down', mig.order)
+                mig.down()
+                last_applied = mig.order - 1
                 self.save_applied_number(last_applied)
-                log.info('Completed migration #%i down. Last applied is now %i', m.order, last_applied)
+                LOG.info(
+                    'Completed migration #%i down. Last applied is now %i', mig.order, last_applied
+                )
 
 
 class Migrator:

@@ -32,8 +32,10 @@ class InvalidAccessControlElementError(Exception):
     """
 
     def __init__(self, element):
-        super().__init__("Invalid access control element '{}'. "
-                         "Allowed values are 'subject', 'resource', 'action', and 'context'".format(element))
+        super().__init__(
+            "Invalid access control element '{}'. Allowed values are "
+            "'subject', 'resource', 'action', and 'context'".format(element)
+        )
 
 
 class InvalidAttributePathError(Exception):
@@ -42,4 +44,6 @@ class InvalidAttributePathError(Exception):
     """
 
     def __init__(self, path):
-        super().__init__("Invalid attribute path '{}'. Path required in ObjectPath format.".format(path))
+        super().__init__(
+            "Invalid attribute path '{}'. Path required in ObjectPath format.".format(path)
+        )

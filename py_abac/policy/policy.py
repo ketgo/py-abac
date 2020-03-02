@@ -4,9 +4,9 @@
 
 from marshmallow import Schema, fields, post_load, ValidationError, validate
 
-from py_abac.context import EvaluationContext
 from .rules import Rules, RulesSchema
 from .targets import Targets, TargetsSchema
+from ..context import EvaluationContext
 from ..exceptions import PolicyCreateError
 
 # Access decisions
@@ -15,9 +15,20 @@ ALLOW_ACCESS = "allow"
 
 
 class Policy(object):
+    """
+        Policy class containing rules and targets
+    """
 
-    def __init__(self, uid: str, description: str, rules: Rules, targets: Targets, effect: str,
-                 priority: int):
+    # pylint: disable=too-many-arguments
+    def __init__(
+            self,
+            uid: str,
+            description: str,
+            rules: Rules,
+            targets: Targets,
+            effect: str,
+            priority: int
+    ):
         self.uid = uid
         self.description = description
         self.rules = rules
@@ -26,30 +37,42 @@ class Policy(object):
         self.priority = priority
 
     @staticmethod
-    def from_json(data: dict):
+    def from_json(data: dict) -> "Policy":
+        """
+            Create Policy object from JSON
+        """
         try:
             return PolicySchema().load(data)
         except ValidationError as err:
             raise PolicyCreateError(*err.args)
 
     def to_json(self):
+        """
+            Convert policy object to JSON
+        """
         return PolicySchema().dump(self)
 
-    def fits(self, ctx: EvaluationContext):
+    def fits(self, ctx: EvaluationContext) -> bool:
         """
             Check if the request fits policy
 
             :param ctx: evaluation context
-            :return: Tre if fits else False
+            :return: True if fits else False
         """
         return self.rules.is_satisfied(ctx) and self.targets.match(ctx)
 
     @property
-    def is_allowed(self):
+    def is_allowed(self) -> bool:
+        """
+            Check if access is allowed
+        """
         return self.effect == ALLOW_ACCESS
 
 
 class PolicySchema(Schema):
+    """
+        JSON schema for policy
+    """
     uid = fields.String(required=True)
     description = fields.String(default="", missing="")
     rules = fields.Nested(RulesSchema, required=True)
@@ -58,5 +81,5 @@ class PolicySchema(Schema):
     priority = fields.Integer(default=0, missing=0, validate=validate.Range(min=0))
 
     @post_load
-    def post_load(self, data, **_):
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
         return Policy(**data)

@@ -7,7 +7,7 @@ import pytest
 from py_abac.context import EvaluationContext
 from py_abac.exceptions import InvalidAccessControlElementError, InvalidAttributePathError
 from py_abac.provider.base import AttributeProvider
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 class EmailAttributeProvider(AttributeProvider):
@@ -46,7 +46,7 @@ def test_create():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     context = EvaluationContext(request)
     assert context.subject_id == request._subject_id
     assert context.resource_id == request._resource_id
@@ -90,7 +90,7 @@ def test_get_attribute_value():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     context = EvaluationContext(request, providers=[EmailAttributeProvider()])
     assert context.get_attribute_value("subject", "$.firstName") == "Carl"
     assert context.get_attribute_value("subject", "$.middleName") == ""
@@ -120,7 +120,7 @@ def test_attribute_provider_infinite_recursion():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     context = EvaluationContext(request, providers=[FaultyAttributeProvider()])
     assert context.get_attribute_value("subject", "$.email") is None
 
@@ -153,7 +153,7 @@ def test_attribute_value_raises():
         },
         "context": {}
     }
-    request = Request.from_json(request_json)
+    request = AccessRequest.from_json(request_json)
     context = EvaluationContext(request)
     with pytest.raises(InvalidAccessControlElementError):
         _ = context.attribute_value

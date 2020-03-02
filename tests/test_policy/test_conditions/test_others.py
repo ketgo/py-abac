@@ -12,7 +12,7 @@ from py_abac.policy.conditions.others import EqualsAttribute
 from py_abac.policy.conditions.others import Exists
 from py_abac.policy.conditions.others import NotExists
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 class TestOtherCondition(object):
@@ -74,8 +74,9 @@ class TestOtherCondition(object):
         (EqualsAttribute("resource", "$.name.what"), {"test": True}, True),
     ])
     def test_is_satisfied(self, condition, what, result):
-        request = Request(subject={"attributes": {"what": what}}, resource={"attributes": {"name": {"what": what}}},
-                          action={}, context={})
+        request = AccessRequest(subject={"attributes": {"what": what}},
+                                resource={"attributes": {"name": {"what": what}}},
+                                action={}, context={})
         ctx = EvaluationContext(request)
         ctx.ace = "subject"
         ctx.attribute_path = "$.what"

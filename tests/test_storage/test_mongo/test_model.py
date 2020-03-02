@@ -2,13 +2,12 @@
     MongoDB policy model test
 """
 
-import fnmatch
 import json
 
 import pytest
 
 from py_abac.policy import Policy
-from py_abac.storage.mongo.model import PolicyModel, _split_id, _get_all_ids
+from py_abac.storage.mongo.model import PolicyModel
 
 
 def test_from_policy():
@@ -130,59 +129,6 @@ def test_to_doc():
 def test__targets_to_tags(policy_json, tags):
     policy = Policy.from_json(policy_json)
     assert PolicyModel._targets_to_tags(policy.targets) == tags
-
-
-@pytest.mark.parametrize("wc_id, splits", [
-    ("a", ["a"]),
-    ("*", ["*"]),
-
-    ("ab", ["ab"]),
-    ("a*", ["a*"]),
-    ("*a", ["*a"]),
-    ("**", ["*"]),
-
-    ("abc", ["abc"]),
-    ("*ab", ["*ab"]),
-    ("a*b", ["a*", "*b"]),
-    ("ab*", ["ab*"]),
-    ("**a", ["*a"]),
-    ("*a*", ["*a*"]),
-    ("a**", ["a*"]),
-    ("***", ["*"]),
-
-    ("abcd", ["abcd"]),
-    ("*abc", ["*abc"]),
-    ("a*bc", ["a*", "*bc"]),
-    ("ab*c", ["ab*", "*c"]),
-    ("abc*", ["abc*"]),
-    ("**ab", ["*ab"]),
-    ("*a*b", ["*a*", "*b"]),
-    ("*ab*", ["*ab*"]),
-    ("a**b", ["a*", "*b"]),
-    ("a*b*", ["a*", "*b*"]),
-    ("ab**", ["ab*"]),
-    ("***a", ["*a"]),
-    ("a***", ["a*"]),
-    ("****", ["*"]),
-])
-def test__split_id(wc_id, splits):
-    target_id = "abcd"
-    assert _split_id(wc_id) == splits
-    assert fnmatch.fnmatch(target_id, wc_id) == all(fnmatch.fnmatch(target_id, x) for x in splits)
-
-
-@pytest.mark.parametrize("target_id, wc_ids", [
-    ("a", ['a', '*', '*a*', 'a*', '*a']),
-    ("ab", ['ab', '*', '*a*', 'a*', '*b', '*b*', '*ab*', 'ab*', '*ab']),
-    ("abc", ['abc', '*', '*a*', 'a*', '*b*', '*c', '*c*', '*ab*', 'ab*', '*bc', '*bc*', '*abc*', 'abc*', '*abc']),
-    ("abcd",
-     ['abcd', '*', '*a*', 'a*', '*b*', '*c*', '*d', '*d*', '*ab*', 'ab*', '*bc*', '*cd', '*cd*', '*abc*', 'abc*',
-      '*bcd',
-      '*bcd*', '*abcd*', 'abcd*', '*abcd'])
-])
-def test__get_all_ids(target_id, wc_ids):
-    assert sorted(_get_all_ids(target_id)) == sorted(wc_ids)
-    assert all(fnmatch.fnmatch(target_id, x) for x in wc_ids)
 
 
 @pytest.mark.parametrize("subject_id, resource_id, action_id, pipeline", [

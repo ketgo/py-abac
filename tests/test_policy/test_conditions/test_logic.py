@@ -11,7 +11,7 @@ from py_abac.policy.conditions.logic import AnyOf
 from py_abac.policy.conditions.logic import Not
 from py_abac.policy.conditions.numeric import Gt, Lt
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 class TestLogicCondition(object):
@@ -104,7 +104,7 @@ class TestLogicCondition(object):
         (Not(Gt(1.0)), 1.5, False),
     ])
     def test_is_satisfied(self, condition, what, result):
-        request = Request(subject={"attributes": {"what": what}}, resource={}, action={}, context={})
+        request = AccessRequest(subject={"attributes": {"what": what}}, resource={}, action={}, context={})
         ctx = EvaluationContext(request)
         ctx.ace = "subject"
         ctx.attribute_path = "$.what"

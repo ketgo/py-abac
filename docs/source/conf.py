@@ -14,15 +14,16 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('_ext'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'py-ABAC'
+project = 'Py-ABAC'
 copyright = '2019, Ketan Goyal'
 author = 'Ketan Goyal'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = '0.2.1'
 
 # -- General configuration ---------------------------------------------------
 
@@ -31,15 +32,9 @@ release = '0.2.0'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.napoleon',
+    'sphinx_rtd_theme'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -48,14 +43,14 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['**tests**', '**build**']
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -70,3 +65,8 @@ latex_elements = {
     'preamble': '',
     'figure_align': 'htbp',
 }
+
+# -- Other options ----------------------------------------------------------
+
+# Sort members by type
+autodoc_member_order = 'groupwise'

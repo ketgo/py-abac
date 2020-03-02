@@ -15,7 +15,7 @@ from py_abac.policy.conditions.collection import IsIn
 from py_abac.policy.conditions.collection import IsNotEmpty
 from py_abac.policy.conditions.collection import IsNotIn
 from py_abac.policy.conditions.schema import ConditionSchema
-from py_abac.request import Request
+from py_abac.request import AccessRequest
 
 
 class TestCollectionCondition(object):
@@ -119,7 +119,7 @@ class TestCollectionCondition(object):
         (IsNotEmpty(), None, False),
     ])
     def test_is_satisfied(self, condition, what, result):
-        request = Request(subject={"attributes": {"what": what}}, resource={}, action={}, context={})
+        request = AccessRequest(subject={"attributes": {"what": what}}, resource={}, action={}, context={})
         ctx = EvaluationContext(request)
         ctx.ace = "subject"
         ctx.attribute_path = "$.what"

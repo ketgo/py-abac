@@ -9,7 +9,7 @@ from ..migration import Migration, MigrationSet
 
 DEFAULT_MIGRATION_COLLECTION = "py_abac_migrations"
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class MongoMigrationSet(MigrationSet):

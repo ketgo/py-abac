@@ -1,5 +1,3 @@
 """
     File storage
 """
-
-raise NotImplementedError()
