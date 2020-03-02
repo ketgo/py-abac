@@ -5,7 +5,7 @@
 import pytest
 
 from py_abac.exceptions import RequestCreateError
-from py_abac.request import AccessRequest
+from py_abac.request import AccessRequest, Request
 
 
 def test_create():
@@ -30,6 +30,13 @@ def test_create():
         "context": {}
     }
     request = AccessRequest.from_json(request_json)
+
+    assert request_json["subject"]["id"] == request._subject_id
+    assert request_json["resource"]["id"] == request._resource_id
+    assert request_json["action"]["id"] == request._action_id
+
+    # Check backward compatibility
+    request = Request.from_json(request_json)
 
     assert request_json["subject"]["id"] == request._subject_id
     assert request_json["resource"]["id"] == request._resource_id
