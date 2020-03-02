@@ -1,7 +1,7 @@
 .. _concepts:
 
 Concepts
-========
+########
 
 `ABAC <https://en.wikipedia.org/wiki/Attribute-based_access_control>`_ gives you a fine-grained control on definition
 of the rules that restrict access to resources and is generally considered a "next generation" authorization model. In
@@ -10,7 +10,7 @@ the following section we describe the different components of ABAC.
 .. _abac_arch:
 
 Access Control Architecture
----------------------------
+===========================
 
 
 .. image:: https://lh6.googleusercontent.com/z4oppCjtEITgem5UZUN28NiaV4LrYPrjqD1MjZiYDhjmj1OkFFcN9H2jj64Zd0tkRkf5O436eOA574Sur0uSDlUztRtadREn_wfRfMbh4dNiACxivd0zjM_gLcF94N-bdhl_g15N
@@ -44,7 +44,7 @@ The above diagram depicts the standard architecture for ABAC, which is as follow
 
 
 Access Control Elements
------------------------
+=======================
 
 In the above architecture, following four elements are involved during an access request to PDP:
 

@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to py-ABAC's documentation!
+Welcome to Py-ABAC's documentation!
 ===================================
 
 .. image:: https://travis-ci.com/ketgo/py-abac.svg?token=oCVxhfjJAa2zDdszGjoy&branch=master
@@ -40,8 +40,10 @@ To install run the following:
 
    pip install py-abac
 
-Basic Usage
------------
+Quick Example
+-------------
+
+The following code shows a quick example usage of Py-ABAC:
 
 .. code-block:: python
 
@@ -104,17 +106,16 @@ Basic Usage
    # Max is allowed to get any resource when client IP matches.
    assert pdp.is_allowed(request)
 
-For more examples see `here <./examples>`_.
 
-User Guide
-==========
+Documentation
+=============
 
 .. toctree::
    :maxdepth: 3
 
    concepts
    components/components
-   policy_language/policy_language
+   policy_language
 
 .. toctree::
    :maxdepth: 1
@@ -129,7 +130,7 @@ User Guide
 Logging
 -------
 
-py-ABAC follows a common logging pattern for libraries:
+Py-ABAC follows a common logging pattern for libraries:
 
 Its corresponding modules log all the events that happen but the log messages by default are handled by ``NullHandler``. It's up to the outer code/application to provide desired log handlers, filters, levels, etc.
 
@@ -148,13 +149,13 @@ For example:
 Acknowledgements
 ----------------
 
-The conceptual and implementation design of py-ABAC stems from the `XACML <https://en.wikipedia.org/wiki/XACML>`_
+The conceptual and implementation design of Py-ABAC stems from the `XACML <https://en.wikipedia.org/wiki/XACML>`_
 standard and the ABAC python SDK `Vakt <https://github.com/kolotaev/vakt>`_.
 
 Development
 -----------
 
-To hack py-ABAC locally run:
+To hack Py-ABAC locally run:
 
 .. code-block:: bash
 
