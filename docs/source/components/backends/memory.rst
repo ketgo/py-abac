@@ -3,4 +3,4 @@
 Memory
 ^^^^^^
 
-Will be part of v0.2.1
+Will be part of v0.4.0
