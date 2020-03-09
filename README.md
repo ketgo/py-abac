@@ -18,9 +18,18 @@ See [documentation](https://py-abac.readthedocs.io) for more details.
 PyABAC runs on Python >= 3.5. PyPy implementation is supported as well.
 
 
-To install run the following:
+To install basic package run the following:
 ```bash
 pip install py-abac
+```
+
+For different policy storage backends run:
+```bash
+# MongoDB backend
+pip install py-abac[mongo]
+
+# SQL backend
+pip install py-abac[sql]
 ```
 
 ## Example Usage
