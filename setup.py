@@ -16,6 +16,9 @@ extra_requires_mongo = [
 extra_requires_sql = [
     'SQLAlchemy~=1.3'
 ]
+extra_requires_memory = [
+    'networkx~=2.4'
+]
 extra_requires_doc = [
     'sphinx==2.4.1',
     'sphinx-rtd-theme~=0.4'
@@ -31,6 +34,7 @@ extra_requires_utils = [
 extra_requires_dev = extra_requires_utils + \
                      extra_requires_mongo + \
                      extra_requires_sql + \
+                     extra_requires_memory + \
                      extra_requires_doc
 
 if __name__ == '__main__':
@@ -57,6 +61,7 @@ if __name__ == '__main__':
             'doc': extra_requires_doc,
             'mongo': extra_requires_mongo,
             'sql': extra_requires_sql,
+            'mem': extra_requires_memory
         },
         packages=find_packages(exclude=('tests', 'benchmarks')),
         classifiers=[
