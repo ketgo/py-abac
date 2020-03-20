@@ -24,5 +24,5 @@ If the value is not found, it then checks all the :class:`AttributeProvider` obj
 .. note::
 
    As attribute values are retrived from :class:`AttributeProvider` objects sequentially, an eager lookup is performed.
-   This means any subsequent :class:`AttributeProvider` objects will be skipped instant the very first provider returns
+   This means any subsequent :class:`AttributeProvider` objects will be skipped the instant very first provider returns
    a value.
