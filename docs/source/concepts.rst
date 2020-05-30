@@ -54,7 +54,7 @@ In the above architecture, following four elements are involved during an access
 - **action**\ : The action being performed on the resource.
 - **context**\ : This element deals with time, location or dynamic aspects of the access control scenario.
 
-In py-ABAC one defines policies containing conditions on one or more attributes of these four elements. If these conditions are satisfied, an access decision is returned by the PDP using an evaluation algorithm. There are three different evaluation algorithms supported by py-ABAC:
+In py-ABAC one defines policies containing conditions on one or more attributes of these four elements. If these conditions are satisfied, an access decision is returned by the PDP using an evaluation algorithm. There are three different evaluation algorithms supported:
 
 .. _allow_overrides:
 

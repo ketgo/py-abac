@@ -17,13 +17,11 @@ See [documentation](https://py-abac.readthedocs.io) for more details.
 
 PyABAC runs on Python >= 3.5. PyPy implementation is supported as well.
 
-
 To install basic package run the following:
 ```bash
 pip install py-abac
 ```
-
-For different policy storage backends run:
+With the basic package the in-memory policy storage backend can be used. For the other persistent backends run:
 ```bash
 # MongoDB backend
 pip install py-abac[mongo]
@@ -127,7 +125,7 @@ Most valuable features to be implemented in the order of importance:
 
 - [x] Sphinx Documentation
 - [ ] Policy Obligations
-- [ ] In-Memory Storage
+- [x] In-Memory Storage
 - [x] SQL Storage
 - [ ] Caching mechanism for Storage
 - [ ] File Storage

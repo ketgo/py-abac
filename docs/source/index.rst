@@ -40,7 +40,7 @@ To install basic package run the following:
 
    pip install py-abac
    
-For different policy storage backends run:
+With the basic package the in-memory policy storage backend can be used. For the other persistent backends run:
 
 .. code-block:: bash
    

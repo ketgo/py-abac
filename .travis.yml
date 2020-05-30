@@ -16,7 +16,6 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-  - "nightly"  # nightly build
   - "pypy3.5"  # Pypy3 3.5.3
 
 before_script:
@@ -30,11 +29,12 @@ install:
   - make deps
 
 script:
-  # All tests with MongoDB and SQLite storage
+  # TODO: Add pytest markers for selecting storage backends
+  # All tests with In-Memory, MongoDB and SQLite storage
   - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="sqlite:///:memory:" make coverage
-  # All tests with MongoDB and MySQL storage
+  # All tests with In-Memory, MongoDB and MySQL storage
   - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="mysql+pymysql://root@127.0.0.1/py_abac" make coverage
-  # All tests with MongoDB and Postgres storage
+  # All tests with In-Memory, MongoDB and Postgres storage
   - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="postgresql+psycopg2cffi://postgres:@localhost/py_abac" make coverage
 
 after_success:

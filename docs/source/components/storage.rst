@@ -10,7 +10,7 @@ RDBMS, NoSQL databases, etc. Py-ABAC ships with some out of the box:
 
    MongoDB <backends/mongo>
    SQL <backends/sql>
-   Memory <backends/memory>
+   In-Memory <backends/memory>
 
 Custom Backend
 --------------
