@@ -17,7 +17,6 @@ See [documentation](https://py-abac.readthedocs.io) for more details.
 
 PyABAC runs on Python >= 3.5. PyPy implementation is supported as well.
 
-
 To install run the following:
 ```bash
 pip install py-abac
@@ -118,7 +117,7 @@ Most valuable features to be implemented in the order of importance:
 
 - [x] Sphinx Documentation
 - [ ] Policy Obligations
-- [ ] In-Memory Storage
+- [x] In-Memory Storage
 - [x] SQL Storage
 - [ ] Caching mechanism for Storage
 - [ ] File Storage
