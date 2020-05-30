@@ -22,7 +22,7 @@ object, you need to implement the :code:`get_attribute_value` method:
                :param ace: string value indicating the access control
                            element, i.e. "subject", "resource", "action"
                            or "context".
-               :param attribute_path: string in ObjectPat notation indicating
+               :param attribute_path: string in ObjectPath notation indicating
                                       the attribute for which the value is
                                       requested.
                :param ctx: evaluation context

@@ -19,3 +19,7 @@
 - Security checks added.
 - Added SQL storage.
 - Refactored `Request` class name to `AccessRequest`. The name `Request` still supported for backward compatibility. 
+
+# v0.4.0
+
+- Added `MemoryStorage` backend.

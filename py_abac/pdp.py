@@ -8,6 +8,7 @@ from typing import List
 from .context import EvaluationContext
 from .provider.base import AttributeProvider
 from .request import AccessRequest
+from .storage import MemoryStorage
 from .storage.base import StorageBase
 
 
@@ -54,7 +55,7 @@ class PDP(object):
     """
 
     def __init__(self,
-                 storage: StorageBase,
+                 storage: StorageBase = MemoryStorage(),
                  algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES,
                  providers: List[AttributeProvider] = None):
         if not isinstance(storage, StorageBase):

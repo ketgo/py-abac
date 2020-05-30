@@ -35,7 +35,7 @@ all policies.
 Targets vs Rules
 ~~~~~~~~~~~~~~~~
 
-The concept of code:`"targets"` and :code:`"rules"` in Py-ABAC is derived from the XACML standard. Both are used to
+The concept of :code:`"targets"` and :code:`"rules"` in Py-ABAC is derived from the XACML standard. Both are used to
 define conditions on attributes during policy creation. There is however a fundamental distinction between the two which
 will become more clear in the following sections. From a conceptual standpoint, :code:`"targets"` states for which
 instances of access control elements a policy applies. Thus called targets of a policy. The :code:`"rules"` on the
