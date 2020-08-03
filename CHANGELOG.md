@@ -23,4 +23,5 @@
 # v0.4.0
 
 - Added `MemoryStorage` backend.
+- Added `FileStorage` backend.
 - Fixed typos in documentation.

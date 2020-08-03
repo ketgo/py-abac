@@ -9,14 +9,14 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError
 
 from .model import PolicyModel
-from ..base import StorageBase
+from ..base import Storage
 from ...exceptions import PolicyExistsError
 from ...policy import Policy
 
 LOG = logging.getLogger(__name__)
 
 
-class SQLStorage(StorageBase):
+class SQLStorage(Storage):
     """
         Stores and retrieves policies from SQL database
 
