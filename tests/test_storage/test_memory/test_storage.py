@@ -202,9 +202,22 @@ def test_update(st):
     assert 'get' == st.get('2').rules.action['$.method'].value
 
 
+def test_update_error(st):
+    # Policy with UID 1 not present.
+    with pytest.raises(ValueError):
+        policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
+        st.update(policy)
+
+
 def test_delete(st):
     policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
     st.add(policy)
     assert '1' == st.get('1').uid
     st.delete('1')
     assert None is st.get('1')
+
+
+def test_delete_error(st):
+    # Policy with UID 1 not present.
+    with pytest.raises(ValueError):
+        st.delete("1")

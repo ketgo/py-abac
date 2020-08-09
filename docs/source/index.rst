@@ -59,7 +59,7 @@ The following code shows a quick example usage of Py-ABAC:
 
    from pymongo import MongoClient
    from py_abac import PDP, Policy, Request
-   from py_abac.storage import MongoStorage
+   from py_abac.storage.mongo import MongoStorage
 
    # Policy definition in JSON
    policy_json = {

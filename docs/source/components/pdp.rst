@@ -10,7 +10,7 @@ object, gives you a boolean answer: is access allowed or not?
 
    from pymongo import MongoClient
    from py_abac import PDP
-   from py_abac.storage import MongoStorage
+   from py_abac.storage.mongo import MongoStorage
 
    # Setup storage
    client = MongoClient()
@@ -35,7 +35,7 @@ sub-section :ref:`components_attribute_provider` for details of their usage.
 .. code-block:: python
 
    from py_abac import PDP, EvaluationAlgorithm
-   from py_abac.storage import MongoStorage
+   from py_abac.storage.mongo import MongoStorage
    from py_abac.providers import AttributeProvider
 
    # A simple email attribute provider class
