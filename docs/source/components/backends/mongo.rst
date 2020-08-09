@@ -8,7 +8,7 @@ MongoDB is chosen as the most popular and widespread NO-SQL database.
 .. code-block:: python
 
    from pymongo import MongoClient
-   from py_abac.storage import MongoStorage, MongoMigrationSet
+   from py_abac.storage.mongo import MongoStorage, MongoMigrationSet
    from py_abac.storage.migration import Migrator
 
    client = MongoClient('localhost', 27017)

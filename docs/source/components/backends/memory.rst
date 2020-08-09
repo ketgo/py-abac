@@ -7,7 +7,7 @@ The In-Memory backend stores the policies in RAM and is the default storage used
 
 .. code-block:: python
 
-   from py_abac.storage import MemoryStorage
+   from py_abac.storage.memory import MemoryStorage
 
    # In-Memory storage
    storage = MemoryStorage()

@@ -24,3 +24,4 @@
 
 - Added `MemoryStorage` backend.
 - Fixed typos in documentation.
+- Fixed import dependency error for storage. Removed import statement from `py_abac/storage/__init__.py`.
