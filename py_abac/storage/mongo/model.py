@@ -9,19 +9,16 @@ from ...policy import Policy
 from ...policy.targets import Targets
 
 
-class PolicyModel(object):
+class PolicyModel:
     """
-        Model to store policy as document on MongoDB
+        Model to store policy as document on MongoDB.
+
+        :param _id: document ID
+        :param policy_str: policy JSON string
+        :param tags: tags for target based filtering
     """
 
     def __init__(self, _id: str, policy_str: str, tags: dict = None):
-        """
-            Initialize mongodb document
-
-            :param _id: document ID
-            :param policy_str: policy JSON string
-            :param tags: tags for target based filtering
-        """
         self._id = _id
         self.policy_str = policy_str
         self.tags = tags

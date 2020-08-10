@@ -3,12 +3,12 @@
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Generator
+from typing import Generator, Union
 
 from ..policy import Policy
 
 
-class StorageBase(metaclass=ABCMeta):
+class Storage(metaclass=ABCMeta):
     """
         Base class for policy storage
     """
@@ -21,7 +21,7 @@ class StorageBase(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def get(self, uid: str) -> Policy:
+    def get(self, uid: str) -> Union[Policy, None]:
         """
             Get specific policy
         """
