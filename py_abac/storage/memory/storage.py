@@ -5,12 +5,12 @@
 from fnmatch import fnmatch
 from typing import Generator, Union, Tuple, List
 
-from ..base import StorageBase
+from ..base import Storage
 from ...exceptions import PolicyExistsError
 from ...policy import Policy
 
 
-class MemoryStorage(StorageBase):
+class MemoryStorage(Storage):
     """
         Stores and retrieves policies from memory
     """
