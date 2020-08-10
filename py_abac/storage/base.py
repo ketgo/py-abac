@@ -8,7 +8,7 @@ from typing import Generator, Union
 from ..policy import Policy
 
 
-class StorageBase(metaclass=ABCMeta):
+class Storage(metaclass=ABCMeta):
     """
         Base class for policy storage
     """

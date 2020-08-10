@@ -8,7 +8,7 @@ from typing import List
 from .context import EvaluationContext
 from .provider.base import AttributeProvider
 from .request import AccessRequest
-from .storage.base import StorageBase
+from .storage.base import Storage
 
 
 class EvaluationAlgorithm(Enum):
@@ -29,7 +29,7 @@ class PDP(object):
         .. code-block:: python
 
             from py_abac import PDP, EvaluationAlgorithm
-            from py_abac.storage import MongoStorage
+            from py_abac.storage.mongo import MongoStorage
             from py_abac.providers import AttributeProvider
 
             # A simple email attribute provider class
@@ -54,10 +54,10 @@ class PDP(object):
     """
 
     def __init__(self,
-                 storage: StorageBase,
+                 storage: Storage,
                  algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES,
                  providers: List[AttributeProvider] = None):
-        if not isinstance(storage, StorageBase):
+        if not isinstance(storage, Storage):
             raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
         if not isinstance(algorithm, EvaluationAlgorithm):
             raise TypeError("Invalid type '{}' for evaluation algorithm.".format(type(algorithm)))
