@@ -11,6 +11,9 @@ from py_abac.request import AccessRequest
 from py_abac.storage.mongo import MongoStorage
 from ..test_storage.test_mongo import create_client
 
+# Pytest mark for module
+pytestmark = [pytest.mark.mongo, pytest.mark.integration]
+
 DB_NAME = 'db_test'
 COLLECTION = 'policies_test'
 SUBJECT_IDS = {"Max": "user:1", "Nina": "user:2", "Ben": "user:3", "Henry": "user:4"}

@@ -16,6 +16,9 @@ from py_abac.storage.sql import SQLStorage
 from py_abac.storage.sql.model import Base
 from . import create_test_sql_engine
 
+# Pytest mark for module
+pytestmark = [pytest.mark.sql, pytest.mark.integration]
+
 
 @pytest.fixture
 def session():

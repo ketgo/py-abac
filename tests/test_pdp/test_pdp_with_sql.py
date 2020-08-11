@@ -13,6 +13,9 @@ from py_abac.storage.sql import SQLStorage
 from py_abac.storage.sql.model import Base
 from ..test_storage.test_sql import create_test_sql_engine
 
+# Pytest mark for module
+pytestmark = [pytest.mark.sql, pytest.mark.integration]
+
 SUBJECT_IDS = {"Max": "user:1", "Nina": "user:2", "Ben": "user:3", "Henry": "user:4"}
 POLICIES = [
     {

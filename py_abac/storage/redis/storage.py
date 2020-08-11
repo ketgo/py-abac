@@ -15,7 +15,7 @@ from ...policy import Policy
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_HASH_VALUE = "py_abac_policies"
+DEFAULT_HASH_KEY = "py_abac_policies"
 
 
 class RedisStorage(Storage):
@@ -23,13 +23,13 @@ class RedisStorage(Storage):
         Redis policy storage backend.
 
         :param client: redis client.
-        :param hash_value: hash value under which policies are
+        :param hash_key: hash key under which policies are
             stored in database.
     """
 
-    def __init__(self, client: Redis, hash_value: str = None):
+    def __init__(self, client: Redis, hash_key: str = None):
         self.client = client
-        self._hash = hash_value or DEFAULT_HASH_VALUE
+        self._hash = hash_key or DEFAULT_HASH_KEY
 
     def add(self, policy: Policy):
         """

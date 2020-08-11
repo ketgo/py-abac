@@ -14,13 +14,16 @@ from py_abac.request import AccessRequest
 from py_abac.storage.redis import RedisStorage
 from . import create_client
 
-HASH_VALUE = 'py_abac_policies_test'
+# Pytest mark for module
+pytestmark = [pytest.mark.redis, pytest.mark.integration]
+
+HASH_KEY = 'py_abac_policies_test'
 
 
 @pytest.fixture
 def st():
     client = create_client()
-    storage = RedisStorage(client, hash_value=HASH_VALUE)
+    storage = RedisStorage(client, hash_key=HASH_KEY)
     yield storage
     client.flushdb()
     client.close()

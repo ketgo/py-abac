@@ -1,7 +1,12 @@
 from typing import List
 
+import pytest
+
 from py_abac.policy import Policy
 from py_abac.storage.sql.model import PolicyModel, TargetModel
+
+# Pytest mark for module
+pytestmark = [pytest.mark.sql, pytest.mark.integration]
 
 
 def policy_model_assert(policy_model: PolicyModel, policy: Policy):

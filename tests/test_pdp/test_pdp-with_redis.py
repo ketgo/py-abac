@@ -11,7 +11,10 @@ from py_abac.request import AccessRequest
 from py_abac.storage.redis import RedisStorage
 from ..test_storage.test_redis import create_client
 
-HASH_VALUE = 'py_abac_policies_test'
+# Pytest mark for module
+pytestmark = [pytest.mark.redis, pytest.mark.integration]
+
+HASH_KEY = 'py_abac_policies_test'
 SUBJECT_IDS = {"Max": "user:1", "Nina": "user:2", "Ben": "user:3", "Henry": "user:4"}
 POLICIES = [
     {
@@ -156,7 +159,7 @@ class EmailsAttributeProvider(AttributeProvider):
 @pytest.fixture
 def st():
     client = create_client()
-    storage = RedisStorage(client, hash_value=HASH_VALUE)
+    storage = RedisStorage(client, hash_key=HASH_KEY)
     for policy_json in POLICIES:
         storage.add(Policy.from_json(policy_json))
     yield storage

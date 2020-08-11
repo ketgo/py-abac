@@ -139,7 +139,7 @@ The conceptual and implementation design of py-ABAC stems from the [XACML](https
 ## Development
 
 Py-ABAC requires a few backend databases like MongoDB, MySQL, etc for testing and development. For convenience
-a [docker-compose]() file is provided in the test folder to spawn up the required infrastructure. Just run:
+a [docker-compose](https://github.com/ketgo/py-abac/blob/master/tests/docker-compose.yml) file is provided in the test folder to spawn up the required infrastructure. Just run:
 
 ```bash
 $ cd tests

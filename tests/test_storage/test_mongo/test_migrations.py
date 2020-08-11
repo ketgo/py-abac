@@ -8,6 +8,9 @@ from py_abac.storage.mongo import MongoStorage
 from py_abac.storage.mongo.migrations import MongoMigrationSet, MongoMigration0To0x2x0
 from . import create_client
 
+# Pytest mark for module
+pytestmark = [pytest.mark.mongo, pytest.mark.integration]
+
 DB_NAME = 'db_test'
 COLLECTION = 'policies_migration_test'
 MIGRATION_COLLECTION = 'policies_migration_ver_test'
