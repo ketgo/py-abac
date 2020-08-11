@@ -14,6 +14,9 @@ from py_abac.request import AccessRequest
 from py_abac.storage.mongo import MongoStorage
 from . import create_client
 
+# Pytest mark for module
+pytestmark = [pytest.mark.mongo, pytest.mark.integration]
+
 DB_NAME = 'db_test'
 COLLECTION = 'policies_test'
 

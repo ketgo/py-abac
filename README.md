@@ -138,11 +138,19 @@ The conceptual and implementation design of py-ABAC stems from the [XACML](https
 
 ## Development
 
-To hack py-ABAC locally run:
+Py-ABAC requires a few backend databases like MongoDB, MySQL, etc for testing and development. For convenience
+a [docker-compose](https://github.com/ketgo/py-abac/blob/master/tests/docker-compose.yml) file is provided in the test folder to spawn up the required infrastructure. Just run:
+
+```bash
+$ cd tests
+$ docker-compose up -d      # this spawns up all the databases.
+$ cd ..     # returns to the root repo folder
+```
+
+To hack py-ABAC run:
 
 ```bash
 $ pip install -e .[dev]			# to install all dependencies
-$ docker run --rm -d -p 27017:27017 mongo			# Run mongodb server on docker
 $ pytest --cov=py_abac tests/			# to get coverage report
 $ pylint py_abac			# to check code quality with PyLint
 $ bandit py_abac			# to check code security with Bandit

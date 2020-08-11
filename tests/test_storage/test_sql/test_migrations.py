@@ -6,6 +6,9 @@ from py_abac.storage.sql.migrations import SQLMigrationSet, Migration0To0x2x1
 from py_abac.storage.sql.model import Base, PolicyModel, SubjectTargetModel, ResourceTargetModel, ActionTargetModel
 from . import create_test_sql_engine
 
+# Pytest mark for module
+pytestmark = [pytest.mark.sql, pytest.mark.integration]
+
 
 @pytest.fixture
 def engine():

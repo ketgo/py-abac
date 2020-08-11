@@ -23,5 +23,6 @@
 # v0.4.0
 
 - Added `MemoryStorage` backend.
+- Added `RedisStorage` backend.
 - Fixed typos in documentation.
-- Fixed import dependency error for storage. Removed import statement from `py_abac/storage/__init__.py`.
+- Fixed import dependency error for storage. Removed import statements from `py_abac/storage/__init__.py`.

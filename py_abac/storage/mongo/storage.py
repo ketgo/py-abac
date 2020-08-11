@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
 from .model import PolicyModel
-from ..base import StorageBase
+from ..base import Storage
 from ...exceptions import PolicyExistsError
 from ...policy import Policy
 
@@ -19,7 +19,7 @@ DEFAULT_COLLECTION = 'py_abac_policies'
 LOG = logging.getLogger(__name__)
 
 
-class MongoStorage(StorageBase):
+class MongoStorage(Storage):
     """
         Stores and retrieves policies from MongoDB
 
