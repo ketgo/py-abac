@@ -45,11 +45,10 @@ class RedisStorage(Storage):
         """
             Get specific policy
         """
-        rvalue = self.client.hget(self._hash, uid)
-        if not rvalue:
+        policy_str = self.client.hget(self._hash, uid)
+        if not policy_str:
             return None
-        policy_json = json.loads(rvalue)
-        return Policy.from_json(policy_json)
+        return self.__to_policy(policy_str)
 
     def get_all(self, limit: int, offset: int) -> Generator[Policy, None, None]:
         """
