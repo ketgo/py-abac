@@ -21,6 +21,8 @@ python:
 
 before_script:
   - sleep 5
+  # Start redis-server. Needed for python 3.5
+  - sudo service redis-server start --bind 127.0.0.1
   # Create databases
   - mongo db --eval 'db.createUser({user:"test_user",pwd:"test_password",roles:["readWrite"]});'
   - mysql -e 'CREATE DATABASE py_abac CHARACTER SET utf8 COLLATE utf8_bin;'
