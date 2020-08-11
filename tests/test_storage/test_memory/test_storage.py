@@ -125,32 +125,33 @@ def test_get_all_with_incorrect_args(st):
     assert "Offset can't be negative" == str(e.value)
 
 
+# NOTE: Currently all polices are returned by storage
 @pytest.mark.parametrize("request_json, num", [
     ({
          "subject": {"id": "a"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 1),
+     }, 4),
     ({
          "subject": {"id": "ab"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 3),
+     }, 4),
     ({
          "subject": {"id": "abc"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 3),
+     }, 4),
     ({
          "subject": {"id": "acb"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 2),
+     }, 4),
     ({
          "subject": {"id": "axc"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 1),
+     }, 4),
 ])
 def test_find_for_target(st, request_json, num):
     st.add(Policy.from_json({"uid": "1",
