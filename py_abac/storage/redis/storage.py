@@ -96,20 +96,14 @@ class RedisStorage(Storage):
         uid = policy.uid
         lua = \
             """
-                local exists = redis.call('HEXISTS', KEYS[1], ARGV[1])
-                if exists == 1 then
+                if redis.call('HEXISTS', KEYS[1], ARGV[1]) == 1 then
                     return redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])
                 end
-                return 0
             """
         update_policy = self.client.register_script(lua)
-        try:
-            rvalue = update_policy(keys=[self._hash], args=[uid, self.__to_policy_str(policy)])
-            if rvalue != 0:
-                LOG.info('Updated Policy with UID=%s. New value is: %s', uid, policy)
-        except Exception as err:
-            LOG.exception('Error trying to update policy with UID=%s.', uid)
-            raise err
+        rvalue = update_policy(keys=[self._hash], args=[uid, self.__to_policy_str(policy)])
+        if rvalue is not None:
+            LOG.info('Updated Policy with UID=%s. New value is: %s', uid, policy)
 
     def delete(self, uid: str):
         """
@@ -120,11 +114,11 @@ class RedisStorage(Storage):
             LOG.info('Deleted Policy with UID=%s.', uid)
 
     @staticmethod
-    def __to_policy(policy_str: str) -> Policy:
+    def __to_policy(policy_str: bytes) -> Policy:
         """
             Converts stored policy string to policy object.
         """
-        policy_json = json.loads(policy_str)
+        policy_json = json.loads(policy_str.decode("utf-8"))
         return Policy.from_json(policy_json)
 
     @staticmethod
