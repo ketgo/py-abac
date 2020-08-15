@@ -6,6 +6,8 @@ import logging
 from itertools import islice
 from typing import Generator, Union
 
+from lru import LRU
+
 from ..base import Storage
 from ...exceptions import PolicyExistsError
 from ...policy import Policy
@@ -16,10 +18,14 @@ LOG = logging.getLogger(__name__)
 class MemoryStorage(Storage):
     """
         Stores and retrieves policies from memory
+
+        :param max_size: maximum number of polices to store by the
+            storage. Default is set to `None` which results in no
+            upper bound.
     """
 
-    def __init__(self):
-        self._index_map = {}
+    def __init__(self, max_size: int = None):
+        self._index_map = LRU(max_size) if max_size else {}
 
     def add(self, policy: Policy):
         """

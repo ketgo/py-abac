@@ -54,7 +54,8 @@ if __name__ == '__main__':
         install_requires=[
             'marshmallow~=3.2',
             'marshmallow-oneofschema~=2.0',
-            'objectpath~=0.6'
+            'objectpath~=0.6',
+            'lru-dict~=1.1'
         ],
         extras_require={
             'dev': extra_requires_dev,

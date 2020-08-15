@@ -4,11 +4,11 @@
 
 from typing import Union, Generator
 
-from .base import StorageBase
+from .base import Storage
 from ..policy import Policy
 
 
-class StorageCache(StorageBase):
+class StorageCache(Storage):
     """
         Storage cache for fast policy retrieval.
 
@@ -21,7 +21,7 @@ class StorageCache(StorageBase):
             represents number of policies stored.
     """
 
-    def __init__(self, storage: StorageBase, max_size: int = 1024):
+    def __init__(self, storage: Storage, max_size: int = 1024):
         self._storage = storage
         self._max_size = max_size
 
