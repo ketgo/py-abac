@@ -20,6 +20,9 @@
 - Added SQL storage.
 - Refactored `Request` class name to `AccessRequest`. The name `Request` still supported for backward compatibility. 
 
+# v0.3.1
+- Fixed import dependency error for storage. Updated import statements from `py_abac/storage/__init__.py`. Thanks [dylanmcreynolds](https://github.com/dylanmcreynolds) for PR.
+
 # v0.4.0
 
 - Added `MemoryStorage` backend.
