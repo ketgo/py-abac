@@ -5,8 +5,6 @@
 import os
 from typing import Union, Generator
 
-import pylru
-
 from ..base import Storage
 from ...policy import Policy
 
@@ -38,14 +36,9 @@ class FileStorage(Storage):
     POLICY_FILE = "policy"
 
     def __init__(self, storage_dir: str, cache_size=100):
-        # Check if directory exists
-        if not os.path.isdir(storage_dir):
-            raise ValueError("Directory '{}' does not exists.".format(storage_dir))
+        # Create path directory if not exists
+        os.makedirs(storage_dir, exist_ok=True)
         self._storage_dir = storage_dir
-        # Note: Should we split the cache size by half as its used by two maps?
-        self._index_map = pylru.lrucache(cache_size)
-        self._targets_map = pylru.lrucache(cache_size)
-        self._targets_map[self.DEFAULT_TARGET_IDS] = set()
 
     def add(self, policy: Policy):
         pass
