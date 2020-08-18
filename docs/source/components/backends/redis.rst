@@ -1,5 +1,8 @@
 .. _backend_redis:
 
+Redis
+^^^^^
+
 The Redis backend stores policies on a Redis server. The usage is as shown below:
 
 .. code-block:: python
