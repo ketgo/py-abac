@@ -3,6 +3,9 @@
 """
 
 import os
+import shelve
+import logging
+import pathlib
 from typing import Union, Generator
 
 from ..base import Storage
@@ -20,28 +23,18 @@ class FileStorage(Storage):
 
         :param storage_dir: path to directory where storage files
             are to be saved.
-        :param cache_size: internal cache size to store indexes. Default
-            set to 100 key-value pairs.
     """
-    # Default target IDs
-    DEFAULT_TARGET_IDS = ("*", "*", "*")
-
-    # Policy index file name
-    POLICY_INDEX_FILE = "index"
-
-    # Target index file name
-    TARGETS_INDEX_FILE = "target"
-
     # Policy storage file name
     POLICY_FILE = "policy"
 
-    def __init__(self, storage_dir: str, cache_size=100):
+    def __init__(self, storage_dir: str):
         # Create path directory if not exists
         os.makedirs(storage_dir, exist_ok=True)
-        self._storage_dir = storage_dir
+        self._file = pathlib.Path(storage_dir) / self.POLICY_FILE
 
     def add(self, policy: Policy):
-        pass
+        with shelve.open(self._file, flag='c', writeback=True) as curr:
+            curr[policy.uid] = policy.to_json()
 
     def get(self, uid: str) -> Union[Policy, None]:
         pass
