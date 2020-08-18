@@ -16,6 +16,9 @@ extra_requires_mongo = [
 extra_requires_sql = [
     'SQLAlchemy~=1.3'
 ]
+extra_requires_redis = [
+    'redis~=3.5'
+]
 extra_requires_doc = [
     'sphinx==2.4.1',
     'sphinx-rtd-theme~=0.4'
@@ -25,7 +28,7 @@ extra_requires_file = [
     'flatten-dict==0.3.0'
 ]
 extra_requires_utils = [
-    'pytest~=4.0',
+    'pytest~=4.6',
     'pytest-cov~=2.6',
     'pylint~=1.0',
     'bandit~=1.6',
@@ -35,6 +38,7 @@ extra_requires_utils = [
 extra_requires_dev = extra_requires_utils + \
                      extra_requires_mongo + \
                      extra_requires_sql + \
+                     extra_requires_redis + \
                      extra_requires_file + \
                      extra_requires_doc
 
@@ -64,6 +68,7 @@ if __name__ == '__main__':
             'mongo': extra_requires_mongo,
             'sql': extra_requires_sql,
             'file': extra_requires_file,
+            'redis': extra_requires_redis,
         },
         packages=find_packages(exclude=('tests', 'benchmarks')),
         classifiers=[

@@ -1,39 +1,32 @@
 """
-    SQL storage tests
+    Redis storage test
 """
 
 import uuid
 
 import pytest
-from sqlalchemy.orm import sessionmaker, scoped_session
 
 from py_abac.exceptions import PolicyExistsError
 from py_abac.policy import Policy
 from py_abac.policy.conditions.numeric import Eq
 from py_abac.policy.conditions.string import Equals
 from py_abac.request import AccessRequest
-from py_abac.storage.sql import SQLStorage
-from py_abac.storage.sql.model import Base
-from . import create_test_sql_engine
+from py_abac.storage.redis import RedisStorage
+from . import create_client
 
 # Pytest mark for module
-pytestmark = [pytest.mark.sql, pytest.mark.integration]
+pytestmark = [pytest.mark.redis, pytest.mark.integration]
+
+HASH_KEY = 'py_abac_policies_test'
 
 
 @pytest.fixture
-def session():
-    engine = create_test_sql_engine()
-    Base.metadata.create_all(engine)
-    session = scoped_session(sessionmaker(bind=engine))
-    yield session
-    Base.metadata.drop_all(engine)
-
-
-@pytest.fixture
-def st(session):
-    storage = SQLStorage(scoped_session=session)
+def st():
+    client = create_client()
+    storage = RedisStorage(client, hash_key=HASH_KEY)
     yield storage
-    session.remove()
+    client.flushdb()
+    client.close()
 
 
 def test_add(st):
@@ -142,33 +135,33 @@ def test_get_all_with_incorrect_args(st):
     assert "Offset can't be negative" == str(e.value)
 
 
-# TODO: Implementation not done
+# NOTE: Currently all policies are returned by redis storage
 @pytest.mark.parametrize("request_json, num", [
     ({
          "subject": {"id": "a"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 1),
+     }, 4),
     ({
          "subject": {"id": "ab"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 3),
+     }, 4),
     ({
          "subject": {"id": "abc"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 3),
+     }, 4),
     ({
          "subject": {"id": "acb"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 2),
+     }, 4),
     ({
          "subject": {"id": "axc"},
          "resource": {"id": str(uuid.uuid4())},
          "action": {"id": str(uuid.uuid4())}
-     }, 1),
+     }, 4),
 ])
 def test_find_for_target(st, request_json, num):
     st.add(Policy.from_json({"uid": "1",
@@ -196,9 +189,6 @@ def test_find_for_target(st, request_json, num):
 
 def test_update(st):
     policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
-    # Test update before insert
-    st.update(policy)
-    assert st.get(policy.uid) is None
     st.add(policy)
     assert '1' == st.get('1').uid
     assert '' is st.get('1').description
@@ -225,9 +215,6 @@ def test_update(st):
 
 def test_delete(st):
     policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
-    # Test non-existing
-    st.delete('1')
-    assert None is st.get('1')
     st.add(policy)
     assert '1' == st.get('1').uid
     st.delete('1')

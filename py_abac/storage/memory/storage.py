@@ -2,26 +2,24 @@
     In-Memory Storage implementation
 """
 
-from fnmatch import fnmatch
-from typing import Generator, Union, Tuple, List
+import logging
+from itertools import islice
+from typing import Generator, Union
 
 from ..base import Storage
 from ...exceptions import PolicyExistsError
 from ...policy import Policy
+
+LOG = logging.getLogger(__name__)
 
 
 class MemoryStorage(Storage):
     """
         Stores and retrieves policies from memory
     """
-    # Default target IDs
-    DEFAULT_TARGET_IDS = ("*", "*", "*")
 
     def __init__(self):
         self._index_map = {}
-        self._targets_map = {
-            self.DEFAULT_TARGET_IDS: set()
-        }
 
     def add(self, policy: Policy):
         """
@@ -31,16 +29,7 @@ class MemoryStorage(Storage):
         if policy.uid in self._index_map:
             raise PolicyExistsError(policy.uid)
         self._index_map[policy.uid] = policy
-
-        for target_ids in self._get_target_ids(
-                policy.targets.subject_id,
-                policy.targets.resource_id,
-                policy.targets.action_id
-        ):
-            # Add policy UID to targets map
-            if target_ids not in self._targets_map:
-                self._targets_map[target_ids] = set()
-            self._targets_map[target_ids].add(policy.uid)
+        LOG.info('Added Policy: %s', policy)
 
     def get(self, uid: str) -> Union[Policy, None]:
         """
@@ -54,9 +43,9 @@ class MemoryStorage(Storage):
         """
         self._check_limit_and_offset(limit, offset)
         # Note: python by default sorts dict by key
-        keys = list(self._index_map.keys())[offset:offset + limit]
-        for key in keys:
-            yield self._index_map[key]
+        policies = islice(self._index_map.values(), offset, offset + limit)
+        for policy in policies:
+            yield policy
 
     def get_for_target(
             self,
@@ -66,17 +55,14 @@ class MemoryStorage(Storage):
     ) -> Generator[Policy, None, None]:
         """
             Get all policies for given target IDs.
+
+            .. note:
+
+                Currently all policies are returned for evaluation.
         """
-        # TODO: Get target IDs from topologically sorted graph for quicker lookup
-        for target_ids in self._targets_map:
-            matches = [
-                fnmatch(subject_id, target_ids[0]),
-                fnmatch(resource_id, target_ids[1]),
-                fnmatch(action_id, target_ids[2]),
-            ]
-            if all(matches):
-                for uid in self._targets_map[target_ids]:
-                    yield self._index_map[uid]
+        # TODO: Create glob match based topologically sorted graph index for filtering
+        for policy in self._index_map.values():
+            yield policy
 
     def update(self, policy: Policy):
         """
@@ -85,6 +71,7 @@ class MemoryStorage(Storage):
         if policy.uid not in self._index_map:
             raise ValueError("Policy with UID='{}' does not exist.".format(policy.uid))
         self._index_map[policy.uid] = policy
+        LOG.info('Updated Policy with UID=%s. New value is: %s', policy.uid, policy)
 
     def delete(self, uid: str):
         """
@@ -92,30 +79,6 @@ class MemoryStorage(Storage):
         """
         if uid not in self._index_map:
             raise ValueError("Policy with UID='{}' does not exist.".format(uid))
-        target_ids = (
-            self._index_map[uid].targets.subject_id,
-            self._index_map[uid].targets.resource_id,
-            self._index_map[uid].targets.action_id
-        )
-
         # Remove policy from index map
         del self._index_map[uid]
-
-        # Remove policy UID from targets map
-        self._targets_map[target_ids].remove(uid)
-        if not self._targets_map[target_ids]:
-            del self._targets_map[target_ids]
-
-    @staticmethod
-    def _get_target_ids(
-            subject_ids: Union[List[str], str],
-            resource_ids: Union[List[str], str],
-            action_ids: Union[List[str], str]
-    ) -> Generator[Tuple, None, None]:
-        _subject_ids = subject_ids if isinstance(subject_ids, list) else [subject_ids]
-        _resource_ids = resource_ids if isinstance(resource_ids, list) else [resource_ids]
-        _action_ids = action_ids if isinstance(action_ids, list) else [action_ids]
-        for sub_id in _subject_ids:
-            for res_id in _resource_ids:
-                for act_id in _action_ids:
-                    yield sub_id, res_id, act_id
+        LOG.info('Deleted Policy with UID=%s.', uid)

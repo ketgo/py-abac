@@ -12,7 +12,7 @@ Example for MySQL:
 
    from sqlalchemy import create_engine
    from sqlalchemy.orm import sessionmaker, scoped_session
-   from py_abac.storage import SQLStorage, SQLMigrationSet
+   from py_abac.storage.sql import SQLStorage, SQLMigrationSet
    from py_abac.storage.migration import Migrator
 
    # Creating SQL storage

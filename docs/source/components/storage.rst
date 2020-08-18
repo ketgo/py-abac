@@ -12,6 +12,7 @@ RDBMS, NoSQL databases, etc. Py-ABAC ships with some out of the box:
    SQL <backends/sql>
    In-Memory <backends/memory>
    File <backends/file>
+   Redis <backends/redis>
 
 Custom Backend
 --------------
