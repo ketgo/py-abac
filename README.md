@@ -128,7 +128,7 @@ Most valuable features to be implemented in the order of importance:
 - [x] In-Memory Storage
 - [x] SQL Storage
 - [ ] Caching mechanism for Storage
-- [ ] File Storage
+- [x] File Storage
 
 ## Acknowledgements
 

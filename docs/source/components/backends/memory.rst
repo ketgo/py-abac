@@ -1,7 +1,7 @@
 .. _backend_memory:
 
 In-Memory
-^^^^^^
+^^^^^^^^^
 
 The In-Memory backend stores the policies in RAM and is the default storage used. The usage is as shown below:
 

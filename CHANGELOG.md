@@ -27,5 +27,6 @@
 
 - Added `MemoryStorage` backend.
 - Added `RedisStorage` backend.
+- Added `FileStorage` backend.
 - Fixed typos in documentation.
 - Fixed import dependency error for storage. Removed import statements from `py_abac/storage/__init__.py`.
