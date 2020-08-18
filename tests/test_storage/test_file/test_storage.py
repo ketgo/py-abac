@@ -19,7 +19,7 @@ pytestmark = [pytest.mark.file, pytest.mark.integration]
 
 @pytest.fixture
 def st(tmp_path):
-    yield FileStorage(tmp_path)
+    yield FileStorage(str(tmp_path))
 
 
 def test_add(st):

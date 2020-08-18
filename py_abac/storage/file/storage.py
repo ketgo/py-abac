@@ -4,7 +4,6 @@
 
 import logging
 import os
-import pathlib
 import shelve
 from itertools import islice
 from typing import Union, Generator
@@ -37,7 +36,7 @@ class FileStorage(Storage):
     def __init__(self, storage_dir: str):
         # Create path directory if not exists
         os.makedirs(storage_dir, exist_ok=True)
-        self._file = str(pathlib.Path(storage_dir) / self.POLICY_FILE)
+        self._file = "{}/{}".format(os.path.abspath(storage_dir), self.POLICY_FILE)
 
     def add(self, policy: Policy):
         """

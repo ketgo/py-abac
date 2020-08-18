@@ -156,7 +156,7 @@ class EmailsAttributeProvider(AttributeProvider):
 
 @pytest.fixture
 def st(tmp_path):
-    storage = FileStorage(tmp_path)
+    storage = FileStorage(str(tmp_path))
     for policy_json in POLICIES:
         storage.add(Policy.from_json(policy_json))
     yield storage
