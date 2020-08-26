@@ -7,7 +7,7 @@ from py_abac.storage.migration import Migration, MigrationSet, Migrator
 
 # SETUP
 
-class MMigration(Migration):
+class MockMigration(Migration):
     def __init__(self, db):
         self.db = db
 
@@ -23,7 +23,7 @@ class MMigration(Migration):
         self.db['data'] = self.db['data'].replace(self.letter, '')
 
 
-class M1(MMigration):
+class M1(MockMigration):
     @property
     def order(self):
         return 1
@@ -33,7 +33,7 @@ class M1(MMigration):
         return 'A'
 
 
-class M2(MMigration):
+class M2(MockMigration):
     @property
     def order(self):
         return 2
@@ -43,7 +43,7 @@ class M2(MMigration):
         return 'B'
 
 
-class M3(MMigration):
+class M3(MockMigration):
     @property
     def order(self):
         return 3

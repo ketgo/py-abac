@@ -45,7 +45,7 @@ class MemoryStorage(Storage):
 
     def get_all(self, limit: int, offset: int) -> Generator[Policy, None, None]:
         """
-            Retrieve all the policies within a window
+            Retrieve all the policies within a window.
         """
         self._check_limit_and_offset(limit, offset)
         # Note: python by default sorts dict by key
@@ -64,7 +64,8 @@ class MemoryStorage(Storage):
 
             .. note:
 
-                Currently all policies are returned for evaluation.
+                Currently all policies are returned for evaluation. This issue will
+                be resolved once indexing is supported for in-memory storage.
         """
         # TODO: Create glob match based topologically sorted graph index for filtering
         for policy in self._index_map.values():

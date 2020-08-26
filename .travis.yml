@@ -14,7 +14,9 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-  - "pypy3"
+  # Disable "nightly" for now due to psycopg2cffi build failures because of python-3.10-dev
+  # - "nightly"  # nightly build
+  - "pypy3.5"  # Pypy3 3.5.3
 
 before_script:
   - docker-compose -f tests/docker-compose.yml up -d
@@ -34,6 +36,8 @@ script:
   - SQL_HOST="postgresql+psycopg2cffi://postgres:password@localhost/py_abac" make coverage MARK='"sql"' COVERAGE_OPTS="--cov-append"
   # Redis storage integration tests
   - REDIS_HOST="localhost" REDIS_PORT="6379" make coverage MARK='"redis"' COVERAGE_OPTS="--cov-append"
+  # File storage integration tests
+  - make coverage MARK='"file"' COVERAGE_OPTS="--cov-append"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
