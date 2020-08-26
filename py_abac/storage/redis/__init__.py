@@ -2,4 +2,4 @@
     Exposed classes and methods
 """
 
-from .storage import FileStorage
+from .storage import RedisStorage

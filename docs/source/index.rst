@@ -40,7 +40,7 @@ To install basic package run the following:
 
    pip install py-abac
    
-For different policy storage backends run:
+With the basic package the in-memory policy storage backend can be used. For the other persistent backends run:
 
 .. code-block:: bash
    
@@ -59,7 +59,7 @@ The following code shows a quick example usage of Py-ABAC:
 
    from pymongo import MongoClient
    from py_abac import PDP, Policy, Request
-   from py_abac.storage import MongoStorage
+   from py_abac.storage.mongo import MongoStorage
 
    # Policy definition in JSON
    policy_json = {
@@ -164,6 +164,16 @@ standard and the ABAC python SDK `Vakt <https://github.com/kolotaev/vakt>`_.
 
 Development
 -----------
+
+Py-ABAC requires a few backend databases like MongoDB, MySQL, etc for testing and development. For convenience
+a `docker-compose <https://github.com/ketgo/py-abac/blob/master/tests/docker-compose.yml>_` file is provided in the
+test folder to spawn up the required infrastructure. Just run:
+
+.. code-block:: bash
+
+   $ cd tests
+   $ docker-compose up -d      # this spawns up all the databases.
+   $ cd ..     # returns to the root repo folder
 
 To hack Py-ABAC locally run:
 

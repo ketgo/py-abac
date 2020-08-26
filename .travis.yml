@@ -5,9 +5,7 @@ sudo: false
 language: python
 
 services:
-  - mongodb
-  - mysql
-  - postgresql
+  - docker
 
 cache: pip
 
@@ -21,22 +19,25 @@ python:
   - "pypy3.5"  # Pypy3 3.5.3
 
 before_script:
-  - sleep 5
-  # Create databases
-  - mongo db --eval 'db.createUser({user:"test_user",pwd:"test_password",roles:["readWrite"]});'
-  - mysql -e 'CREATE DATABASE py_abac CHARACTER SET utf8 COLLATE utf8_bin;'
-  - psql -c "CREATE DATABASE py_abac ENCODING='UTF8';" -U postgres
+  - docker-compose -f tests/docker-compose.yml up -d
+  - sleep 15
 
 install:
   - make deps
 
 script:
-  # All tests with MongoDB and SQLite storage
-  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="sqlite:///:memory:" make coverage
-  # All tests with MongoDB and MySQL storage
-  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="mysql+pymysql://root@127.0.0.1/py_abac" make coverage
-  # All tests with MongoDB and Postgres storage
-  - MONGODB_HOST="127.0.0.1:27017" SQL_HOST="postgresql+psycopg2cffi://postgres:@localhost/py_abac" make coverage
+  # All default tests with in-memory storage
+  - make coverage MARK='"not integration"' COVERAGE_OPTS="--cov-append"
+  # MongoDB storage integration tests
+  - MONGODB_HOST="mongodb://mongo:password@localhost:27017" make coverage MARK='"mongo"' COVERAGE_OPTS="--cov-append"
+  # MySQL storage integration tests
+  - SQL_HOST="mysql+pymysql://mysql:password@localhost/py_abac" make coverage MARK='"sql"' COVERAGE_OPTS="--cov-append"
+  # Postgres storage integration tests
+  - SQL_HOST="postgresql+psycopg2cffi://postgres:password@localhost/py_abac" make coverage MARK='"sql"' COVERAGE_OPTS="--cov-append"
+  # Redis storage integration tests
+  - REDIS_HOST="localhost" REDIS_PORT="6379" make coverage MARK='"redis"' COVERAGE_OPTS="--cov-append"
+  # File storage integration tests
+  - make coverage MARK='"file"' COVERAGE_OPTS="--cov-append"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

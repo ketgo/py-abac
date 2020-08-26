@@ -5,5 +5,5 @@ exclude_lines =
 omit =
     setup.py
     ./venv/*
-    ./pyabac/version.py
+    ./py_abac/version.py
     ./benchmarks/*

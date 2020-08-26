@@ -9,6 +9,9 @@ import pytest
 from py_abac.policy import Policy
 from py_abac.storage.mongo.model import PolicyModel
 
+# Pytest mark for module
+pytestmark = [pytest.mark.mongo, pytest.mark.integration]
+
 
 def test_from_policy():
     policy_json = {

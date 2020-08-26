@@ -9,6 +9,7 @@ Subpackages
    py_abac.storage.file
    py_abac.storage.memory
    py_abac.storage.mongo
+   py_abac.storage.redis
    py_abac.storage.sql
 
 Submodules

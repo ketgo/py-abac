@@ -1,5 +1,5 @@
 """
-    PDP tests with MongoDb storage
+    PDP tests with In-Memory storage
 """
 
 import pytest
@@ -8,14 +8,8 @@ from py_abac.pdp import PDP, EvaluationAlgorithm
 from py_abac.policy import Policy
 from py_abac.provider.base import AttributeProvider
 from py_abac.request import AccessRequest
-from py_abac.storage.mongo import MongoStorage
-from ..test_storage.test_mongo import create_client
+from py_abac.storage.memory import MemoryStorage
 
-# Pytest mark for module
-pytestmark = [pytest.mark.mongo, pytest.mark.integration]
-
-DB_NAME = 'db_test'
-COLLECTION = 'policies_test'
 SUBJECT_IDS = {"Max": "user:1", "Nina": "user:2", "Ben": "user:3", "Henry": "user:4"}
 POLICIES = [
     {
@@ -159,13 +153,10 @@ class EmailsAttributeProvider(AttributeProvider):
 
 @pytest.fixture
 def st():
-    client = create_client()
-    storage = MongoStorage(client, DB_NAME, collection=COLLECTION)
+    storage = MemoryStorage()
     for policy_json in POLICIES:
         storage.add(Policy.from_json(policy_json))
     yield storage
-    client[DB_NAME][COLLECTION].drop()
-    client.close()
 
 
 @pytest.mark.parametrize('desc, request_json, should_be_allowed', [
