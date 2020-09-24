@@ -2,7 +2,7 @@
 Attribute Based Access Control (ABAC) for python. 
 
 [![Build Status](https://travis-ci.com/ketgo/py-abac.svg?token=oCVxhfjJAa2zDdszGjoy&branch=master)](https://travis-ci.com/ketgo/py-abac)
-[![codecov.io](https://codecov.io/gh/ketgo/pyabac/coverage.svg?branch=master)](https://codecov.io/gh/ketgo/pyabac/coverage.svg?branch=master)
+[![codecov](https://codecov.io/gh/ketgo/py-abac/branch/master/graph/badge.svg)](https://codecov.io/gh/ketgo/py-abac)
 [![Apache 2.0 licensed](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://raw.githubusercontent.com/kolotaev/vakt/master/LICENSE)
 
 ---
