@@ -6,4 +6,5 @@ omit =
     setup.py
     ./venv/*
     ./py_abac/version.py
+    ./examples/*
     ./benchmarks/*
