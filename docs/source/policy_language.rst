@@ -468,7 +468,7 @@ Attribute Condition Block
     +---------------------+--------------------------------------------------------------------------------------------------------+
     | Field               | Description                                                                                            |
     +---------------------+--------------------------------------------------------------------------------------------------------+
-    | :code:`"condition"` | Specifies the :code:`"EqualsAttribute"` condition:                                                     |
+    | :code:`"condition"` | Specifies the type of attribute condition. Possible values are:                                        |
     |                     |                                                                                                        |
     |                     | - :code:`"EqualsAttribute"`: attribute value equals the value of attribute at location :code:`"path"`  |
     |                     |   of :code:`"ace"` access control element                                                              |
