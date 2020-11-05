@@ -203,6 +203,7 @@ There are basically six types of :code:`<condition_expression>` blocks supported
 - :ref:`Collection <collection_conditions>`
 - :ref:`Object <object_conditions>`
 - :ref:`Logic <logic_conditions>`
+- :ref:`Attribute <attribute_conditions>`
 - :ref:`Other <other_conditions>`
 
 The JSON schema and examples for each are shown in the following tables.
@@ -449,6 +450,59 @@ Logic Condition Block
            "value": {"condition": "Eq", "value": 1.5}
        }
 
+.. _attribute_conditions:
+
+Attribute Condition Block
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#.   **JSON Schema:**
+
+    .. code-block::
+
+       {
+         "condition": <string>,
+         "ace": <string>,
+         "path": <string>
+       }
+
+    +---------------------+--------------------------------------------------------------------------------------------------------+
+    | Field               | Description                                                                                            |
+    +---------------------+--------------------------------------------------------------------------------------------------------+
+    | :code:`"condition"` | Specifies the :code:`"EqualsAttribute"` condition:                                                     |
+    |                     |                                                                                                        |
+    |                     | - :code:`"EqualsAttribute"`: attribute value equals the value of attribute at location :code:`"path"`  |
+    |                     |   of :code:`"ace"` access control element                                                              |
+    |                     | - :code:`"NotEqualsAttribute"`: attribute value not equals the value of attribute at location          |
+    |                     |   :code:`"path"` of :code:`"ace"` access control element                                               |
+    |                     | - :code:`"IsInAttribute"`: attribute value is in the collection value of attribute at location         |
+    |                     |   :code:`"path"` of :code:`"ace"` access control element                                               |
+    |                     | - :code:`"IsNotInAttribute"`: attribute value is not in the collection value of attribute at location  |
+    |                     |   :code:`"path"` of :code:`"ace"` access control element                                               |
+    |                     | - :code:`"AllInAttribute"`: all attribute collection values is in the collection valued attribute at   |
+    |                     |   location :code:`"path"` of :code:`"ace"` access control element                                      |
+    |                     | - :code:`"AllNotInAttribute"`: all attribute collection values is not in the collection valued         |
+    |                     |   attribute at location :code:`"path"` of :code:`"ace"` access control element                         |
+    |                     | - :code:`"AnyInAttribute"`: any attribute collection values is in the collection valued attribute at   |
+    |                     |   location :code:`"path"` of :code:`"ace"` access control element                                      |
+    |                     | - :code:`"AnyNotInAttribute"`: any attribute collection values is not in the collection valued         |
+    |                     |   attribute at location :code:`"path"` of :code:`"ace"` access control element                         |
+    +---------------------+--------------------------------------------------------------------------------------------------------+
+    | :code:`"ace"`       | Specifies access control element. The value for this field should be either :code:`"subject"`,         |
+    |                     | :code:`"resource"`, :code:`"action"`, or :code:`"context"`                                             |
+    +---------------------+--------------------------------------------------------------------------------------------------------+
+    | :code:`"path"`      | Specified the attribute path in ObjectPath notation of the access control element in :code:`"ace"`     |
+    +---------------------+--------------------------------------------------------------------------------------------------------+
+
+    **Example:**
+
+    .. code-block:: json
+
+       {
+           "condition": "EqualsAttribute",
+           "ace": "context",
+           "path": "$.network.name"
+       }
+
 .. _other_conditions:
 
 Other Condition Block
@@ -480,40 +534,6 @@ Other Condition Block
        {
            "condition": "CIDR",
            "value": "10.0.0.0/16"
-       }
-
-#.   **JSON Schema:** :code:`"EqualsAttribute"`
-
-    .. code-block::
-
-       {
-         "condition": "EqualsAttribute",
-         "ace": <string>,
-         "path": <string>
-       }
-
-    +---------------------+--------------------------------------------------------------------------------------------------------+
-    | Field               | Description                                                                                            |
-    +---------------------+--------------------------------------------------------------------------------------------------------+
-    | :code:`"condition"` | Specifies the :code:`"EqualsAttribute"` condition:                                                     |
-    |                     |                                                                                                        |
-    |                     | - :code:`"EqualsAttribute"`: attribute value equals the value of attribute at location :code:`"path"`  |
-    |                     |   of :code:`"ace"` access control element                                                              |
-    +---------------------+--------------------------------------------------------------------------------------------------------+
-    | :code:`"ace"`       | Specifies access control element. The value for this field should be either :code:`"subject"`,         |
-    |                     | :code:`"resource"`, :code:`"action"`, or :code:`"context"`                                             |
-    +---------------------+--------------------------------------------------------------------------------------------------------+
-    | :code:`"path"`      | Specified the attribute path in ObjectPath notation of the access control element in :code:`"ace"`     |
-    +---------------------+--------------------------------------------------------------------------------------------------------+
-
-    **Example:**
-
-    .. code-block:: json
-
-       {
-           "condtion": "EqualsAttribute",
-           "ace": "context",
-           "path": "$.network.name"
        }
 
 #.   **JSON Schema:** :code:`"Any"`, :code:`"Exists"`, :code:`"NotExists"`

@@ -138,5 +138,4 @@ class PDP(object):
                 policy_groups[policy.priority].append(policy)
             else:
                 policy_groups[policy.priority] = [policy]
-        print(policy_groups)
         return self._deny_overrides(policy_groups[max_priority])

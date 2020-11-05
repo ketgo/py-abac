@@ -4,6 +4,15 @@
 
 from marshmallow_oneofschema import OneOfSchema
 
+from .attribute.all_in import AllInAttribute, AllInAttributeSchema
+from .attribute.all_not_in import AllNotInAttribute, AllNotInAttributeSchema
+from .attribute.any_in import AnyInAttribute, AnyInAttributeSchema
+from .attribute.any_not_in import AnyNotInAttribute, AnyNotInAttributeSchema
+# -- Attribute Conditions ---
+from .attribute.equals import EqualsAttribute, EqualsAttributeSchema
+from .attribute.is_in import IsInAttribute, IsInAttributeSchema
+from .attribute.is_not_in import IsNotInAttribute, IsNotInAttributeSchema
+from .attribute.not_equals import NotEqualsAttribute, NotEqualsAttributeSchema
 # --- Collection Conditions ---
 from .collection.all_in import AllIn, AllInSchema
 from .collection.all_not_in import AllNotIn, AllNotInSchema
@@ -13,10 +22,10 @@ from .collection.is_empty import IsEmpty, IsEmptySchema
 from .collection.is_in import IsIn, IsInSchema
 from .collection.is_not_empty import IsNotEmpty, IsNotEmptySchema
 from .collection.is_not_in import IsNotIn, IsNotInSchema
-from .logic._not import Not, NotSchema
 # --- Logic Conditions ---
 from .logic.all_of import AllOf, AllOfSchema
 from .logic.any_of import AnyOf, AnyOfSchema
+from .logic.not_ import Not, NotSchema
 # --- Numeric Conditions ---
 from .numeric.eq import Eq, EqSchema
 from .numeric.gt import Gt, GtSchema
@@ -29,7 +38,6 @@ from .object.equals_object import EqualsObject, EqualsObjectSchema
 # --- Other Conditions ---
 from .others.any import Any, AnySchema
 from .others.cidr import CIDR, CIDRSchema
-from .others.equals_attribute import EqualsAttribute, EqualsAttributeSchema
 from .others.exists import Exists, ExistsSchema
 from .others.not_exists import NotExists, NotExistsSchema
 # --- String Conditions ---
@@ -81,7 +89,15 @@ class ConditionSchema(OneOfSchema):
         Exists.__name__: ExistsSchema,
         NotExists.__name__: NotExistsSchema,
         Any.__name__: AnySchema,
+        # --- Attribute Conditions ---
         EqualsAttribute.__name__: EqualsAttributeSchema,
+        NotEqualsAttribute.__name__: NotEqualsAttributeSchema,
+        AnyInAttribute.__name__: AnyInAttributeSchema,
+        AnyNotInAttribute.__name__: AnyNotInAttributeSchema,
+        AllInAttribute.__name__: AllInAttributeSchema,
+        AllNotInAttribute.__name__: AllNotInAttributeSchema,
+        IsInAttribute.__name__: IsInAttributeSchema,
+        IsNotInAttribute.__name__: IsNotInAttributeSchema,
         # --- Object Condition ---
         EqualsObject.__name__: EqualsObjectSchema,
     }
