@@ -20,14 +20,6 @@ py\_abac.policy.conditions.others.cidr module
    :undoc-members:
    :show-inheritance:
 
-py\_abac.policy.conditions.others.equals\_attribute module
-----------------------------------------------------------
-
-.. automodule:: py_abac.policy.conditions.others.equals_attribute
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 py\_abac.policy.conditions.others.exists module
 -----------------------------------------------
 

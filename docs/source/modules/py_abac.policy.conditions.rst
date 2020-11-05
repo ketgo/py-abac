@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+   py_abac.policy.conditions.attribute
    py_abac.policy.conditions.collection
    py_abac.policy.conditions.logic
    py_abac.policy.conditions.numeric

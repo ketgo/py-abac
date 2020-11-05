@@ -6,7 +6,7 @@ from typing import Union, List, Dict
 
 from marshmallow import Schema, fields, post_load
 
-from .conditions.others.equals_attribute import validate_path
+from .conditions.attribute.base import validate_path
 from .conditions.schema import ConditionSchema
 from ..context import EvaluationContext
 
