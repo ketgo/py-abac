@@ -30,3 +30,7 @@
 - Added `FileStorage` backend.
 - Fixed typos in documentation.
 - Removed all import statements from `py_abac/storage/__init__.py`.
+
+# v0.4.1
+
+- Added the `NotEqualsAttribute`, `IsInAttribute`, `IsNotInAttribute`, `AllInAttribute`, `AllNotInAttribute`, `AnyInAttribute` and `AnyNotInAttribute` conditions to policy language.

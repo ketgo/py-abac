@@ -28,6 +28,14 @@ py\_abac.policy.conditions.logic.base module
    :undoc-members:
    :show-inheritance:
 
+py\_abac.policy.conditions.logic.not\_ module
+---------------------------------------------
+
+.. automodule:: py_abac.policy.conditions.logic.not_
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

@@ -472,10 +472,20 @@ Attribute Condition Block
     |                     |                                                                                                        |
     |                     | - :code:`"EqualsAttribute"`: attribute value equals the value of attribute at location :code:`"path"`  |
     |                     |   of :code:`"ace"` access control element                                                              |
+    |                     | - :code:`"NotEqualsAttribute"`: attribute value not equals the value of attribute at location          |
+    |                     |   :code:`"path"` of :code:`"ace"` access control element                                               |
     |                     | - :code:`"IsInAttribute"`: attribute value is in the collection value of attribute at location         |
     |                     |   :code:`"path"` of :code:`"ace"` access control element                                               |
     |                     | - :code:`"IsNotInAttribute"`: attribute value is not in the collection value of attribute at location  |
     |                     |   :code:`"path"` of :code:`"ace"` access control element                                               |
+    |                     | - :code:`"AllInAttribute"`: all attribute collection values is in the collection valued attribute at   |
+    |                     |   location :code:`"path"` of :code:`"ace"` access control element                                      |
+    |                     | - :code:`"AllNotInAttribute"`: all attribute collection values is not in the collection valued         |
+    |                     |   attribute at location :code:`"path"` of :code:`"ace"` access control element                         |
+    |                     | - :code:`"AnyInAttribute"`: any attribute collection values is in the collection valued attribute at   |
+    |                     |   location :code:`"path"` of :code:`"ace"` access control element                                      |
+    |                     | - :code:`"AnyNotInAttribute"`: any attribute collection values is not in the collection valued         |
+    |                     |   attribute at location :code:`"path"` of :code:`"ace"` access control element                         |
     +---------------------+--------------------------------------------------------------------------------------------------------+
     | :code:`"ace"`       | Specifies access control element. The value for this field should be either :code:`"subject"`,         |
     |                     | :code:`"resource"`, :code:`"action"`, or :code:`"context"`                                             |
@@ -488,7 +498,7 @@ Attribute Condition Block
     .. code-block:: json
 
        {
-           "condtion": "EqualsAttribute",
+           "condition": "EqualsAttribute",
            "ace": "context",
            "path": "$.network.name"
        }
