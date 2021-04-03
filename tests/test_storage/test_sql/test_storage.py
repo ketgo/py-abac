@@ -201,7 +201,7 @@ def test_update(st):
     assert st.get(policy.uid) is None
     st.add(policy)
     assert '1' == st.get('1').uid
-    assert '' is st.get('1').description
+    assert '' == st.get('1').description
     policy.description = 'foo'
     st.update(policy)
     assert '1' == st.get('1').uid

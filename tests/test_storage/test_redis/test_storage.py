@@ -191,7 +191,7 @@ def test_update(st):
     policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
     st.add(policy)
     assert '1' == st.get('1').uid
-    assert '' is st.get('1').description
+    assert '' == st.get('1').description
     policy.description = 'foo'
     st.update(policy)
     assert '1' == st.get('1').uid
