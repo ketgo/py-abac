@@ -2,7 +2,7 @@ import os
 
 from pymongo import MongoClient
 
-DEFAULT_MONGODB_HOST = "127.0.0.1:27017"
+DEFAULT_MONGODB_HOST = "mongodb://mongo:password@127.0.0.1:27017"
 
 
 def create_client() -> MongoClient:
