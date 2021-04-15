@@ -2,8 +2,6 @@
     Condition one-of schema
 """
 
-from marshmallow_oneofschema import OneOfSchema
-
 from .attribute.all_in import AllInAttribute, AllInAttributeSchema
 from .attribute.all_not_in import AllNotInAttribute, AllNotInAttributeSchema
 from .attribute.any_in import AnyInAttribute, AnyInAttributeSchema
@@ -50,7 +48,7 @@ from .string.regex_match import RegexMatch, RegexMatchSchema
 from .string.starts_with import StartsWith, StartsWithSchema
 
 
-class ConditionSchema(OneOfSchema):
+class ConditionField:
     """
         Polymorphic JSON schema for conditions
     """
@@ -101,3 +99,13 @@ class ConditionSchema(OneOfSchema):
         # --- Object Condition ---
         EqualsObject.__name__: EqualsObjectSchema,
     }
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v, values):
+        item_type = values[cls.type_field]
+        condition = cls.type_schemas[item_type]
+        return condition(**v)

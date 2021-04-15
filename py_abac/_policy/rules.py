@@ -4,31 +4,48 @@
 
 from typing import Union, List, Dict
 
-from marshmallow import Schema, fields, post_load
-
-from .conditions.attribute.base import validate_path
-from .conditions.schema import ConditionSchema
-from ..context import EvaluationContext
-
 from pydantic import BaseModel
 
+from .conditions.base import ConditionBase
+from ..context import EvaluationContext
 
-class Rules(object):
+
+class ObjectPathField:
+    """
+        ObjectPath field
+    """
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not isinstance(v, str):
+            raise TypeError("str type in ObjectPath notion expected")
+        return v
+
+
+class Rules(BaseModel):
     """
         Policy rules
     """
-
-    def __init__(
-            self,
-            subject: Union[List, Dict],
-            resource: Union[List, Dict],
-            action: Union[List, Dict],
-            context: Union[List, Dict]
-    ):
-        self.subject = subject
-        self.resource = resource
-        self.action = action
-        self.context = context
+    subject: Union[
+        Dict[ObjectPathField, ConditionBase],
+        List[Dict[ObjectPathField, ConditionBase]]
+    ]
+    resource: Union[
+        Dict[ObjectPathField, ConditionBase],
+        List[Dict[ObjectPathField, ConditionBase]]
+    ]
+    action: Union[
+        Dict[ObjectPathField, ConditionBase],
+        List[Dict[ObjectPathField, ConditionBase]]
+    ]
+    context: Union[
+        Dict[ObjectPathField, ConditionBase],
+        List[Dict[ObjectPathField, ConditionBase]]
+    ]
 
     def is_satisfied(self, ctx: EvaluationContext):
         """
@@ -78,49 +95,3 @@ class Rules(object):
                 return False
         # If all conditions are satisfied, return True
         return True
-
-
-class RuleField(fields.Field):
-    """
-        Marshmallow field class for rules
-    """
-    _implicit_and_field = fields.Dict(
-        keys=fields.String(validate=validate_path),
-        values=fields.Nested(ConditionSchema)
-    )
-    _implicit_or_field = fields.List(
-        fields.Dict(
-            keys=fields.String(validate=validate_path),
-            values=fields.Nested(ConditionSchema)
-        )
-    )
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        if isinstance(value, list):
-            return self._implicit_or_field._serialize(value, attr, obj, **kwargs)  # pylint: disable=protected-access
-        return self._implicit_and_field._serialize(value, attr, obj, **kwargs)  # pylint: disable=protected-access
-
-    def _deserialize(self, value, attr, data, **kwargs):
-        if isinstance(value, list):
-            return self._implicit_or_field.deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
-        return self._implicit_and_field.deserialize(value, attr, data, **kwargs)  # pylint: disable=protected-access
-
-
-class RulesSchema(Schema):
-    """
-        JSON schema for rules
-    """
-    subject = RuleField(default={}, missing={})
-    resource = RuleField(default={}, missing={})
-    action = RuleField(default={}, missing={})
-    context = RuleField(default={}, missing={})
-
-    @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
-        return Rules(**data)
-
-class Rules2(BaseModel):
-    """
-        Policy rules
-    """
-    subject:

@@ -5,7 +5,7 @@
 import fnmatch
 from typing import Union, List
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, constr
 
 from ..context import EvaluationContext
 
@@ -14,20 +14,9 @@ class Targets(BaseModel):
     """
         Policy targets
     """
-    subject_id: Union[str, List[str]] = "*"
-    resource_id: Union[str, List[str]] = "*"
-    action_id: Union[str, List[str]] = "*"
-
-    @validator('*')
-    def validate(cls, v):
-        """
-            Validate fields in target
-        """
-        values = v if isinstance(v, list) else [v]
-        for value in values:
-            if len(value) == 0:
-                raise ValueError("shorter than minimum length 1.")
-        return v
+    subject_id: Union[constr(min_length=1), List[constr(min_length=1)]] = "*"
+    resource_id: Union[constr(min_length=1), List[constr(min_length=1)]] = "*"
+    action_id: Union[constr(min_length=1), List[constr(min_length=1)]] = "*"
 
     def match(self, ctx: EvaluationContext):
         """
