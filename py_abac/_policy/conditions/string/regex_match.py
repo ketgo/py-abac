@@ -4,15 +4,34 @@
 
 import re
 
-from marshmallow import Schema, fields, post_load, ValidationError
+from .base import ConditionBase, LOG, is_string
+from pydantic import validator, ValidationError
 
-from .base import StringCondition
 
-
-class RegexMatch(StringCondition):
+class RegexMatch(ConditionBase):
     """
         Condition for string `what` matches regex `value`
     """
+    # Condition type specifier
+    condition: str = "RegexMatch"
+    value: str
+
+    @validator('value')
+    def is_regex(cls, v):
+        validate_regex(v)
+        return v
+
+    def is_satisfied(self, ctx) -> bool:
+        if not is_string(ctx.attribute_value):
+            LOG.debug(
+                "Invalid type '%s' for attribute value at path '%s' for element '%s'."
+                " Condition not satisfied.",
+                type(ctx.attribute_value),
+                ctx.attribute_path,
+                ctx.ace
+            )
+            return False
+        return self._is_satisfied(ctx.attribute_value)
 
     def _is_satisfied(self, what) -> bool:
         return re.search(self.value, what) is not None
@@ -28,14 +47,3 @@ def validate_regex(value):
         re.compile(value)
     except Exception:
         raise ValidationError("Invalid regex expression '{}'.".format(value))
-
-
-class RegexMatchSchema(Schema):
-    """
-        JSON schema for regex match string condition
-    """
-    value = fields.String(required=True, allow_none=False, validate=validate_regex)
-
-    @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
-        return RegexMatch(**data)

@@ -2,6 +2,8 @@
     Condition one-of schema
 """
 
+from pydantic import BaseModel, validator
+
 from .attribute.all_in import AllInAttribute, AllInAttributeSchema
 from .attribute.all_not_in import AllNotInAttribute, AllNotInAttributeSchema
 from .attribute.any_in import AnyInAttribute, AnyInAttributeSchema
@@ -39,16 +41,16 @@ from .others.cidr import CIDR, CIDRSchema
 from .others.exists import Exists, ExistsSchema
 from .others.not_exists import NotExists, NotExistsSchema
 # --- String Conditions ---
-from .string.contains import Contains, ContainsSchema
-from .string.ends_with import EndsWith, EndsWithSchema
-from .string.equals import Equals, EqualsSchema
-from .string.not_contains import NotContains, NotContainsSchema
-from .string.not_equals import NotEquals, NotEqualsSchema
-from .string.regex_match import RegexMatch, RegexMatchSchema
-from .string.starts_with import StartsWith, StartsWithSchema
+from .string.contains import Contains
+from .string.ends_with import EndsWith
+from .string.equals import Equals
+from .string.not_contains import NotContains
+from .string.not_equals import NotEquals
+from .string.regex_match import RegexMatch
+from .string.starts_with import StartsWith
 
 
-class ConditionField:
+class ConditionSchema(BaseModel):
     """
         Polymorphic JSON schema for conditions
     """
@@ -62,13 +64,13 @@ class ConditionField:
         Lte.__name__: LteSchema,
         Neq.__name__: NeqSchema,
         # --- String Conditions ---
-        Contains.__name__: ContainsSchema,
-        NotContains.__name__: NotContainsSchema,
-        Equals.__name__: EqualsSchema,
-        NotEquals.__name__: NotEqualsSchema,
-        StartsWith.__name__: StartsWithSchema,
-        EndsWith.__name__: EndsWithSchema,
-        RegexMatch.__name__: RegexMatchSchema,
+        Contains.__name__: Contains,
+        NotContains.__name__: NotContains,
+        Equals.__name__: Equals,
+        NotEquals.__name__: NotEquals,
+        StartsWith.__name__: StartsWith,
+        EndsWith.__name__: EndsWith,
+        RegexMatch.__name__: RegexMatch,
         # --- Collection Conditions ---
         IsIn.__name__: IsInSchema,
         IsNotIn.__name__: IsNotInSchema,
@@ -100,11 +102,7 @@ class ConditionField:
         EqualsObject.__name__: EqualsObjectSchema,
     }
 
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
+    @validator('*')
     def validate(cls, v, values):
         item_type = values[cls.type_field]
         condition = cls.type_schemas[item_type]

@@ -4,8 +4,6 @@
 
 import logging
 
-from marshmallow import Schema, fields
-
 from ..base import ConditionBase, ABCMeta, abstractmethod
 
 LOG = logging.getLogger(__name__)
@@ -22,10 +20,8 @@ class StringCondition(ConditionBase, metaclass=ABCMeta):
     """
         Base class for string conditions
     """
-
-    def __init__(self, value, case_insensitive=False):
-        self.case_insensitive = case_insensitive or False
-        self.value = value
+    value: str
+    case_insensitive: bool = False
 
     def is_satisfied(self, ctx) -> bool:
         if not is_string(ctx.attribute_value):
@@ -48,11 +44,3 @@ class StringCondition(ConditionBase, metaclass=ABCMeta):
             :return: True if satisfied else False
         """
         raise NotImplementedError()
-
-
-class StringConditionSchema(Schema):
-    """
-        Base JSON schema for string conditions
-    """
-    value = fields.String(required=True, allow_none=False)
-    case_insensitive = fields.Bool(default=False, missing=False)

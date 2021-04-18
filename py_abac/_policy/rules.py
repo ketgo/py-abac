@@ -6,7 +6,7 @@ from typing import Union, List, Dict
 
 from pydantic import BaseModel
 
-from .conditions.base import ConditionBase
+from .conditions.schema import ConditionSchema as Condition
 from ..context import EvaluationContext
 
 
@@ -31,20 +31,20 @@ class Rules(BaseModel):
         Policy rules
     """
     subject: Union[
-        Dict[ObjectPathField, ConditionBase],
-        List[Dict[ObjectPathField, ConditionBase]]
+        Dict[ObjectPathField, Condition],
+        List[Dict[ObjectPathField, Condition]]
     ]
     resource: Union[
-        Dict[ObjectPathField, ConditionBase],
-        List[Dict[ObjectPathField, ConditionBase]]
+        Dict[ObjectPathField, Condition],
+        List[Dict[ObjectPathField, Condition]]
     ]
     action: Union[
-        Dict[ObjectPathField, ConditionBase],
-        List[Dict[ObjectPathField, ConditionBase]]
+        Dict[ObjectPathField, Condition],
+        List[Dict[ObjectPathField, Condition]]
     ]
     context: Union[
-        Dict[ObjectPathField, ConditionBase],
-        List[Dict[ObjectPathField, ConditionBase]]
+        Dict[ObjectPathField, Condition],
+        List[Dict[ObjectPathField, Condition]]
     ]
 
     def is_satisfied(self, ctx: EvaluationContext):
