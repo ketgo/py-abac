@@ -3,10 +3,8 @@
 """
 
 import pytest
-from marshmallow import ValidationError
+from pydantic import ValidationError
 
-from py_abac.context import EvaluationContext
-from py_abac._policy.conditions.schema import ConditionSchema
 from py_abac._policy.conditions.string import Contains
 from py_abac._policy.conditions.string import EndsWith
 from py_abac._policy.conditions.string import Equals
@@ -14,6 +12,7 @@ from py_abac._policy.conditions.string import NotContains
 from py_abac._policy.conditions.string import NotEquals
 from py_abac._policy.conditions.string import RegexMatch
 from py_abac._policy.conditions.string import StartsWith
+from py_abac.context import EvaluationContext
 from py_abac.request import AccessRequest
 
 
@@ -65,9 +64,7 @@ class TestStringCondition(object):
         (RegexMatch(value="2"), {"condition": "RegexMatch", "value": "2"}),
     ])
     def test_from_json(self, condition, condition_json):
-        new_condition = ConditionSchema.parse_obj(condition_json)
-        print(new_condition)
-        assert new_condition.condition == condition.condition
+        new_condition = condition.__class__.parse_obj(condition_json)
         for attr in condition.__dict__:
             assert getattr(new_condition, attr) == getattr(condition, attr)
 
@@ -88,7 +85,7 @@ class TestStringCondition(object):
     ])
     def test_create_error(self, condition_type, data):
         with pytest.raises(ValidationError):
-            ConditionSchema().load(data)
+            condition_type.parse_obj(data)
 
     @pytest.mark.parametrize("condition, what, result", [
         (Contains(value="b"), "abc", True),

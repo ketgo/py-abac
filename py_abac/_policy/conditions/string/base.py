@@ -4,6 +4,8 @@
 
 import logging
 
+from pydantic import StrictStr
+
 from ..base import ConditionBase, ABCMeta, abstractmethod
 
 LOG = logging.getLogger(__name__)
@@ -20,7 +22,7 @@ class StringCondition(ConditionBase, metaclass=ABCMeta):
     """
         Base class for string conditions
     """
-    value: str
+    value: StrictStr
     case_insensitive: bool = False
 
     def is_satisfied(self, ctx) -> bool:

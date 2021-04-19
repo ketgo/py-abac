@@ -6,7 +6,7 @@ from typing import Union, List, Dict
 
 from pydantic import BaseModel
 
-from .conditions.schema import ConditionSchema as Condition
+from .conditions.field import Condition
 from ..context import EvaluationContext
 
 

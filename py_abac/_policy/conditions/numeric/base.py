@@ -3,8 +3,7 @@
 """
 
 import logging
-
-from marshmallow import Schema, fields
+from typing import Union
 
 from ..base import ConditionBase, ABCMeta, abstractmethod
 
@@ -22,9 +21,7 @@ class NumericCondition(ConditionBase, metaclass=ABCMeta):
     """
         Base class for numeric conditions
     """
-
-    def __init__(self, value):
-        self.value = value
+    value: Union[int, float]
 
     def is_satisfied(self, ctx) -> bool:
         if not is_number(ctx.attribute_value):
@@ -47,10 +44,3 @@ class NumericCondition(ConditionBase, metaclass=ABCMeta):
             :return: True if satisfied else False
         """
         raise NotImplementedError()
-
-
-class NumericConditionSchema(Schema):
-    """
-        Base JSON schema for numeric conditions
-    """
-    value = fields.Number(required=True, allow_none=False)

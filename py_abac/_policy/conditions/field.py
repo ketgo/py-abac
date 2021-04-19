@@ -2,7 +2,7 @@
     Condition one-of schema
 """
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 from .attribute.all_in import AllInAttribute, AllInAttributeSchema
 from .attribute.all_not_in import AllNotInAttribute, AllNotInAttributeSchema
@@ -50,9 +50,9 @@ from .string.regex_match import RegexMatch
 from .string.starts_with import StartsWith
 
 
-class ConditionSchema(BaseModel):
+class Condition(BaseModel):
     """
-        Polymorphic JSON schema for conditions
+        Polymorphic JSON field for conditions
     """
     type_field = "condition"
     type_schemas = {
@@ -102,7 +102,11 @@ class ConditionSchema(BaseModel):
         EqualsObject.__name__: EqualsObjectSchema,
     }
 
-    @validator('*')
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
     def validate(cls, v, values):
         item_type = values[cls.type_field]
         condition = cls.type_schemas[item_type]
