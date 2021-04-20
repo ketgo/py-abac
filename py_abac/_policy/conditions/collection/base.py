@@ -3,8 +3,7 @@
 """
 
 import logging
-
-from marshmallow import Schema, fields
+from typing import Union, List, Set, Tuple
 
 from ..base import ConditionBase, ABCMeta, abstractmethod
 
@@ -21,12 +20,8 @@ def is_collection(value) -> bool:
 class CollectionCondition(ConditionBase, metaclass=ABCMeta):
     """
         Base class for collection conditions
-
-        :param values: collection of values to compare during policy evaluation
     """
-
-    def __init__(self, values):
-        self.values = values
+    values: Union[List, Set, Tuple]
 
     def is_satisfied(self, ctx) -> bool:
         if not is_collection(ctx.attribute_value):
@@ -49,14 +44,3 @@ class CollectionCondition(ConditionBase, metaclass=ABCMeta):
             :return: True if satisfied else False
         """
         raise NotImplementedError()
-
-
-class CollectionConditionSchema(Schema):
-    """
-        Base JSON schema class for collection conditions
-    """
-    values = fields.List(
-        fields.Raw(required=True, allow_none=False),
-        required=True,
-        allow_none=False
-    )

@@ -3,18 +3,17 @@
 """
 
 import pytest
-from marshmallow import ValidationError
+from pydantic import ValidationError
 
+from py_abac._policy.conditions.attribute import AllInAttribute
+from py_abac._policy.conditions.attribute import AllNotInAttribute
+from py_abac._policy.conditions.attribute import AnyInAttribute
+from py_abac._policy.conditions.attribute import AnyNotInAttribute
+from py_abac._policy.conditions.attribute import EqualsAttribute
+from py_abac._policy.conditions.attribute import IsInAttribute
+from py_abac._policy.conditions.attribute import IsNotInAttribute
+from py_abac._policy.conditions.attribute import NotEqualsAttribute
 from py_abac.context import EvaluationContext
-from py_abac.policy.conditions.attribute import AllInAttribute
-from py_abac.policy.conditions.attribute import AllNotInAttribute
-from py_abac.policy.conditions.attribute import AnyInAttribute
-from py_abac.policy.conditions.attribute import AnyNotInAttribute
-from py_abac.policy.conditions.attribute import EqualsAttribute
-from py_abac.policy.conditions.attribute import IsInAttribute
-from py_abac.policy.conditions.attribute import IsNotInAttribute
-from py_abac.policy.conditions.attribute import NotEqualsAttribute
-from py_abac.policy.conditions.schema import ConditionSchema
 from py_abac.request import AccessRequest
 
 
@@ -22,124 +21,123 @@ class TestAttributeCondition(object):
 
     @pytest.mark.parametrize("condition, condition_json", [
         (
-                EqualsAttribute("subject", "$.name"),
+                EqualsAttribute(ace="subject", path="$.name"),
                 {"condition": "EqualsAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                NotEqualsAttribute("subject", "$.name"),
+                NotEqualsAttribute(ace="subject", path="$.name"),
                 {"condition": "NotEqualsAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                IsInAttribute("subject", "$.teams"),
+                IsInAttribute(ace="subject", path="$.teams"),
                 {"condition": "IsInAttribute", "ace": "subject", "path": "$.teams"}
         ),
         (
-                IsNotInAttribute("subject", "$.teams"),
+                IsNotInAttribute(ace="subject", path="$.teams"),
                 {"condition": "IsNotInAttribute", "ace": "subject", "path": "$.teams"}
         ),
         (
-                AllInAttribute("subject", "$.name"),
+                AllInAttribute(ace="subject", path="$.name"),
                 {"condition": "AllInAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                AllNotInAttribute("subject", "$.name"),
+                AllNotInAttribute(ace="subject", path="$.name"),
                 {"condition": "AllNotInAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                AnyInAttribute("subject", "$.name"),
+                AnyInAttribute(ace="subject", path="$.name"),
                 {"condition": "AnyInAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                AnyNotInAttribute("subject", "$.name"),
+                AnyNotInAttribute(ace="subject", path="$.name"),
                 {"condition": "AnyNotInAttribute", "ace": "subject", "path": "$.name"}
         ),
     ])
     def test_to_json(self, condition, condition_json):
-        assert ConditionSchema().dump(condition) == condition_json
+        assert condition.dict() == condition_json
 
     @pytest.mark.parametrize("condition, condition_json", [
         (
-                EqualsAttribute("subject", "$.name"),
+                EqualsAttribute(ace="subject", path="$.name"),
                 {"condition": "EqualsAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                NotEqualsAttribute("subject", "$.name"),
+                NotEqualsAttribute(ace="subject", path="$.name"),
                 {"condition": "NotEqualsAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                IsInAttribute("subject", "$.teams"),
+                IsInAttribute(ace="subject", path="$.teams"),
                 {"condition": "IsInAttribute", "ace": "subject", "path": "$.teams"}
         ),
         (
-                IsNotInAttribute("subject", "$.teams"),
+                IsNotInAttribute(ace="subject", path="$.teams"),
                 {"condition": "IsNotInAttribute", "ace": "subject", "path": "$.teams"}
         ),
         (
-                AllInAttribute("subject", "$.name"),
+                AllInAttribute(ace="subject", path="$.name"),
                 {"condition": "AllInAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                AllNotInAttribute("subject", "$.name"),
+                AllNotInAttribute(ace="subject", path="$.name"),
                 {"condition": "AllNotInAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                AnyInAttribute("subject", "$.name"),
+                AnyInAttribute(ace="subject", path="$.name"),
                 {"condition": "AnyInAttribute", "ace": "subject", "path": "$.name"}
         ),
         (
-                AnyNotInAttribute("subject", "$.name"),
+                AnyNotInAttribute(ace="subject", path="$.name"),
                 {"condition": "AnyNotInAttribute", "ace": "subject", "path": "$.name"}
         ),
     ])
     def test_from_json(self, condition, condition_json):
-        new_condition = ConditionSchema().load(condition_json)
-        assert isinstance(new_condition, condition.__class__)
+        new_condition = condition.__class__.parse_obj(condition_json)
         for attr in condition.__dict__:
             assert getattr(new_condition, attr) == getattr(condition, attr)
 
-    @pytest.mark.parametrize("data", [
-        {"condition": "EqualsAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "EqualsAttribute", "ace": "subject", "path": ")"},
-        {"condition": "EqualsAttribute", "ace": "subject", "path": None},
+    @pytest.mark.parametrize("condition_type, data", [
+        (EqualsAttribute, {"condition": "EqualsAttribute", "ace": "test", "path": "$.name"}),
+        (EqualsAttribute, {"condition": "EqualsAttribute", "ace": "subject", "path": ")"}),
+        (EqualsAttribute, {"condition": "EqualsAttribute", "ace": "subject", "path": None}),
 
-        {"condition": "NotEqualsAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "NotEqualsAttribute", "ace": "subject", "path": ")"},
-        {"condition": "NotEqualsAttribute", "ace": "subject", "path": None},
+        (NotEqualsAttribute, {"condition": "NotEqualsAttribute", "ace": "test", "path": "$.name"}),
+        (NotEqualsAttribute, {"condition": "NotEqualsAttribute", "ace": "subject", "path": ")"}),
+        (NotEqualsAttribute, {"condition": "NotEqualsAttribute", "ace": "subject", "path": None}),
 
-        {"condition": "IsInAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "IsInAttribute", "ace": "subject", "path": ")"},
-        {"condition": "IsInAttribute", "ace": "subject", "path": None},
+        (IsInAttribute, {"condition": "IsInAttribute", "ace": "test", "path": "$.name"}),
+        (IsInAttribute, {"condition": "IsInAttribute", "ace": "subject", "path": ")"}),
+        (IsInAttribute, {"condition": "IsInAttribute", "ace": "subject", "path": None}),
 
-        {"condition": "IsNotInAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "IsNotInAttribute", "ace": "subject", "path": ")"},
-        {"condition": "IsNotInAttribute", "ace": "subject", "path": None},
+        (IsNotInAttribute, {"condition": "IsNotInAttribute", "ace": "test", "path": "$.name"}),
+        (IsNotInAttribute, {"condition": "IsNotInAttribute", "ace": "subject", "path": ")"}),
+        (IsNotInAttribute, {"condition": "IsNotInAttribute", "ace": "subject", "path": None}),
 
-        {"condition": "AllInAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "AllInAttribute", "ace": "subject", "path": ")"},
-        {"condition": "AllInAttribute", "ace": "subject", "path": None},
+        (AllInAttribute, {"condition": "AllInAttribute", "ace": "test", "path": "$.name"}),
+        (AllInAttribute, {"condition": "AllInAttribute", "ace": "subject", "path": ")"}),
+        (AllInAttribute, {"condition": "AllInAttribute", "ace": "subject", "path": None}),
 
-        {"condition": "AllNotInAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "AllNotInAttribute", "ace": "subject", "path": ")"},
-        {"condition": "AllNotInAttribute", "ace": "subject", "path": None},
+        (AllNotInAttribute, {"condition": "AllNotInAttribute", "ace": "test", "path": "$.name"}),
+        (AllNotInAttribute, {"condition": "AllNotInAttribute", "ace": "subject", "path": ")"}),
+        (AllNotInAttribute, {"condition": "AllNotInAttribute", "ace": "subject", "path": None}),
 
-        {"condition": "AnyInAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "AnyInAttribute", "ace": "subject", "path": ")"},
-        {"condition": "AnyInAttribute", "ace": "subject", "path": None},
+        (AnyInAttribute, {"condition": "AnyInAttribute", "ace": "test", "path": "$.name"}),
+        (AnyInAttribute, {"condition": "AnyInAttribute", "ace": "subject", "path": ")"}),
+        (AnyInAttribute, {"condition": "AnyInAttribute", "ace": "subject", "path": None}),
 
-        {"condition": "AnyNotInAttribute", "ace": "test", "path": "$.name"},
-        {"condition": "AnyNotInAttribute", "ace": "subject", "path": ")"},
-        {"condition": "AnyNotInAttribute", "ace": "subject", "path": None},
+        (AnyNotInAttribute, {"condition": "AnyNotInAttribute", "ace": "test", "path": "$.name"}),
+        (AnyNotInAttribute, {"condition": "AnyNotInAttribute", "ace": "subject", "path": ")"}),
+        (AnyNotInAttribute, {"condition": "AnyNotInAttribute", "ace": "subject", "path": None}),
     ])
-    def test_create_error(self, data):
+    def test_create_error(self, condition_type, data):
         with pytest.raises(ValidationError):
-            ConditionSchema().load(data)
+            condition_type.parse_obj(data)
 
     @pytest.mark.parametrize("condition, what, result", [
-        (EqualsAttribute("subject", "$.what"), "test", True),
-        (EqualsAttribute("resource", "$.what"), "test", False),
-        (EqualsAttribute("resource", "$.*"), "test", False),
-        (EqualsAttribute("resource", "$.name"), "test", False),
-        (EqualsAttribute("resource", "$.name.what"), {"test": True}, True),
+        (EqualsAttribute(ace="subject", path="$.what"), "test", True),
+        (EqualsAttribute(ace="resource", path="$.what"), "test", False),
+        (EqualsAttribute(ace="resource", path="$.*"), "test", False),
+        (EqualsAttribute(ace="resource", path="$.name"), "test", False),
+        (EqualsAttribute(ace="resource", path="$.name.what"), {"test": True}, True),
     ])
     def test_is_satisfied_equals_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},
@@ -151,11 +149,11 @@ class TestAttributeCondition(object):
         assert condition.is_satisfied(ctx) == result
 
     @pytest.mark.parametrize("condition, what, result", [
-        (NotEqualsAttribute("subject", "$.what"), "test", False),
-        (NotEqualsAttribute("resource", "$.what"), "test", True),
-        (NotEqualsAttribute("resource", "$.*"), "test", True),
-        (NotEqualsAttribute("resource", "$.name"), "test", True),
-        (NotEqualsAttribute("resource", "$.name.what"), {"test": True}, False),
+        (NotEqualsAttribute(ace="subject", path="$.what"), "test", False),
+        (NotEqualsAttribute(ace="resource", path="$.what"), "test", True),
+        (NotEqualsAttribute(ace="resource", path="$.*"), "test", True),
+        (NotEqualsAttribute(ace="resource", path="$.name"), "test", True),
+        (NotEqualsAttribute(ace="resource", path="$.name.what"), {"test": True}, False),
     ])
     def test_is_satisfied_not_equals_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},
@@ -167,11 +165,11 @@ class TestAttributeCondition(object):
         assert condition.is_satisfied(ctx) == result
 
     @pytest.mark.parametrize("condition, what, result", [
-        (IsInAttribute("subject", "$.what"), "test", False),
-        (IsInAttribute("resource", "$.what"), "test", False),
-        (IsInAttribute("resource", "$.*"), "test", False),
-        (IsInAttribute("resource", "$.name"), "test", False),
-        (IsInAttribute("resource", "$.name.what"), "test", True),
+        (IsInAttribute(ace="subject", path="$.what"), "test", False),
+        (IsInAttribute(ace="resource", path="$.what"), "test", False),
+        (IsInAttribute(ace="resource", path="$.*"), "test", False),
+        (IsInAttribute(ace="resource", path="$.name"), "test", False),
+        (IsInAttribute(ace="resource", path="$.name.what"), "test", True),
     ])
     def test_is_satisfied_is_in_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},
@@ -183,11 +181,11 @@ class TestAttributeCondition(object):
         assert condition.is_satisfied(ctx) == result
 
     @pytest.mark.parametrize("condition, what, result", [
-        (IsNotInAttribute("subject", "$.what"), "test", False),
-        (IsNotInAttribute("resource", "$.what"), "test", False),
-        (IsNotInAttribute("resource", "$.*"), "test", False),
-        (IsNotInAttribute("resource", "$.name"), "test", False),
-        (IsNotInAttribute("resource", "$.name.what"), "test", True),
+        (IsNotInAttribute(ace="subject", path="$.what"), "test", False),
+        (IsNotInAttribute(ace="resource", path="$.what"), "test", False),
+        (IsNotInAttribute(ace="resource", path="$.*"), "test", False),
+        (IsNotInAttribute(ace="resource", path="$.name"), "test", False),
+        (IsNotInAttribute(ace="resource", path="$.name.what"), "test", True),
     ])
     def test_is_satisfied_is_not_in_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},
@@ -199,13 +197,13 @@ class TestAttributeCondition(object):
         assert condition.is_satisfied(ctx) == result
 
     @pytest.mark.parametrize("condition, what, result", [
-        (AllInAttribute("subject", "$.what"), "test", False),
-        (AllInAttribute("subject", "$.what"), ["test"], True),
-        (AllInAttribute("resource", "$.what"), ["test"], False),
-        (AllInAttribute("resource", "$.*"), ["test"], False),
-        (AllInAttribute("resource", "$.name"), ["test"], False),
-        (AllInAttribute("resource", "$.name.what"), ["test_1"], True),
-        (AllInAttribute("resource", "$.name.what"), ["test_1", "test_2"], False),
+        (AllInAttribute(ace="subject", path="$.what"), "test", False),
+        (AllInAttribute(ace="subject", path="$.what"), ["test"], True),
+        (AllInAttribute(ace="resource", path="$.what"), ["test"], False),
+        (AllInAttribute(ace="resource", path="$.*"), ["test"], False),
+        (AllInAttribute(ace="resource", path="$.name"), ["test"], False),
+        (AllInAttribute(ace="resource", path="$.name.what"), ["test_1"], True),
+        (AllInAttribute(ace="resource", path="$.name.what"), ["test_1", "test_2"], False),
     ])
     def test_is_satisfied_all_in_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},
@@ -217,13 +215,13 @@ class TestAttributeCondition(object):
         assert condition.is_satisfied(ctx) == result
 
     @pytest.mark.parametrize("condition, what, result", [
-        (AllNotInAttribute("subject", "$.what"), "test", False),
-        (AllNotInAttribute("subject", "$.what"), ["test"], False),
-        (AllNotInAttribute("resource", "$.what"), ["test"], False),
-        (AllNotInAttribute("resource", "$.*"), ["test"], False),
-        (AllNotInAttribute("resource", "$.name"), ["test"], False),
-        (AllNotInAttribute("resource", "$.name.what"), ["test_1"], False),
-        (AllNotInAttribute("resource", "$.name.what"), ["test_1", "test_2"], True),
+        (AllNotInAttribute(ace="subject", path="$.what"), "test", False),
+        (AllNotInAttribute(ace="subject", path="$.what"), ["test"], False),
+        (AllNotInAttribute(ace="resource", path="$.what"), ["test"], False),
+        (AllNotInAttribute(ace="resource", path="$.*"), ["test"], False),
+        (AllNotInAttribute(ace="resource", path="$.name"), ["test"], False),
+        (AllNotInAttribute(ace="resource", path="$.name.what"), ["test_1"], False),
+        (AllNotInAttribute(ace="resource", path="$.name.what"), ["test_1", "test_2"], True),
     ])
     def test_is_satisfied_all_not_in_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},
@@ -235,13 +233,13 @@ class TestAttributeCondition(object):
         assert condition.is_satisfied(ctx) == result
 
     @pytest.mark.parametrize("condition, what, result", [
-        (AnyInAttribute("subject", "$.what"), "test", False),
-        (AnyInAttribute("subject", "$.what"), ["test"], True),
-        (AnyInAttribute("resource", "$.what"), ["test"], False),
-        (AnyInAttribute("resource", "$.*"), ["test"], False),
-        (AnyInAttribute("resource", "$.name"), ["test"], False),
-        (AnyInAttribute("resource", "$.name.what"), ["test_1"], True),
-        (AnyInAttribute("resource", "$.name.what"), ["test_1", "test_2"], True),
+        (AnyInAttribute(ace="subject", path="$.what"), "test", False),
+        (AnyInAttribute(ace="subject", path="$.what"), ["test"], True),
+        (AnyInAttribute(ace="resource", path="$.what"), ["test"], False),
+        (AnyInAttribute(ace="resource", path="$.*"), ["test"], False),
+        (AnyInAttribute(ace="resource", path="$.name"), ["test"], False),
+        (AnyInAttribute(ace="resource", path="$.name.what"), ["test_1"], True),
+        (AnyInAttribute(ace="resource", path="$.name.what"), ["test_1", "test_2"], True),
     ])
     def test_is_satisfied_any_in_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},
@@ -253,13 +251,13 @@ class TestAttributeCondition(object):
         assert condition.is_satisfied(ctx) == result
 
     @pytest.mark.parametrize("condition, what, result", [
-        (AnyNotInAttribute("subject", "$.what"), "test", False),
-        (AnyNotInAttribute("subject", "$.what"), ["test"], False),
-        (AnyNotInAttribute("resource", "$.what"), ["test"], False),
-        (AnyNotInAttribute("resource", "$.*"), ["test"], False),
-        (AnyNotInAttribute("resource", "$.name"), ["test"], False),
-        (AnyNotInAttribute("resource", "$.name.what"), ["test_3"], True),
-        (AnyNotInAttribute("resource", "$.name.what"), ["test_1", "test_2"], False),
+        (AnyNotInAttribute(ace="subject", path="$.what"), "test", False),
+        (AnyNotInAttribute(ace="subject", path="$.what"), ["test"], False),
+        (AnyNotInAttribute(ace="resource", path="$.what"), ["test"], False),
+        (AnyNotInAttribute(ace="resource", path="$.*"), ["test"], False),
+        (AnyNotInAttribute(ace="resource", path="$.name"), ["test"], False),
+        (AnyNotInAttribute(ace="resource", path="$.name.what"), ["test_3"], True),
+        (AnyNotInAttribute(ace="resource", path="$.name.what"), ["test_1", "test_2"], False),
     ])
     def test_is_satisfied_any_not_in_attribute(self, condition, what, result):
         request = AccessRequest(subject={"attributes": {"what": what}},

@@ -2,8 +2,6 @@
     Collection is not empty conditions
 """
 
-from marshmallow import Schema, post_load
-
 from .base import ConditionBase, is_collection, LOG
 
 
@@ -11,6 +9,8 @@ class IsNotEmpty(ConditionBase):
     """
         Condition for `what` not being an empty collection
     """
+    # Condition type specifier
+    condition: str = "IsNotEmpty"
 
     def is_satisfied(self, ctx) -> bool:
         if not is_collection(ctx.attribute_value):
@@ -33,13 +33,3 @@ class IsNotEmpty(ConditionBase):
             :return: True if satisfied else False
         """
         return len(what) != 0
-
-
-class IsNotEmptySchema(Schema):
-    """
-        JSON schema for is not empty collection condition
-    """
-
-    @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use,unused-argument
-        return IsNotEmpty()

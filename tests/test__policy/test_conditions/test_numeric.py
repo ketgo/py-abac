@@ -50,7 +50,6 @@ class TestNumericCondition(object):
     ])
     def test_from_json(self, condition_type, value, condition_json):
         condition = condition_type.parse_obj(condition_json)
-        assert isinstance(condition, condition_type)
         assert condition.value == value
 
     @pytest.mark.parametrize("condition_type, data", [

@@ -16,6 +16,12 @@ class ConditionBase(BaseModel, metaclass=ABCMeta):
     # Condition type specifier
     condition: str
 
+    class Config:
+        """
+            Pydantic configuration
+        """
+        extra = 'forbid'
+
     @abstractmethod
     def is_satisfied(self, ctx: EvaluationContext) -> bool:
         """

@@ -2,44 +2,42 @@
     Condition one-of schema
 """
 
-from pydantic import BaseModel
-
-from .attribute.all_in import AllInAttribute, AllInAttributeSchema
-from .attribute.all_not_in import AllNotInAttribute, AllNotInAttributeSchema
-from .attribute.any_in import AnyInAttribute, AnyInAttributeSchema
-from .attribute.any_not_in import AnyNotInAttribute, AnyNotInAttributeSchema
+from .attribute.all_in import AllInAttribute
+from .attribute.all_not_in import AllNotInAttribute
+from .attribute.any_in import AnyInAttribute
+from .attribute.any_not_in import AnyNotInAttribute
 # -- Attribute Conditions ---
-from .attribute.equals import EqualsAttribute, EqualsAttributeSchema
-from .attribute.is_in import IsInAttribute, IsInAttributeSchema
-from .attribute.is_not_in import IsNotInAttribute, IsNotInAttributeSchema
-from .attribute.not_equals import NotEqualsAttribute, NotEqualsAttributeSchema
+from .attribute.equals import EqualsAttribute
+from .attribute.is_in import IsInAttribute
+from .attribute.is_not_in import IsNotInAttribute
+from .attribute.not_equals import NotEqualsAttribute
 # --- Collection Conditions ---
-from .collection.all_in import AllIn, AllInSchema
-from .collection.all_not_in import AllNotIn, AllNotInSchema
-from .collection.any_in import AnyIn, AnyInSchema
-from .collection.any_not_in import AnyNotIn, AnyNotInSchema
-from .collection.is_empty import IsEmpty, IsEmptySchema
-from .collection.is_in import IsIn, IsInSchema
-from .collection.is_not_empty import IsNotEmpty, IsNotEmptySchema
-from .collection.is_not_in import IsNotIn, IsNotInSchema
+from .collection.all_in import AllIn
+from .collection.all_not_in import AllNotIn
+from .collection.any_in import AnyIn
+from .collection.any_not_in import AnyNotIn
+from .collection.is_empty import IsEmpty
+from .collection.is_in import IsIn
+from .collection.is_not_empty import IsNotEmpty
+from .collection.is_not_in import IsNotIn
 # --- Logic Conditions ---
-from .logic.all_of import AllOf, AllOfSchema
-from .logic.any_of import AnyOf, AnyOfSchema
-from .logic.not_ import Not, NotSchema
+from .logic.all_of import AllOf
+from .logic.any_of import AnyOf
+from .logic.not_ import Not
 # --- Numeric Conditions ---
-from .numeric.eq import Eq, EqSchema
-from .numeric.gt import Gt, GtSchema
-from .numeric.gte import Gte, GteSchema
-from .numeric.lt import Lt, LtSchema
-from .numeric.lte import Lte, LteSchema
-from .numeric.neq import Neq, NeqSchema
+from .numeric.eq import Eq
+from .numeric.gt import Gt
+from .numeric.gte import Gte
+from .numeric.lt import Lt
+from .numeric.lte import Lte
+from .numeric.neq import Neq
 # --- Object Conditions ---
-from .object.equals_object import EqualsObject, EqualsObjectSchema
+from .object.equals_object import EqualsObject
 # --- Other Conditions ---
-from .others.any import Any, AnySchema
-from .others.cidr import CIDR, CIDRSchema
-from .others.exists import Exists, ExistsSchema
-from .others.not_exists import NotExists, NotExistsSchema
+from .others.any import Any
+from .others.cidr import CIDR
+from .others.exists import Exists
+from .others.not_exists import NotExists
 # --- String Conditions ---
 from .string.contains import Contains
 from .string.ends_with import EndsWith
@@ -50,19 +48,19 @@ from .string.regex_match import RegexMatch
 from .string.starts_with import StartsWith
 
 
-class Condition(BaseModel):
+class ConditionField:
     """
         Polymorphic JSON field for conditions
     """
     type_field = "condition"
     type_schemas = {
         # --- Numeric Conditions ---
-        Eq.__name__: EqSchema,
-        Gt.__name__: GtSchema,
-        Lt.__name__: LtSchema,
-        Gte.__name__: GteSchema,
-        Lte.__name__: LteSchema,
-        Neq.__name__: NeqSchema,
+        Eq.__name__: Eq,
+        Gt.__name__: Gt,
+        Lt.__name__: Lt,
+        Gte.__name__: Gte,
+        Lte.__name__: Lte,
+        Neq.__name__: Neq,
         # --- String Conditions ---
         Contains.__name__: Contains,
         NotContains.__name__: NotContains,
@@ -72,34 +70,34 @@ class Condition(BaseModel):
         EndsWith.__name__: EndsWith,
         RegexMatch.__name__: RegexMatch,
         # --- Collection Conditions ---
-        IsIn.__name__: IsInSchema,
-        IsNotIn.__name__: IsNotInSchema,
-        AllIn.__name__: AllInSchema,
-        AllNotIn.__name__: AllNotInSchema,
-        AnyIn.__name__: AnyInSchema,
-        AnyNotIn.__name__: AnyNotInSchema,
-        IsEmpty.__name__: IsEmptySchema,
-        IsNotEmpty.__name__: IsNotEmptySchema,
+        IsIn.__name__: IsIn,
+        IsNotIn.__name__: IsNotIn,
+        AllIn.__name__: AllIn,
+        AllNotIn.__name__: AllNotIn,
+        AnyIn.__name__: AnyIn,
+        AnyNotIn.__name__: AnyNotIn,
+        IsEmpty.__name__: IsEmpty,
+        IsNotEmpty.__name__: IsNotEmpty,
         # --- Logic Conditions ---
-        AllOf.__name__: AllOfSchema,
-        AnyOf.__name__: AnyOfSchema,
-        Not.__name__: NotSchema,
+        AllOf.__name__: AllOf,
+        AnyOf.__name__: AnyOf,
+        Not.__name__: Not,
         # --- Other Conditions ---
-        CIDR.__name__: CIDRSchema,
-        Exists.__name__: ExistsSchema,
-        NotExists.__name__: NotExistsSchema,
-        Any.__name__: AnySchema,
+        CIDR.__name__: CIDR,
+        Exists.__name__: Exists,
+        NotExists.__name__: NotExists,
+        Any.__name__: Any,
         # --- Attribute Conditions ---
-        EqualsAttribute.__name__: EqualsAttributeSchema,
-        NotEqualsAttribute.__name__: NotEqualsAttributeSchema,
-        AnyInAttribute.__name__: AnyInAttributeSchema,
-        AnyNotInAttribute.__name__: AnyNotInAttributeSchema,
-        AllInAttribute.__name__: AllInAttributeSchema,
-        AllNotInAttribute.__name__: AllNotInAttributeSchema,
-        IsInAttribute.__name__: IsInAttributeSchema,
-        IsNotInAttribute.__name__: IsNotInAttributeSchema,
+        EqualsAttribute.__name__: EqualsAttribute,
+        NotEqualsAttribute.__name__: NotEqualsAttribute,
+        AnyInAttribute.__name__: AnyInAttribute,
+        AnyNotInAttribute.__name__: AnyNotInAttribute,
+        AllInAttribute.__name__: AllInAttribute,
+        AllNotInAttribute.__name__: AllNotInAttribute,
+        IsInAttribute.__name__: IsInAttribute,
+        IsNotInAttribute.__name__: IsNotInAttribute,
         # --- Object Condition ---
-        EqualsObject.__name__: EqualsObjectSchema,
+        EqualsObject.__name__: EqualsObject,
     }
 
     @classmethod

@@ -5,7 +5,7 @@
 import ipaddress
 import logging
 
-from marshmallow import Schema, fields, post_load
+from pydantic import StrictStr
 
 from ..base import ConditionBase
 
@@ -16,9 +16,9 @@ class CIDR(ConditionBase):
     """
         Condition for IP address `what` in CIDR `value`.
     """
-
-    def __init__(self, value):
-        self.value = value
+    # Condition type specifier
+    condition: str = "CIDR"
+    value: StrictStr
 
     def is_satisfied(self, ctx) -> bool:
         if not isinstance(ctx.attribute_value, str):
@@ -45,14 +45,3 @@ class CIDR(ConditionBase):
         except ValueError:
             return False
         return ip_addr in net
-
-
-class CIDRSchema(Schema):
-    """
-        JSON schema for CIDR condition
-    """
-    value = fields.String(required=True, allow_none=False)
-
-    @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
-        return CIDR(**data)

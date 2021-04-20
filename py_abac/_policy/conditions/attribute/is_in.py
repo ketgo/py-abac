@@ -4,9 +4,7 @@
 
 import logging
 
-from marshmallow import post_load
-
-from .base import AttributeCondition, AttributeConditionSchema
+from .base import AttributeCondition
 from ..collection.base import is_collection
 
 LOG = logging.getLogger(__name__)
@@ -16,26 +14,18 @@ class IsInAttribute(AttributeCondition):
     """
         Condition for attribute value in that of another
     """
+    # Condition type specifier
+    condition: str = "IsInAttribute"
 
     def _is_satisfied(self, what) -> bool:
         # Check if value is a collection
-        if not is_collection(self.value):
+        if not is_collection(self._value):
             LOG.debug(
                 "Invalid type '%s' for attribute value at path '%s' for element '%s'."
                 " Condition not satisfied.",
-                type(self.value),
+                type(self._value),
                 self.path,
                 self.ace
             )
             return False
-        return what in self.value
-
-
-class IsInAttributeSchema(AttributeConditionSchema):
-    """
-        JSON schema for is in attribute condition
-    """
-
-    @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
-        return IsInAttribute(**data)
+        return what in self._value
