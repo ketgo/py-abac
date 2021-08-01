@@ -8,7 +8,7 @@ This section presents the JSON-based policy language for Py-ABAC. There are two 
 Policy JSON
 -----------
 
-A policy composes of :code:`uid`, :code:`description`, :code:`conditions` , :code:`targets`, :code:`effect`,
+A policy composes of :code:`uid`, :code:`description`, :code:`rules` , :code:`targets`, :code:`effect`,
 and :code:`priority` fields. The JSON schema is given by
 
 .. code-block::
