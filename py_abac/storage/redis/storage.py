@@ -79,7 +79,7 @@ class RedisStorage(Storage):
 
                 Currently all policies are returned for evaluation by PDP.
         """
-        # TODO: Create topologically sorted graph index for filtered retrieval.
+        # TODO: Create topologically sorted graph index for filtered retrieval.  # pylint: disable=fixme
         rvalue = self.client.hgetall(self._hash)
         for uid in rvalue:
             policy_str = rvalue[uid]

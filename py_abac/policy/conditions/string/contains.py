@@ -24,5 +24,5 @@ class ContainsSchema(StringConditionSchema):
     """
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return Contains(**data)
