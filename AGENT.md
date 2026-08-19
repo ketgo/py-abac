@@ -48,7 +48,7 @@ Backend-specific tests are marked with pytest markers (`mongo`, `sql`, `redis`, 
 ```bash
 cd tests && docker-compose up -d && cd ..
 ```
-Then run per-backend, using the same env vars CI uses (see [.travis.yml](.travis.yml)):
+Then run per-backend, using the same env vars CI uses (see [.github/workflows/ci.yml](.github/workflows/ci.yml)):
 ```bash
 MONGODB_HOST="mongodb://mongo:password@localhost:27017" pytest -m mongo
 SQL_HOST="mysql+pymysql://mysql:password@localhost/py_abac" pytest -m sql
@@ -57,6 +57,10 @@ REDIS_HOST="localhost" REDIS_PORT="6379" pytest -m redis
 pytest -m file
 ```
 SQL tests default to an in-memory SQLite engine (`DEFAULT_SQL_HOST` in `tests/test_storage/test_sql/__init__.py`) when `SQL_HOST` is unset, so `pytest -m sql` works without Docker for SQLite-compatible cases. Mongo/Redis tests need the corresponding service reachable at their `DEFAULT_*_HOST` unless overridden.
+
+## Git workflow
+
+`master` is protected and requires an approving review plus passing CI (`.github/workflows/ci.yml`) before merging. When working as an agent: open a PR for review, but never merge or approve your own PR — leave that for the repo owner to do explicitly after reviewing the diff.
 
 ## Architecture
 

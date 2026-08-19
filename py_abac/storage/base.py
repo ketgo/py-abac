@@ -44,7 +44,7 @@ class Storage(metaclass=ABCMeta):
         """
             Get all policies for given target IDs.
         """
-        # TODO: Add policy retrieval caching
+        # TODO: Add policy retrieval caching  # pylint: disable=fixme
         raise NotImplementedError()
 
     @abstractmethod
@@ -77,4 +77,4 @@ class Storage(metaclass=ABCMeta):
             construction, where it could be interpreted as query operators.
         """
         if not isinstance(uid, str):
-            raise TypeError("Policy UID must be of type 'str', got '{}'.".format(type(uid).__name__))
+            raise TypeError(f"Policy UID must be of type 'str', got '{type(uid).__name__}'.")

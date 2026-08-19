@@ -9,7 +9,7 @@ from marshmallow import Schema, fields, post_load, validate
 from ..context import EvaluationContext
 
 
-class Targets(object):
+class Targets:
     """
         Policy targets
     """
@@ -73,5 +73,5 @@ class TargetsSchema(Schema):
     action_id = TargetField(missing="*", default="*")
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return Targets(**data)

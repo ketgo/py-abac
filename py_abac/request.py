@@ -9,7 +9,7 @@ from marshmallow import Schema, fields, validate, ValidationError, post_load
 from .exceptions import RequestCreateError
 
 
-class AccessRequest(object):
+class AccessRequest:
     """
         Authorization request sent by PEP
 
@@ -113,7 +113,7 @@ class AccessRequest(object):
         try:
             return _RequestSchema().load(data)
         except ValidationError as err:
-            raise RequestCreateError(*err.args)
+            raise RequestCreateError(str(err)) from err
 
 
 # backward compatible with v0.2.0
@@ -138,5 +138,5 @@ class _RequestSchema(Schema):
     context = fields.Dict(default={}, missing={})
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return AccessRequest(**data)

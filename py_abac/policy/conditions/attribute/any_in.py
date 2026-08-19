@@ -52,5 +52,5 @@ class AnyInAttributeSchema(AttributeConditionSchema):
     """
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return AnyInAttribute(**data)

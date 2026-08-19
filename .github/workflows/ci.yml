@@ -1,0 +1,174 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, 'rc-v*' ]
+  pull_request:
+    branches: [ master, 'rc-v*' ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+    # Mirrors tests/docker-compose.yml (images/ports/credentials), used for local
+    # integration testing. Declared natively here rather than via `docker-compose
+    # up` so GitHub Actions can attach health checks and gate steps on service
+    # readiness directly; keep both in sync if the backends' setup changes.
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: mongo
+          MONGO_INITDB_ROOT_PASSWORD: password
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_DATABASE: py_abac
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: py_abac
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: setup.py
+
+      - name: Install dependencies
+        run: make deps
+
+      # MongoDB has no built-in `services:` health check here (its readiness probe
+      # needs mongosh/mongo shell tooling that varies across image versions and
+      # isn't preinstalled on the runner), so poll with pymongo instead, which
+      # `make deps` above already installs.
+      - name: Wait for MongoDB
+        run: |
+          python - <<'PY'
+          import time
+          from pymongo import MongoClient
+          from pymongo.errors import PyMongoError
+
+          deadline = time.time() + 30
+          while time.time() < deadline:
+              try:
+                  MongoClient(
+                      "mongodb://mongo:password@localhost:27017",
+                      serverSelectionTimeoutMS=2000,
+                  ).admin.command("ping")
+                  print("MongoDB is ready")
+                  break
+              except PyMongoError:
+                  time.sleep(1)
+          else:
+              raise SystemExit("MongoDB did not become ready in time")
+          PY
+
+      - name: Default tests (in-memory storage)
+        run: make coverage MARK='"not integration"' COVERAGE_OPTS="--cov-append"
+
+      - name: MongoDB integration tests
+        run: MONGODB_HOST="mongodb://mongo:password@localhost:27017" make coverage MARK='"mongo"' COVERAGE_OPTS="--cov-append"
+
+      - name: MySQL integration tests
+        run: SQL_HOST="mysql+pymysql://mysql:password@localhost/py_abac" make coverage MARK='"sql"' COVERAGE_OPTS="--cov-append"
+
+      - name: Postgres integration tests
+        run: SQL_HOST="postgresql+psycopg2cffi://postgres:password@localhost/py_abac" make coverage MARK='"sql"' COVERAGE_OPTS="--cov-append"
+
+      - name: Redis integration tests
+        run: REDIS_HOST="localhost" REDIS_PORT="6379" make coverage MARK='"redis"' COVERAGE_OPTS="--cov-append"
+
+      - name: File storage integration tests
+        run: make coverage MARK='"file"' COVERAGE_OPTS="--cov-append"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: setup.py
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run pylint
+        run: make lint
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: setup.py
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run bandit
+        run: make security
+
+  # Single check to require in branch protection instead of every matrix
+  # combination individually, so the required-checks list doesn't need to be
+  # updated every time the Python version matrix changes.
+  ci:
+    if: always()
+    needs: [ test, lint, security ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check job results
+        run: |
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "One or more required jobs failed."
+            exit 1
+          fi
+          echo "All required jobs passed."

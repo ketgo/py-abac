@@ -20,7 +20,7 @@ class EvaluationAlgorithm(Enum):
     HIGHEST_PRIORITY = "highest_priority"
 
 
-class PDP(object):
+class PDP:
     """
         Policy decision point
 
@@ -58,15 +58,15 @@ class PDP(object):
                  algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES,
                  providers: List[AttributeProvider] = None):
         if not isinstance(storage, Storage):
-            raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
+            raise TypeError(f"Invalid type '{type(storage)}' for storage.")
         if not isinstance(algorithm, EvaluationAlgorithm):
-            raise TypeError("Invalid type '{}' for evaluation algorithm.".format(type(algorithm)))
+            raise TypeError(f"Invalid type '{type(algorithm)}' for evaluation algorithm.")
         self._storage = storage
         self._algorithm = algorithm.value
         self._providers = providers or []
         for provider in self._providers:
             if not isinstance(provider, AttributeProvider):
-                raise TypeError("Invalid type '{}' for attribute provider.".format(type(provider)))
+                raise TypeError(f"Invalid type '{type(provider)}' for attribute provider.")
 
     def is_allowed(self, request: AccessRequest):
         """
@@ -76,10 +76,10 @@ class PDP(object):
             :return: True if authorized else False
         """
         if not isinstance(request, AccessRequest):
-            raise TypeError("Invalid type '{}' for authorization request.".format(request))
+            raise TypeError(f"Invalid type '{request}' for authorization request.")
 
         # Get appropriate evaluation algorithm handler
-        evaluate = getattr(self, "_{}".format(self._algorithm))
+        evaluate = getattr(self, f"_{self._algorithm}")
         # Create evaluation context
         ctx = EvaluationContext(request, self._providers)
 
@@ -132,8 +132,7 @@ class PDP(object):
         policy_groups = {}
         max_priority = -1
         for policy in policies:
-            if policy.priority > max_priority:
-                max_priority = policy.priority
+            max_priority = max(max_priority, policy.priority)
             if policy.priority in policy_groups:
                 policy_groups[policy.priority].append(policy)
             else:
