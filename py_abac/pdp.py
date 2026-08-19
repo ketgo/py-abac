@@ -20,7 +20,7 @@ class EvaluationAlgorithm(Enum):
     HIGHEST_PRIORITY = "highest_priority"
 
 
-class PDP(object):
+class PDP:
     """
         Policy decision point
 
@@ -132,8 +132,7 @@ class PDP(object):
         policy_groups = {}
         max_priority = -1
         for policy in policies:
-            if policy.priority > max_priority:
-                max_priority = policy.priority
+            max_priority = max(max_priority, policy.priority)
             if policy.priority in policy_groups:
                 policy_groups[policy.priority].append(policy)
             else:
