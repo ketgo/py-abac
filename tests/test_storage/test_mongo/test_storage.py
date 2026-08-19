@@ -98,6 +98,15 @@ def test_get(st):
     assert 'some text' == st.get('2').description
 
 
+def test_get_rejects_non_str_uid_to_prevent_query_operator_injection(st):
+    # A dict UID must never reach pymongo's find_one() as-is: pymongo treats
+    # a dict argument as a raw filter rather than an `_id` lookup, which would
+    # let an attacker-controlled UID inject Mongo query operators.
+    st.add(Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"}))
+    with pytest.raises(TypeError):
+        st.get({"$ne": None})
+
+
 @pytest.mark.parametrize('limit, offset, result', [
     (500, 0, 200),
     (101, 1, 101),
@@ -220,3 +229,14 @@ def test_delete(st):
     assert '1' == st.get('1').uid
     st.delete('1')
     assert None is st.get('1')
+
+
+def test_delete_rejects_non_str_uid_to_prevent_query_operator_injection(st):
+    # A dict UID like {"$ne": "..."} embedded in {'_id': uid} would match
+    # documents by operator instead of exact ID, letting an attacker delete
+    # policies without knowing their real UID.
+    policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
+    st.add(policy)
+    with pytest.raises(TypeError):
+        st.delete({"$ne": "1"})
+    assert '1' == st.get('1').uid

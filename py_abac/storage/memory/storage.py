@@ -35,6 +35,7 @@ class MemoryStorage(Storage):
         """
             Get specific policy
         """
+        self._check_uid(uid)
         return self._index_map.get(uid, None)
 
     def get_all(self, limit: int, offset: int) -> Generator[Policy, None, None]:
@@ -69,6 +70,7 @@ class MemoryStorage(Storage):
         """
             Update a policy
         """
+        self._check_uid(policy.uid)
         if policy.uid not in self._index_map:
             raise ValueError("Policy with UID='{}' does not exist.".format(policy.uid))
         self._index_map[policy.uid] = policy
@@ -78,6 +80,7 @@ class MemoryStorage(Storage):
         """
             Delete a policy
         """
+        self._check_uid(uid)
         if uid not in self._index_map:
             raise ValueError("Policy with UID='{}' does not exist.".format(uid))
         # Remove policy from index map

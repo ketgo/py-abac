@@ -52,6 +52,7 @@ class FileStorage(Storage):
         """
             Get specific policy
         """
+        self._check_uid(uid)
         with shelve.open(self._file, flag='r') as curr:
             policy_json = curr.get(uid, None)
             policy = Policy.from_json(policy_json) if policy_json else None
@@ -96,6 +97,7 @@ class FileStorage(Storage):
         """
             Update a policy
         """
+        self._check_uid(policy.uid)
         with shelve.open(self._file, flag='c', writeback=True) as curr:
             if policy.uid not in curr:
                 raise ValueError("Policy with UID='{}' does not exist.".format(policy.uid))
@@ -106,6 +108,7 @@ class FileStorage(Storage):
         """
             Delete a policy
         """
+        self._check_uid(uid)
         with shelve.open(self._file, flag='c', writeback=True) as curr:
             if uid not in curr:
                 raise ValueError("Policy with UID='{}' does not exist.".format(uid))
