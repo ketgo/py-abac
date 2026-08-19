@@ -99,3 +99,10 @@ Each optional backend's dependency (`pymongo`, `SQLAlchemy`, `redis`, `dotty-dic
 ### Adding a new storage backend
 
 Implement `Storage` (`storage/base.py`) in a new `storage/<backend>/` package, add its dependency as a new `extras_require` group in `setup.py`, and add tests under `tests/test_storage/test_<backend>/` (plus PDP integration tests under `tests/test_pdp/`) marked with a corresponding pytest marker registered in `pytest.ini`.
+
+## Release process
+
+- Day-to-day PRs (bug fixes, docs, small features) target `master` directly.
+- A larger body of work destined for the next version accumulates on a staging branch named `rc-vX.Y.Z` (e.g. `rc-v0.5.0`). While one is active, PRs for changes intended for that release target the `rc-vX.Y.Z` branch instead of `master`.
+- When the release is ready, the `rc-vX.Y.Z` branch is merged into `master` via a single PR (see e.g. PR #13 "Rc v0.4.0", PR #10 "Rc0.2.1"), `py_abac/version.py`'s `__version__` is bumped, a new section is added to `CHANGELOG.md`, and a `vX.Y.Z` tag is cut from `master`.
+- If no `rc-vX.Y.Z` branch is currently active (or the existing one is stale — check `git log origin/master..origin/rc-vX.Y.Z` for commits unique to it), treat `master` as the target instead of creating/using a stale rc branch.
