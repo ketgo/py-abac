@@ -38,7 +38,7 @@ class FileStorage(Storage):
     def __init__(self, storage_dir: str):
         # Create path directory if not exists
         os.makedirs(storage_dir, exist_ok=True)
-        self._file = "{}/{}".format(os.path.abspath(storage_dir), self.POLICY_FILE)
+        self._file = f"{os.path.abspath(storage_dir)}/{self.POLICY_FILE}"
 
     def add(self, policy: Policy):
         """
@@ -89,7 +89,7 @@ class FileStorage(Storage):
 
                 Currently all policies are returned for evaluation.
         """
-        # TODO: Create glob match based topologically sorted graph index for filtering
+        # TODO: Create glob match based topologically sorted graph index for filtering  # pylint: disable=fixme
         with shelve.open(self._file, flag="r") as curr:  # nosec B301
             for policy_json in curr.values():
                 yield Policy.from_json(policy_json)
@@ -100,7 +100,7 @@ class FileStorage(Storage):
         """
         with shelve.open(self._file, flag='c', writeback=True) as curr:  # nosec B301
             if policy.uid not in curr:
-                raise ValueError("Policy with UID='{}' does not exist.".format(policy.uid))
+                raise ValueError(f"Policy with UID='{policy.uid}' does not exist.")
             curr[policy.uid] = policy.to_json()
         LOG.info('Updated Policy with UID=%s. New value is: %s', policy.uid, policy)
 
@@ -110,6 +110,6 @@ class FileStorage(Storage):
         """
         with shelve.open(self._file, flag='c', writeback=True) as curr:  # nosec B301
             if uid not in curr:
-                raise ValueError("Policy with UID='{}' does not exist.".format(uid))
+                raise ValueError(f"Policy with UID='{uid}' does not exist.")
             curr.pop(uid)
         LOG.info('Deleted Policy with UID=%s.', uid)

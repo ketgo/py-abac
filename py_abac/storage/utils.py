@@ -29,7 +29,7 @@ def get_sub_wildcard_queries(query: str, wildcard: str = '*') -> List[str]:
     """
     # Remove consecutive wildcard duplicates, e.g. ab** -> ab*
     _query = query
-    dup_pattern = r"\*\**" if wildcard == '*' else r'{0}{0}*'.format(wildcard)
+    dup_pattern = r"\*\**" if wildcard == '*' else rf'{wildcard}{wildcard}*'
     for rep in re.findall(dup_pattern, query):
         _query = query.replace(rep, wildcard)
 

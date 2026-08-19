@@ -13,6 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+    # Mirrors tests/docker-compose.yml (images/ports/credentials), used for local
+    # integration testing. Declared natively here rather than via `docker-compose
+    # up` so GitHub Actions can attach health checks and gate steps on service
+    # readiness directly; keep both in sync if the backends' setup changes.
     services:
       mongodb:
         image: mongo
@@ -63,15 +67,37 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: setup.py
 
       - name: Install dependencies
         run: make deps
 
       # MongoDB has no built-in `services:` health check here (its readiness probe
-      # needs mongosh/mongo shell tooling that varies across image versions), so
-      # give it a fixed grace period the way the old Travis config did.
+      # needs mongosh/mongo shell tooling that varies across image versions and
+      # isn't preinstalled on the runner), so poll with pymongo instead, which
+      # `make deps` above already installs.
       - name: Wait for MongoDB
-        run: sleep 15
+        run: |
+          python - <<'PY'
+          import time
+          from pymongo import MongoClient
+          from pymongo.errors import PyMongoError
+
+          deadline = time.time() + 30
+          while time.time() < deadline:
+              try:
+                  MongoClient(
+                      "mongodb://mongo:password@localhost:27017",
+                      serverSelectionTimeoutMS=2000,
+                  ).admin.command("ping")
+                  print("MongoDB is ready")
+                  break
+              except PyMongoError:
+                  time.sleep(1)
+          else:
+              raise SystemExit("MongoDB did not become ready in time")
+          PY
 
       - name: Default tests (in-memory storage)
         run: make coverage MARK='"not integration"' COVERAGE_OPTS="--cov-append"
@@ -105,6 +131,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: setup.py
 
       - name: Install dependencies
         run: make deps
@@ -120,6 +148,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: setup.py
 
       - name: Install dependencies
         run: make deps

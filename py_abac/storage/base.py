@@ -44,7 +44,7 @@ class Storage(metaclass=ABCMeta):
         """
             Get all policies for given target IDs.
         """
-        # TODO: Add policy retrieval caching
+        # TODO: Add policy retrieval caching  # pylint: disable=fixme
         raise NotImplementedError()
 
     @abstractmethod

@@ -21,7 +21,7 @@ class PolicyExistsError(Exception):
     """
 
     def __init__(self, uid):
-        super().__init__("Conflicting UID = '{}'".format(uid))
+        super().__init__(f"Conflicting UID = '{uid}'")
 
 
 class InvalidAccessControlElementError(Exception):
@@ -31,8 +31,8 @@ class InvalidAccessControlElementError(Exception):
 
     def __init__(self, element):
         super().__init__(
-            "Invalid access control element '{}'. Allowed values are "
-            "'subject', 'resource', 'action', and 'context'".format(element)
+            f"Invalid access control element '{element}'. Allowed values are "
+            "'subject', 'resource', 'action', and 'context'"
         )
 
 
@@ -43,5 +43,5 @@ class InvalidAttributePathError(Exception):
 
     def __init__(self, path):
         super().__init__(
-            "Invalid attribute path '{}'. Path required in ObjectPath format.".format(path)
+            f"Invalid attribute path '{path}'. Path required in ObjectPath format."
         )
