@@ -45,7 +45,7 @@ def validate_path(path):
     try:
         Tree({}).execute(path)
     except Exception as err:
-        raise ValidationError(*err.args)
+        raise ValidationError(str(err)) from err
 
 
 class AttributeConditionSchema(Schema):

@@ -28,9 +28,9 @@ extra_requires_file = [
     'flatten-dict==0.3.0'
 ]
 extra_requires_utils = [
-    'pytest~=4.6',
-    'pytest-cov~=2.6',
-    'pylint~=1.0',
+    'pytest~=8.0',
+    'pytest-cov~=5.0',
+    'pylint~=3.2',
     'bandit~=1.6',
     'PyMySQL~=0.9',
     'psycopg2cffi~=2.8'

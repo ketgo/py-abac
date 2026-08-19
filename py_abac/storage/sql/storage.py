@@ -33,10 +33,10 @@ class SQLStorage(Storage):
             self.session.add(policy_model)
             self.session.commit()
             LOG.info("Added Policy: %s", policy)
-        except (IntegrityError, FlushError):
+        except (IntegrityError, FlushError) as exc:
             self.session.rollback()
             LOG.error("Error trying to create already existing policy with UID=%s.", policy.uid)
-            raise PolicyExistsError(policy.uid)
+            raise PolicyExistsError(policy.uid) from exc
 
     def get(self, uid: str) -> Union[Policy, None]:
         self._check_uid(uid)

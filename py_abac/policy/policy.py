@@ -14,12 +14,12 @@ DENY_ACCESS = "deny"
 ALLOW_ACCESS = "allow"
 
 
-class Policy(object):
+class Policy:
     """
         Policy class containing rules and targets
     """
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
     def __init__(
             self,
             uid: str,
@@ -44,7 +44,7 @@ class Policy(object):
         try:
             return PolicySchema().load(data)
         except ValidationError as err:
-            raise PolicyCreateError(*err.args)
+            raise PolicyCreateError(str(err)) from err
 
     def to_json(self):
         """
@@ -81,5 +81,5 @@ class PolicySchema(Schema):
     priority = fields.Integer(default=0, missing=0, validate=validate.Range(min=0))
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return Policy(**data)

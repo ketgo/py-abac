@@ -41,9 +41,9 @@ class MongoStorage(Storage):
     def add(self, policy: Policy):
         try:
             self.collection.insert_one(PolicyModel.from_policy(policy).to_doc())
-        except DuplicateKeyError:
+        except DuplicateKeyError as exc:
             LOG.error('Error trying to create already existing policy with UID=%s.', policy.uid)
-            raise PolicyExistsError(policy.uid)
+            raise PolicyExistsError(policy.uid) from exc
         LOG.info('Added Policy: %s', policy)
 
     def get(self, uid: str) -> Union[Policy, None]:

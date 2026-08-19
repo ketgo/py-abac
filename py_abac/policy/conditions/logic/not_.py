@@ -26,5 +26,5 @@ class NotSchema(Schema):
     value = fields.Nested("ConditionSchema", required=True, allow_none=False, many=False)
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return Not(**data)
