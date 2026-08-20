@@ -47,6 +47,7 @@ class MongoStorage(Storage):
         LOG.info('Added Policy: %s', policy)
 
     def get(self, uid: str) -> Union[Policy, None]:
+        self._check_uid(uid)
         doc = self.collection.find_one(uid)
         if not doc:
             return None
@@ -71,6 +72,7 @@ class MongoStorage(Storage):
 
     def update(self, policy: Policy):
         uid = policy.uid
+        self._check_uid(uid)
         self.collection.update_one(
             {'_id': uid},
             {"$set": PolicyModel.from_policy(policy).to_doc()},
@@ -79,5 +81,6 @@ class MongoStorage(Storage):
         LOG.info('Updated Policy with UID=%s. New value is: %s', uid, policy)
 
     def delete(self, uid: str):
+        self._check_uid(uid)
         self.collection.delete_one({'_id': uid})
         LOG.info('Deleted Policy with UID=%s.', uid)

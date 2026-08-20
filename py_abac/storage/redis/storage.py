@@ -45,6 +45,7 @@ class RedisStorage(Storage):
         """
             Get specific policy
         """
+        self._check_uid(uid)
         policy_str = self.client.hget(self._hash, uid)
         if not policy_str:
             return None
@@ -93,6 +94,7 @@ class RedisStorage(Storage):
                 operation occurs instead of upsert.
         """
         uid = policy.uid
+        self._check_uid(uid)
         lua = \
             """
                 if redis.call('HEXISTS', KEYS[1], ARGV[1]) == 1 then
@@ -108,6 +110,7 @@ class RedisStorage(Storage):
         """
             Delete a policy
         """
+        self._check_uid(uid)
         rvalue = self.client.hdel(self._hash, uid)
         if rvalue != 0:
             LOG.info('Deleted Policy with UID=%s.', uid)
