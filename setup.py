@@ -28,9 +28,9 @@ extra_requires_file = [
     'flatten-dict==0.3.0'
 ]
 extra_requires_utils = [
-    'pytest~=8.0',
-    'pytest-cov~=5.0',
-    'pylint~=3.2',
+    'pytest~=4.6',
+    'pytest-cov~=2.6',
+    'pylint~=1.0',
     'bandit~=1.6',
     'PyMySQL~=0.9',
     'psycopg2cffi~=2.8'
@@ -55,7 +55,7 @@ if __name__ == '__main__':
         long_description=long_description,
         long_description_content_type='text/markdown',
         py_modules=['py_abac'],
-        python_requires='>3.4',
+        python_requires='>=3.7',
         install_requires=[
             'marshmallow~=3.2',
             'marshmallow-oneofschema~=2.0',
@@ -83,9 +83,8 @@ if __name__ == '__main__':
             'Topic :: Utilities',
             'Natural Language :: English',
             'Programming Language :: Python',
-            'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
-            'Programming Language :: Python :: Implementation :: PyPy',
+            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
         ],
     )

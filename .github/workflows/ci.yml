@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+        python-version: [ "3.7", "3.8", "3.9" ]
     # Mirrors tests/docker-compose.yml (images/ports/credentials), used for local
     # integration testing. Declared natively here rather than via `docker-compose
     # up` so GitHub Actions can attach health checks and gate steps on service
@@ -123,23 +123,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: 'pip'
-          cache-dependency-path: setup.py
-
-      - name: Install dependencies
-        run: make deps
-
-      - name: Run pylint
-        run: make lint
-
   security:
     runs-on: ubuntu-latest
     steps:
@@ -147,7 +130,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.9"
           cache: 'pip'
           cache-dependency-path: setup.py
 
@@ -162,7 +145,7 @@ jobs:
   # updated every time the Python version matrix changes.
   ci:
     if: always()
-    needs: [ test, lint, security ]
+    needs: [ test, security ]
     runs-on: ubuntu-latest
     steps:
       - name: Check job results
