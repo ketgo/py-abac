@@ -12,7 +12,7 @@ from .request import AccessRequest
 LOG = logging.getLogger(__name__)
 
 
-class EvaluationContext(object):
+class EvaluationContext:
     """
         Evaluation context class
     """

@@ -26,8 +26,8 @@ def validate_regex(value):
     # noinspection PyBroadException
     try:
         re.compile(value)
-    except Exception:
-        raise ValidationError("Invalid regex expression '{}'.".format(value))
+    except Exception as exc:
+        raise ValidationError("Invalid regex expression '{}'.".format(value)) from exc
 
 
 class RegexMatchSchema(Schema):
@@ -37,5 +37,5 @@ class RegexMatchSchema(Schema):
     value = fields.String(required=True, allow_none=False, validate=validate_regex)
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return RegexMatch(**data)

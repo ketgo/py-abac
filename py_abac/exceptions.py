@@ -7,14 +7,12 @@ class RequestCreateError(Exception):
     """
         Error occurred during Request creation.
     """
-    pass
 
 
 class PolicyCreateError(Exception):
     """
         Error occurred during Policy creation.
     """
-    pass
 
 
 class PolicyExistsError(Exception):
