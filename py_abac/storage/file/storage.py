@@ -4,7 +4,9 @@
 
 import logging
 import os
-import shelve
+# shelve (and its pickle-based backing) is used here to persist policies in a
+# local, operator-controlled file, not to deserialize untrusted external input.
+import shelve  # nosec B403
 from itertools import islice
 from typing import Union, Generator
 
@@ -42,7 +44,7 @@ class FileStorage(Storage):
         """
             Store a policy
         """
-        with shelve.open(self._file, flag='c', writeback=True) as curr:
+        with shelve.open(self._file, flag='c', writeback=True) as curr:  # nosec B301
             if policy.uid in curr:
                 raise PolicyExistsError(policy.uid)
             curr[policy.uid] = policy.to_json()
@@ -53,7 +55,7 @@ class FileStorage(Storage):
             Get specific policy
         """
         self._check_uid(uid)
-        with shelve.open(self._file, flag='r') as curr:
+        with shelve.open(self._file, flag='r') as curr:  # nosec B301
             policy_json = curr.get(uid, None)
             policy = Policy.from_json(policy_json) if policy_json else None
             return policy
@@ -69,7 +71,7 @@ class FileStorage(Storage):
                 once indexing is supported for file storage.
         """
         self._check_limit_and_offset(limit, offset)
-        with shelve.open(self._file, flag="r") as curr:
+        with shelve.open(self._file, flag="r") as curr:  # nosec B301
             # Note: python by default sorts dict by key
             policies = islice(curr.values(), offset, offset + limit)
             for policy_json in policies:
@@ -88,8 +90,8 @@ class FileStorage(Storage):
 
                 Currently all policies are returned for evaluation.
         """
-        # TODO: Create glob match based topologically sorted graph index for filtering
-        with shelve.open(self._file, flag="r") as curr:
+        # TODO: Create glob match based topologically sorted graph index for filtering  # pylint: disable=fixme
+        with shelve.open(self._file, flag="r") as curr:  # nosec B301
             for policy_json in curr.values():
                 yield Policy.from_json(policy_json)
 
@@ -98,7 +100,7 @@ class FileStorage(Storage):
             Update a policy
         """
         self._check_uid(policy.uid)
-        with shelve.open(self._file, flag='c', writeback=True) as curr:
+        with shelve.open(self._file, flag='c', writeback=True) as curr:  # nosec B301
             if policy.uid not in curr:
                 raise ValueError("Policy with UID='{}' does not exist.".format(policy.uid))
             curr[policy.uid] = policy.to_json()
@@ -109,7 +111,7 @@ class FileStorage(Storage):
             Delete a policy
         """
         self._check_uid(uid)
-        with shelve.open(self._file, flag='c', writeback=True) as curr:
+        with shelve.open(self._file, flag='c', writeback=True) as curr:  # nosec B301
             if uid not in curr:
                 raise ValueError("Policy with UID='{}' does not exist.".format(uid))
             curr.pop(uid)

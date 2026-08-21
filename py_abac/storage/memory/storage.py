@@ -44,9 +44,7 @@ class MemoryStorage(Storage):
         """
         self._check_limit_and_offset(limit, offset)
         # Note: python by default sorts dict by key
-        policies = islice(self._index_map.values(), offset, offset + limit)
-        for policy in policies:
-            yield policy
+        yield from islice(self._index_map.values(), offset, offset + limit)
 
     def get_for_target(
             self,
@@ -62,9 +60,8 @@ class MemoryStorage(Storage):
                 Currently all policies are returned for evaluation. This issue will
                 be resolved once indexing is supported for in-memory storage.
         """
-        # TODO: Create glob match based topologically sorted graph index for filtering
-        for policy in self._index_map.values():
-            yield policy
+        # TODO: Create glob match based topologically sorted graph index for filtering  # pylint: disable=fixme
+        yield from self._index_map.values()
 
     def update(self, policy: Policy):
         """

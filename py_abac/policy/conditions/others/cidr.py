@@ -54,5 +54,5 @@ class CIDRSchema(Schema):
     value = fields.String(required=True, allow_none=False)
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return CIDR(**data)

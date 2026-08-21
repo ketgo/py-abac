@@ -11,7 +11,7 @@ from .conditions.schema import ConditionSchema
 from ..context import EvaluationContext
 
 
-class Rules(object):
+class Rules:
     """
         Policy rules
     """
@@ -114,5 +114,5 @@ class RulesSchema(Schema):
     context = RuleField(default={}, missing={})
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring
         return Rules(**data)

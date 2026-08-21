@@ -21,5 +21,5 @@ class AnySchema(Schema):
     """
 
     @post_load
-    def post_load(self, data, **_):  # pylint: disable=missing-docstring,no-self-use,unused-argument
+    def post_load(self, data, **_):  # pylint: disable=missing-docstring,unused-argument
         return Any()
