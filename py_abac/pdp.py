@@ -58,15 +58,15 @@ class PDP:
                  algorithm: EvaluationAlgorithm = EvaluationAlgorithm.DENY_OVERRIDES,
                  providers: List[AttributeProvider] = None):
         if not isinstance(storage, Storage):
-            raise TypeError(f"Invalid type '{type(storage)}' for storage.")
+            raise TypeError("Invalid type '{}' for storage.".format(type(storage)))
         if not isinstance(algorithm, EvaluationAlgorithm):
-            raise TypeError(f"Invalid type '{type(algorithm)}' for evaluation algorithm.")
+            raise TypeError("Invalid type '{}' for evaluation algorithm.".format(type(algorithm)))
         self._storage = storage
         self._algorithm = algorithm.value
         self._providers = providers or []
         for provider in self._providers:
             if not isinstance(provider, AttributeProvider):
-                raise TypeError(f"Invalid type '{type(provider)}' for attribute provider.")
+                raise TypeError("Invalid type '{}' for attribute provider.".format(type(provider)))
 
     def is_allowed(self, request: AccessRequest):
         """
@@ -76,10 +76,10 @@ class PDP:
             :return: True if authorized else False
         """
         if not isinstance(request, AccessRequest):
-            raise TypeError(f"Invalid type '{request}' for authorization request.")
+            raise TypeError("Invalid type '{}' for authorization request.".format(request))
 
         # Get appropriate evaluation algorithm handler
-        evaluate = getattr(self, f"_{self._algorithm}")
+        evaluate = getattr(self, "_{}".format(self._algorithm))
         # Create evaluation context
         ctx = EvaluationContext(request, self._providers)
 

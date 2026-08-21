@@ -69,7 +69,7 @@ class MemoryStorage(Storage):
         """
         self._check_uid(policy.uid)
         if policy.uid not in self._index_map:
-            raise ValueError(f"Policy with UID='{policy.uid}' does not exist.")
+            raise ValueError("Policy with UID='{}' does not exist.".format(policy.uid))
         self._index_map[policy.uid] = policy
         LOG.info('Updated Policy with UID=%s. New value is: %s', policy.uid, policy)
 
@@ -79,7 +79,7 @@ class MemoryStorage(Storage):
         """
         self._check_uid(uid)
         if uid not in self._index_map:
-            raise ValueError(f"Policy with UID='{uid}' does not exist.")
+            raise ValueError("Policy with UID='{}' does not exist.".format(uid))
         # Remove policy from index map
         del self._index_map[uid]
         LOG.info('Deleted Policy with UID=%s.', uid)

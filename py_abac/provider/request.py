@@ -41,7 +41,7 @@ class RequestAttributeProvider(AttributeProvider):
         """
         # Validates given access control element and gets ObjectPath tree
         try:
-            attribute_tree = getattr(self, f"_{ace}_tree")
+            attribute_tree = getattr(self, "_{}_tree".format(ace))
         except AttributeError as exc:
             raise InvalidAccessControlElementError(ace) from exc
 

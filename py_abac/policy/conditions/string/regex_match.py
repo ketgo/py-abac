@@ -27,7 +27,7 @@ def validate_regex(value):
     try:
         re.compile(value)
     except Exception as exc:
-        raise ValidationError(f"Invalid regex expression '{value}'.") from exc
+        raise ValidationError("Invalid regex expression '{}'.".format(value)) from exc
 
 
 class RegexMatchSchema(Schema):
