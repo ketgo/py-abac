@@ -8,7 +8,10 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # actions/setup-python has no Python 3.7 build for Ubuntu 24.04 (what
+    # ubuntu-latest now points to), only up through 22.04, so pin the runner
+    # rather than dropping 3.7 from the matrix.
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
