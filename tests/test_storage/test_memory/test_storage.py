@@ -87,6 +87,13 @@ def test_get(st):
     assert 'some text' == st.get('2').description
 
 
+def test_get_with_non_str_uid(st):
+    # Non-str UID (e.g. a dict) must be rejected before it can reach a
+    # backend query, where it could otherwise be interpreted as an operator.
+    with pytest.raises(TypeError):
+        st.get({"$ne": None})
+
+
 @pytest.mark.parametrize('limit, offset, result', [
     (500, 0, 200),
     (101, 1, 101),
@@ -210,12 +217,24 @@ def test_update_error(st):
         st.update(policy)
 
 
+def test_update_with_non_str_uid(st):
+    policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
+    policy.uid = {"$ne": None}
+    with pytest.raises(TypeError):
+        st.update(policy)
+
+
 def test_delete(st):
     policy = Policy.from_json({"uid": "1", "rules": {}, "targets": {}, "effect": "deny"})
     st.add(policy)
     assert '1' == st.get('1').uid
     st.delete('1')
     assert None is st.get('1')
+
+
+def test_delete_with_non_str_uid(st):
+    with pytest.raises(TypeError):
+        st.delete({"$ne": None})
 
 
 def test_delete_error(st):

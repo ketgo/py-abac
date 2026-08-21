@@ -67,3 +67,14 @@ class Storage(metaclass=ABCMeta):
             raise ValueError("Limit can't be negative")
         if offset < 0:
             raise ValueError("Offset can't be negative")
+
+    @staticmethod
+    def _check_uid(uid):
+        """
+            Validate policy UID type. Backends build lookup/update/delete
+            queries directly from this value, so a non-str UID (e.g. a dict)
+            must be rejected here rather than reaching backend query
+            construction, where it could be interpreted as query operators.
+        """
+        if not isinstance(uid, str):
+            raise TypeError("Policy UID must be of type 'str', got '{}'.".format(type(uid).__name__))

@@ -39,6 +39,7 @@ class SQLStorage(Storage):
             raise PolicyExistsError(policy.uid)
 
     def get(self, uid: str) -> Union[Policy, None]:
+        self._check_uid(uid)
         policy_model = self.session.query(PolicyModel).get(uid)
         return policy_model.to_policy() if policy_model else None
 
@@ -61,6 +62,7 @@ class SQLStorage(Storage):
             yield policy_model.to_policy()
 
     def update(self, policy: Policy):
+        self._check_uid(policy.uid)
         try:
             policy_model = self.session.query(PolicyModel).get(policy.uid)
             if not policy_model:
@@ -73,5 +75,6 @@ class SQLStorage(Storage):
         LOG.info('Updated Policy with UID=%s. New value is: %s', policy.uid, policy)
 
     def delete(self, uid: str):
+        self._check_uid(uid)
         self.session.query(PolicyModel).filter(PolicyModel.uid == uid).delete()
         LOG.info("Deleted Policy with UID=%s.", uid)
