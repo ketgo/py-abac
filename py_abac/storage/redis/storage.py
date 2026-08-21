@@ -45,6 +45,7 @@ class RedisStorage(Storage):
         """
             Get specific policy
         """
+        self._check_uid(uid)
         policy_str = self.client.hget(self._hash, uid)
         if not policy_str:
             return None
@@ -79,7 +80,7 @@ class RedisStorage(Storage):
 
                 Currently all policies are returned for evaluation by PDP.
         """
-        # TODO: Create topologically sorted graph index for filtered retrieval.
+        # TODO: Create topologically sorted graph index for filtered retrieval.  # pylint: disable=fixme
         rvalue = self.client.hgetall(self._hash)
         for uid in rvalue:
             policy_str = rvalue[uid]
@@ -93,6 +94,7 @@ class RedisStorage(Storage):
                 operation occurs instead of upsert.
         """
         uid = policy.uid
+        self._check_uid(uid)
         lua = \
             """
                 if redis.call('HEXISTS', KEYS[1], ARGV[1]) == 1 then
@@ -108,6 +110,7 @@ class RedisStorage(Storage):
         """
             Delete a policy
         """
+        self._check_uid(uid)
         rvalue = self.client.hdel(self._hash, uid)
         if rvalue != 0:
             LOG.info('Deleted Policy with UID=%s.', uid)

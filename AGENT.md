@@ -48,7 +48,7 @@ Backend-specific tests are marked with pytest markers (`mongo`, `sql`, `redis`, 
 ```bash
 cd tests && docker-compose up -d && cd ..
 ```
-Then run per-backend, using the same env vars CI uses (see [.travis.yml](.travis.yml)):
+Then run per-backend, using the same env vars CI uses (see [.github/workflows/ci.yml](.github/workflows/ci.yml)):
 ```bash
 MONGODB_HOST="mongodb://mongo:password@localhost:27017" pytest -m mongo
 SQL_HOST="mysql+pymysql://mysql:password@localhost/py_abac" pytest -m sql
@@ -57,6 +57,10 @@ REDIS_HOST="localhost" REDIS_PORT="6379" pytest -m redis
 pytest -m file
 ```
 SQL tests default to an in-memory SQLite engine (`DEFAULT_SQL_HOST` in `tests/test_storage/test_sql/__init__.py`) when `SQL_HOST` is unset, so `pytest -m sql` works without Docker for SQLite-compatible cases. Mongo/Redis tests need the corresponding service reachable at their `DEFAULT_*_HOST` unless overridden.
+
+## Git workflow
+
+`master` is protected and requires an approving review plus passing CI (`.github/workflows/ci.yml`) before merging. When working as an agent: open a PR for review, but never merge or approve your own PR — leave that for the repo owner to do explicitly after reviewing the diff.
 
 ## Architecture
 
@@ -99,3 +103,10 @@ Each optional backend's dependency (`pymongo`, `SQLAlchemy`, `redis`, `dotty-dic
 ### Adding a new storage backend
 
 Implement `Storage` (`storage/base.py`) in a new `storage/<backend>/` package, add its dependency as a new `extras_require` group in `setup.py`, and add tests under `tests/test_storage/test_<backend>/` (plus PDP integration tests under `tests/test_pdp/`) marked with a corresponding pytest marker registered in `pytest.ini`.
+
+## Release process
+
+- Day-to-day PRs (bug fixes, docs, small features) target `master` directly.
+- A larger body of work destined for the next version accumulates on a staging branch named `rc-vX.Y.Z` (e.g. `rc-v0.5.0`). While one is active, PRs for changes intended for that release target the `rc-vX.Y.Z` branch instead of `master`.
+- When the release is ready, the `rc-vX.Y.Z` branch is merged into `master` via a single PR (see e.g. PR #13 "Rc v0.4.0", PR #10 "Rc0.2.1"), `py_abac/version.py`'s `__version__` is bumped, a new section is added to `CHANGELOG.md`, and a `vX.Y.Z` tag is cut from `master`.
+- If no `rc-vX.Y.Z` branch is currently active (or the existing one is stale — check `git log origin/master..origin/rc-vX.Y.Z` for commits unique to it), treat `master` as the target instead of creating/using a stale rc branch.

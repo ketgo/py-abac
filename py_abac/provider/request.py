@@ -41,9 +41,9 @@ class RequestAttributeProvider(AttributeProvider):
         """
         # Validates given access control element and gets ObjectPath tree
         try:
-            attribute_tree = getattr(self, "_{}_tree".format(ace))
-        except AttributeError:
-            raise InvalidAccessControlElementError(ace)
+            attribute_tree = getattr(self, f"_{ace}_tree")
+        except AttributeError as exc:
+            raise InvalidAccessControlElementError(ace) from exc
 
         # Check if attribute value stored in cache
         if attribute_path in self._attribute_values_cache[ace]:
@@ -53,8 +53,8 @@ class RequestAttributeProvider(AttributeProvider):
             try:
                 rvalue = attribute_tree.execute(attribute_path)
             # Broad exception needed for ObjectPath package
-            except Exception:
-                raise InvalidAttributePathError(attribute_path)
+            except Exception as exc:
+                raise InvalidAttributePathError(attribute_path) from exc
             # Store the obtained value in cache
             self._attribute_values_cache[ace][attribute_path] = rvalue
         return rvalue
