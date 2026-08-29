@@ -4,7 +4,7 @@
 
 import json
 
-from ..utils import get_sub_wildcard_queries, get_all_wildcard_queries
+from ..utils import get_sub_wildcard_queries, get_all_wildcard_queries, has_untranslatable_wildcard
 from ...policy import Policy
 from ...policy.targets import Targets
 
@@ -89,9 +89,16 @@ class PolicyModel:
             if isinstance(targets.resource_id, list) else [targets.resource_id]
         action_queries = targets.action_id \
             if isinstance(targets.action_id, list) else [targets.action_id]
-        # Add all wildcard sub-queries for target queries
+        # Add all wildcard sub-queries for target queries. '?' and '[seq]' have no
+        # equivalent in the tag-based wildcard grammar (which only understands '*')
+        # and would otherwise be tagged as literal strings, silently dropping the
+        # policy from `get_for_target()` results (GHSA-rq77-w5m2-2g6m). Widen such
+        # targets to match everything; `Targets.match()` re-checks with fnmatch.
+        def _tag_queries(queries):
+            return [["*"] if has_untranslatable_wildcard(x) else get_sub_wildcard_queries(x) for x in queries]
+
         return {
-            "subject": [{"id": get_sub_wildcard_queries(x)} for x in subject_queries],
-            "resource": [{"id": get_sub_wildcard_queries(x)} for x in resource_queries],
-            "action": [{"id": get_sub_wildcard_queries(x)} for x in action_queries]
+            "subject": [{"id": q} for q in _tag_queries(subject_queries)],
+            "resource": [{"id": q} for q in _tag_queries(resource_queries)],
+            "action": [{"id": q} for q in _tag_queries(action_queries)]
         }

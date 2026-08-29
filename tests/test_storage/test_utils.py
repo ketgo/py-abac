@@ -6,7 +6,19 @@ import fnmatch
 
 import pytest
 
-from py_abac.storage.utils import get_sub_wildcard_queries, get_all_wildcard_queries
+from py_abac.storage.utils import get_sub_wildcard_queries, get_all_wildcard_queries, has_untranslatable_wildcard
+
+
+@pytest.mark.parametrize("target_id, expected", [
+    ("*", False),
+    ("abc", False),
+    ("ab*c", False),
+    ("/admin?", True),
+    ("/[s]tar*", True),
+    ("/[!s]tar*", True),
+])
+def test_has_untranslatable_wildcard(target_id, expected):
+    assert has_untranslatable_wildcard(target_id) == expected
 
 
 @pytest.mark.parametrize("query, sub_queries", [

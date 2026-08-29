@@ -10,6 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from ...policy import Policy
+from ..utils import has_untranslatable_wildcard
 
 Base = declarative_base()
 
@@ -142,6 +143,13 @@ class PolicyModel(Base):
         # Add targets in policy model
         for tid in target_ids:
             target_model = target_model_cls()
-            # Replace with SQL wildcard '%'
-            target_model.target_id = tid.replace('*', '%')
+            if has_untranslatable_wildcard(tid):
+                # '?' and '[seq]' have no SQL LIKE equivalent and would otherwise
+                # be stored/matched as literal characters, silently dropping the
+                # policy from `get_for_target()` results (GHSA-rq77-w5m2-2g6m).
+                # Widen to match everything; `Targets.match()` re-checks with fnmatch.
+                target_model.target_id = '%'
+            else:
+                # Replace with SQL wildcard '%'
+                target_model.target_id = tid.replace('*', '%')
             model_attr.append(target_model)

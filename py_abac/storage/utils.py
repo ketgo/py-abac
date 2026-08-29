@@ -6,6 +6,21 @@ import re
 from typing import List
 
 
+def has_untranslatable_wildcard(target_id: str) -> bool:
+    """
+        Check if a policy target ID uses an fnmatch wildcard other than '*',
+        i.e. '?' or a '[seq]'/'[!seq]' character class. The SQL and MongoDB
+        storage backends' pre-filter queries only understand '*', so such a
+        target must be widened to match everything at the storage layer and
+        left to `Targets.match()` (which uses the full `fnmatch` grammar) to
+        apply the real restriction.
+
+        :param target_id: policy target ID
+        :returns: True if `target_id` contains '?' or '['
+    """
+    return '?' in target_id or '[' in target_id
+
+
 def get_sub_wildcard_queries(query: str, wildcard: str = '*') -> List[str]:
     """
         This method splits a wildcard query into sub-queries in such a way that

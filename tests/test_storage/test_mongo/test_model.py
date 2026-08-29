@@ -128,6 +128,33 @@ def test_to_doc():
                 ]
             }
     ),
+    (
+            # Regression test for GHSA-rq77-w5m2-2g6m: '?' and '[seq]' targets must be
+            # tagged as a match-everything wildcard ('*'), not the wildcard sub-queries
+            # computed for plain '*' targets, since those don't understand '?'/'[seq]'
+            # and would otherwise drop the policy from `get_for_target()` results.
+            {
+                "uid": "a381fdd3-b73a-4858-a57b-94085628b0f1",
+                "description": "Question mark and character class targets",
+                "rules": {},
+                "targets": {
+                    "subject_id": "/admin?",
+                    "resource_id": "/[s]tar*"
+                },
+                "effect": "deny"
+            },
+            {
+                "subject": [
+                    {"id": ["*"]}
+                ],
+                "resource": [
+                    {"id": ["*"]}
+                ],
+                "action": [
+                    {"id": ["*"]}
+                ]
+            }
+    ),
 ])
 def test__targets_to_tags(policy_json, tags):
     policy = Policy.from_json(policy_json)

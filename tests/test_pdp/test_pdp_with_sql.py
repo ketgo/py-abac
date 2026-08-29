@@ -905,3 +905,38 @@ def test_is_allowed_error(st):
     g = PDP(st)
     with pytest.raises(TypeError):
         g.is_allowed(None)
+
+
+@pytest.mark.parametrize('resource_id, should_be_allowed', [
+    # '?' matches exactly one character, so 'admin1' fits the '/admin?' deny target.
+    ('/admin1', False),
+    # Control case: '*' target wildcards have always been handled correctly.
+    ('/star_zone', False),
+    # Unrelated resource is only covered by the broad allow.
+    ('/public', True),
+])
+def test_is_allowed_respects_deny_with_question_mark_and_seq_targets(session, resource_id, should_be_allowed):
+    """
+        Regression test for GHSA-rq77-w5m2-2g6m: a DENY policy targeting '/admin?' or
+        '[s]tar*' must not be silently dropped by the SQL storage pre-filter, or the
+        surviving broad ALLOW wins under DENY_OVERRIDES and the request is wrongly allowed.
+    """
+    storage = SQLStorage(scoped_session=session)
+    storage.add(Policy.from_json({
+        "uid": "allow-all", "rules": {}, "targets": {"resource_id": "*"}, "effect": "allow"
+    }))
+    storage.add(Policy.from_json({
+        "uid": "deny-q", "rules": {}, "targets": {"resource_id": "/admin?"}, "effect": "deny"
+    }))
+    storage.add(Policy.from_json({
+        "uid": "deny-seq", "rules": {}, "targets": {"resource_id": "/[s]tar*"}, "effect": "deny"
+    }))
+
+    pdp = PDP(storage, EvaluationAlgorithm.DENY_OVERRIDES)
+    request = AccessRequest.from_json({
+        "subject": {"id": "u"},
+        "resource": {"id": resource_id},
+        "action": {"id": "read"},
+        "context": {}
+    })
+    assert should_be_allowed == pdp.is_allowed(request)
