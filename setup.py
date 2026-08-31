@@ -59,6 +59,7 @@ if __name__ == '__main__':
         install_requires=[
             'marshmallow~=3.2',
             'marshmallow-oneofschema~=2.0',
+            'pydantic~=1.8.1',
             'objectpath~=0.6',
             'lru-dict~=1.1'
         ],
